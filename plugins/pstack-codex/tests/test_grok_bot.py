@@ -1,13 +1,3 @@
-"""Grok Bot sender contract and regression tests.
-
-Every network interaction here is either an injected opener or a loopback
-``http.server`` on 127.0.0.1.  Nothing contacts an external service, no real
-sender key exists, and no test is evidence that a live routine accepted a POST.
-
-The regression classes reproduce the review findings against the send boundary:
-host override, queue file handling, key-bearing payloads, error-message leaks
-and non-200 acceptance.
-"""
 
 import contextlib
 import email.message
@@ -32,8 +22,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 import grok_bot  # noqa: E402
 
 URL = "https://api2.cursor.sh/automations/webhook/synthetic-routine-id"
-# Synthetic keys share no 8-character window with any other fixture text (URL, paths, messages),
-# so a fragment check can tell a leak from a coincidence.
 KEY = "sk-NEVERPRINT-7f3a9c2e-b1d4-4e8a-9f6c"
 _ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
 LONG_KEY = "LONG_SYNTHETIC_" + "".join(_ALPHABET[(i * 7) % 62] for i in range(2000))
@@ -78,7 +66,6 @@ raise SystemExit('nonregular file accepted')
 
 
 class NeverReadBody:
-    """A response body that fails the test if anyone reads it."""
 
     def read(self, *_args):
         raise AssertionError("the response body must never be read")
@@ -106,7 +93,6 @@ class FakeResponse:
 
 
 class FakeOpener:
-    """Records every call; returns or raises the scripted outcome."""
 
     def __init__(self, outcome):
         self.outcome = outcome
@@ -122,7 +108,6 @@ class FakeOpener:
 
 
 class Tripwire(dict):
-    """An environ mapping that fails the test if the sender key is ever looked up."""
 
     def get(self, *_args, **_kwargs):
         raise AssertionError("the sender key must not be resolved before the boundary checks")
@@ -146,7 +131,6 @@ def write_secret_file(path: Path, text: str, mode: int = 0o600) -> None:
 
 
 def assert_no_fragment(test, text, secret, window=8):
-    """No window of ``secret`` (not just the whole value) may appear in ``text``."""
     for start in range(0, max(1, len(secret) - window + 1)):
         piece = secret[start:start + window]
         test.assertNotIn(piece, text, f"key fragment at offset {start} leaked")
@@ -183,9 +167,6 @@ class Base(unittest.TestCase):
         self.assertNotIn(secret, text)
         self.assertNotIn(RESPONSE_SECRET, text)
         assert_no_fragment(self, text, secret)
-
-
-# --------------------------------------------------------------------------- URL and config
 
 
 class UrlValidationTests(unittest.TestCase):
@@ -317,7 +298,6 @@ class ConfigTests(Base):
 
 
 class HostOverrideRegressionTests(Base):
-    """Finding 1: no host other than api2.cursor.sh may ever receive the credential headers."""
 
     def test_expected_host_in_file_config_is_rejected_before_any_send(self):
         self.write_config({"url": "https://example.org/automations/webhook/r1", "key_file": str(self.key_file), "expected_host": "example.org"})
@@ -370,9 +350,6 @@ class HostOverrideRegressionTests(Base):
         self.assertEqual(timeout, 8.0)
         self.assertEqual(result["status"], "accepted")
         self.assertEqual(result["host_policy"], "documented_default")
-
-
-# --------------------------------------------------------------------------- secret
 
 
 class SecretTests(Base):
@@ -449,9 +426,6 @@ class SecretTests(Base):
         self.assertEqual(grok_bot.scrub("clean", None), "clean")
 
 
-# --------------------------------------------------------------------------- payload
-
-
 class PayloadTests(unittest.TestCase):
     def test_rejects_non_object_media_and_unbounded_payloads(self):
         cases = {
@@ -497,12 +471,7 @@ class PayloadTests(unittest.TestCase):
         self.assertFalse(grok_bot.payload_contains(clean, grok_bot.encode_payload(clean), KEY))
 
 
-# --------------------------------------------------------------------------- queue (finding 2)
-
-
 class QueueRegressionTests(Base):
-    """Finding 2: the queue is opened O_NOFOLLOW, checked on the descriptor, never chmodded, never
-    truncated, never the key or config file, and validated before anything is sent."""
 
     def test_existing_world_readable_queue_is_refused_untouched_and_nothing_is_sent(self):
         self.queue_path.write_bytes(b'{"earlier":1}\n')
@@ -656,11 +625,7 @@ class QueueRegressionTests(Base):
         self.assertIn("mode 0600", report["error"])
 
 
-# --------------------------------------------------------------------------- key in payload (finding 3)
-
-
 class KeyInPayloadRegressionTests(Base):
-    """Finding 3: an event containing the resolved sender key is never sent and never queued."""
 
     def secrets(self):
         return {"short": KEY, "tricky": TRICKY_KEY, "long": LONG_KEY}
@@ -704,11 +669,7 @@ class KeyInPayloadRegressionTests(Base):
         self.assertNotIn(KEY.encode(), line)
 
 
-# --------------------------------------------------------------------------- error leakage (finding 4)
-
-
 class ErrorLeakRegressionTests(Base):
-    """Finding 4: no transport exception message, response body or header reaches the receipt."""
 
     class Weird(Exception):
         pass
@@ -791,11 +752,7 @@ class ErrorLeakRegressionTests(Base):
                 self.assertTrue(any("redacted" in e for e in cleaned["errors"]))
 
 
-# --------------------------------------------------------------------------- acceptance (finding 5)
-
-
 class AcceptanceRegressionTests(Base):
-    """Finding 5: exactly HTTP 200 is acceptance; the response body is never drained."""
 
     def test_only_http_200_is_accepted(self):
         result, opener = self.send(FakeResponse(200))
@@ -922,15 +879,12 @@ class AcceptanceRegressionTests(Base):
         self.assertIn("symbolic link", " ".join(report["errors"]))
 
 
-# --------------------------------------------------------------------------- loopback transport
-
-
 class _LoopbackHandler(http.server.BaseHTTPRequestHandler):
     seen = []
     mode = "ok"
     lock = threading.Lock()
 
-    def log_message(self, *_args):  # silence
+    def log_message(self, *_args):
         return
 
     def do_POST(self):
@@ -963,8 +917,6 @@ class _LoopbackHandler(http.server.BaseHTTPRequestHandler):
 
 
 class LoopbackBoundaryTests(unittest.TestCase):
-    """Real urllib transport against a loopback server: header delivery, redirect refusal, timeout,
-    and no body read.  Transport-level only; send_event never accepts a loopback URL."""
 
     def setUp(self):
         _LoopbackHandler.seen = []
@@ -1020,9 +972,6 @@ class LoopbackBoundaryTests(unittest.TestCase):
         result = grok_bot.send_event({"url": self.url, "key_env": "K", "queue_path": "/tmp/never.jsonl"}, EVENT, environ=Tripwire())
         self.assertEqual(result["status"], "invalid_config")
         self.assertEqual(_LoopbackHandler.seen, [])
-
-
-# --------------------------------------------------------------------------- CLI
 
 
 class CliTests(Base):

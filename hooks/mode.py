@@ -11,8 +11,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from pstack import change_state, mode_context, read_state
 
-# A mention ends at whitespace or end of line, optionally after closing punctuation.
-# Word characters, hyphens and colons glued to the name are a different token.
 DELIMITER = r"(?=[.,;:!?)\]}]*(?:[ \t]|$))"
 ACTIVATE = re.compile(r"^ {0,3}[$/](?:pstack-codex:)?poteto-mode" + DELIMITER, re.I)
 DOLLAR_MENTION = re.compile(r"(?<![\w\\])\$(?:pstack-codex:)?poteto-mode" + DELIMITER, re.I)
@@ -30,13 +28,6 @@ def _blank(match: re.Match) -> str:
 
 
 def prose_lines(lines: list[str]) -> Iterator[tuple[int, str]]:
-    """Yield (index, visible text) for the lines where an explicit mention counts.
-
-    Fenced code (tracked across lines), indented code and blockquotes are skipped.
-    Inline code and single-quoted spans are blanked. Double quotes alternate across
-    lines, so text inside a quote that opened on an earlier line stays hidden until
-    the quote closes; positions are preserved so a match maps back to the raw line.
-    """
     fence = None
     quoted = False
     for index, line in enumerate(lines):
@@ -68,7 +59,6 @@ def prose_lines(lines: list[str]) -> Iterator[tuple[int, str]]:
 
 
 def activation_mention(lines: list[str]) -> tuple[int, re.Match] | None:
-    """Return the first explicit mention: slash or dollar form on the first line, dollar form on later prose lines."""
     for index, visible in prose_lines(lines):
         match = (ACTIVATE.match(visible) if index == 0 else None) or DOLLAR_MENTION.search(visible)
         if match:

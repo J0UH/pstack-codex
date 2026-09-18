@@ -31,7 +31,6 @@ class WorkerCommonTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="pstack fake worker ")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
-        # The worker's cwd and its attempt evidence are siblings, never nested.
         self.project = self.root / "project"
         self.project.mkdir()
         self.attempts = self.root / "attempts"

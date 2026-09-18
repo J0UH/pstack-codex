@@ -10,6 +10,8 @@ The coordinator addressed all twelve recorded follow-ups and added regression co
 
 These repairs still need a Fable delta review. The next requested Fable implementation run—for the separately verified Grok controls—stopped at the Claude session limit before any tools or edits. No implementation or approval is attributed to that failed run. The provider reported a reset at 1:30 a.m. Copenhagen time after the September 18 evening attempt.
 
+The resumed Poteto run verified the three external companions in the installed package and corrected two historical audit passages. It applied the bundled comment-review and deslop workflows, removed redundant comments, represented a skipped launch separately from a spawn failure, and removed an unreachable secret guard. All 216 tests still pass. These changes also await the final Fable review. A fresh Fable retry confirmed the same session limit before any edits.
+
 ## Before the next release
 
 1. Have Fable implement the verified Grok launch controls and version gate, using captured actual streams. Keep reader/writer and shell capabilities unsupported until each has sufficient evidence.

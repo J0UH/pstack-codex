@@ -18,9 +18,6 @@ try:
 except ImportError:
     jsonschema = None
 
-# Schema parity runs against the standard Draft 2020-12 validator from requirements-test.txt.
-# Locally the parity tests skip when it is absent. CI installs it, so a missing package
-# there is a failure rather than a silent skip.
 REQUIRE_JSONSCHEMA = bool(os.environ.get("CI") or os.environ.get("PSTACK_REQUIRE_JSONSCHEMA"))
 
 
@@ -48,7 +45,6 @@ def model(token, backend="claude"):
     return config({"backend": backend, "model": token, "effort": "high"})
 
 
-# Characters spelled out by code point so the source stays plain ASCII.
 NUL, VT, FF, FS, US, DEL = (chr(code) for code in (0x00, 0x0B, 0x0C, 0x1C, 0x1F, 0x7F))
 NEL, NBSP, OGHAM, EN_QUAD, LS, PS, NNBSP, MMSP, IDEO, BOM = (chr(code) for code in (0x85, 0xA0, 0x1680, 0x2000, 0x2028, 0x2029, 0x202F, 0x205F, 0x3000, 0xFEFF))
 NON_ASCII_TOKEN = "mod" + chr(0xE8) + "le-" + chr(0x4F8B)
@@ -258,8 +254,6 @@ class ModelConfigTests(unittest.TestCase):
         self.assertEqual({TOKEN_PATTERN}, {entry["properties"]["model"]["pattern"] for entry in entries})
 
     def test_runtime_token_rule_matches_the_pattern_for_every_bmp_code_point(self):
-        # The parity corpus samples; this checks every Basic Multilingual Plane code point so
-        # model_config._token and the schema pattern, as Python's re evaluates it, cannot diverge.
         pattern = re.compile(TOKEN_PATTERN)
         for code in range(0x10000):
             token = "a" + chr(code)

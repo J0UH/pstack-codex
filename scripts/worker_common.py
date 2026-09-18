@@ -197,17 +197,10 @@ def _require_abs_path(spec: dict, key: str) -> str:
 
 
 def _is_within(path: str, ancestor: str) -> bool:
-    """True when ``path`` equals ``ancestor`` or lies below it (both already resolved)."""
     return path == ancestor or path.startswith(ancestor.rstrip(os.sep) + os.sep)
 
 
 def _require_disjoint_run_dir(cwd: str, run_dir: str) -> None:
-    """Reject a run_dir that overlaps cwd once symlinks and ``..`` are resolved.
-
-    A writer's file-tool rule covers its whole working directory, so an attempt
-    directory inside it would let the child rewrite the launch record, process
-    record and raw stream its own receipt is derived from.
-    """
     real_cwd = os.path.realpath(cwd)
     real_run_dir = os.path.realpath(run_dir)
     if _is_within(real_run_dir, real_cwd) or _is_within(real_cwd, real_run_dir):
@@ -456,7 +449,6 @@ class _SignalGuard:
         self.installed = True
 
     def unreported_signals(self, already_listed: int) -> list[str]:
-        """Names of recorded signals the receipt does not yet mention."""
         names: list[str] = []
         if self.requested_signal is not None and self.reported_signal != self.requested_signal:
             names.append(_signal_name(self.requested_signal))
@@ -787,15 +779,8 @@ def _termination_view(termination: dict, guard: _SignalGuard) -> dict:
     }
 
 
-def _ended_by_own_cause(lifecycle: str, problems: list[str]) -> bool:
-    """True when the attempt already ended for a cause a later stop signal must not relabel.
-
-    A timeout has already terminated the child, and a spawn failure with a recorded
-    problem never started one. The default ``spawn_failed`` lifecycle without a
-    problem means Popen was skipped because a stop request was already pending;
-    that attempt is genuinely interrupted.
-    """
-    return lifecycle == "timeout" or (lifecycle == "spawn_failed" and bool(problems))
+def _ended_by_own_cause(lifecycle: str) -> bool:
+    return lifecycle in ("timeout", "spawn_failed")
 
 
 def _stop_after_cause_error(signal_name: str, lifecycle: str) -> str:
@@ -806,12 +791,6 @@ def _stop_after_cause_error(signal_name: str, lifecycle: str) -> str:
 
 
 def _record_late_signals(receipt: dict, guard: _SignalGuard) -> None:
-    """Fold stop signals that arrived after the receipt was finalized into it.
-
-    The child is already reaped and the status is final, so there is nothing left
-    to interrupt; the request is reported instead of silently discarded. The
-    durable copy is rewritten so the public and stored receipts still agree.
-    """
     termination = receipt["termination"]
     listed = list(termination.get("late_parent_signals") or [])
     unreported = guard.unreported_signals(len(listed))
@@ -875,7 +854,7 @@ def _run_claimed_process(
 
     proc: subprocess.Popen | None = None
     pgid: int | None = None
-    lifecycle = "spawn_failed"
+    lifecycle = "interrupted"
     confirmed = True
     termination: dict[str, Any] = {
         "term_sent": False, "kill_sent": False, "interrupt_signal": None, "stop_signal_after_termination": None,
@@ -903,6 +882,7 @@ def _run_claimed_process(
                     # even when a short-lived leader exits before getpgid can run.
                     pgid = proc.pid
             except (OSError, ValueError) as exc:
+                lifecycle = "spawn_failed"
                 problems.append(f"spawn_failed: {type(exc).__name__}: {_short(exc, 200)}")
         finally:
             os.close(out_fd)
@@ -926,9 +906,7 @@ def _run_claimed_process(
         stop_after_cause: str | None = None
         if guard.requested_signal is not None:
             signal_name = _signal_name(guard.requested_signal)
-            if _ended_by_own_cause(lifecycle, problems):
-                # The attempt already ended for its own cause; keep that cause and
-                # record the stop request beside it instead of relabeling.
+            if _ended_by_own_cause(lifecycle):
                 stop_after_cause = signal_name
                 termination["stop_signal_after_termination"] = signal_name
             else:
@@ -987,8 +965,6 @@ def _run_claimed_process(
         if isinstance(denial_count, int) and not isinstance(denial_count, bool) and denial_count > 0:
             denied = evidence.get("permission_denied_tools")
             denied_names = ", ".join(str(name) for name in denied) if isinstance(denied, list) and denied else "unknown"
-            # Delivery can succeed while the requested task was blocked; the receipt
-            # carries that signal without pretending the delivery failed.
             denial_warnings.append(
                 f"permission_denials: {denial_count} (tools: {denied_names}); delivery status is unchanged, "
                 "inspect the denials before accepting the task"
@@ -1051,14 +1027,9 @@ def _run_claimed_process(
         atomic_write_json(paths["receipt"], receipt)
         if guard.requested_signal is not None and guard.reported_signal is None:
             # A first stop request can arrive during parsing or the receipt write.
-            # Finalize it without discarding the captured artifacts, applying the
-            # same rule as the post-supervision path: an attempt that already ended
-            # by timeout or a real spawn failure keeps that cause and records the
-            # request beside it; anything else (including a success that is still
-            # finalizing) becomes interrupted.
             guard.reported_signal = guard.requested_signal
             signal_name = _signal_name(guard.requested_signal)
-            if _ended_by_own_cause(lifecycle, problems):
+            if _ended_by_own_cause(lifecycle):
                 termination["stop_signal_after_termination"] = signal_name
                 receipt["errors"] = (receipt["errors"] + [_stop_after_cause_error(signal_name, lifecycle)])[:MAX_ERRORS]
             else:

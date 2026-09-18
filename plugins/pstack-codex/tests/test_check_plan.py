@@ -1,4 +1,3 @@
-"""Codex plan checker: retained upstream gates, host-evidenced markers and an explicit lane policy."""
 
 import json
 import os

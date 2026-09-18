@@ -63,7 +63,6 @@ class ClaudeWorkerTests(unittest.TestCase):
         binary.chmod(0o755)
         self.prompt = self.root / "prompt file.txt"
         self.prompt.write_text("Synthetic stdin with spaces, quotes ' and æ.")
-        # The worker's cwd and its attempt evidence are siblings, never nested.
         self.project = self.root / "project"
         self.project.mkdir()
         self.count = 0
@@ -141,7 +140,6 @@ class ClaudeWorkerTests(unittest.TestCase):
         receipt=self.run_fixture("permission_denial",profile="reader")
         self.assertEqual(1,receipt["permission_denial_count"])
         self.assertEqual(["Read"],receipt["evidence"]["permission_denied_tools"])
-        # Delivery succeeded and stays success; the receipt itself now carries the denial signal.
         self.assertEqual("success",receipt["status"])
         self.assertEqual(0,receipt["exit_code"])
         self.assertEqual([],receipt["errors"])
@@ -215,12 +213,10 @@ class ClaudeWorkerTests(unittest.TestCase):
         self.assertEqual(plan["adapter"]["allowed_tools"], argv[argv.index("--allowedTools") + 1:])
         self.assertEqual({"rule": expected, "resolved_cwd": os.path.realpath(self.project), "anchor": "filesystem-root"},
                          plan["adapter"]["edit_scope"])
-        # The rule reaches the launched CLI unchanged, alongside a scoped shell rule.
         receipt = self.run_fixture(profile="writer", allowed_tools=["Bash(python3 -m unittest:*)"])
         self.assertEqual("success", receipt["status"])
         result = json.loads(Path(receipt["result_path"]).read_text())
         self.assertEqual(["Read", "Glob", "Grep", expected, "Bash(python3 -m unittest:*)"], result["allowed"])
-        # A symlinked cwd is scoped to the directory it resolves to, not to the alias path.
         alias = self.root / "alias"
         alias.symlink_to(self.project, target_is_directory=True)
         aliased = self.plan(profile="writer", cwd=str(alias))

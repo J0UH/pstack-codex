@@ -72,8 +72,6 @@ elif window in ('process_record','receipt'):
             pause()
     worker.atomic_write_json=write_record
     if window=='receipt' and behavior=='heartbeat':
-        # Start the timeout clock only once the child is heartbeating and ignoring TERM,
-        # so the attempt ends by a real timeout before its receipt is written.
         supervise_original=worker._supervise
         def supervise(*args,**kwargs):
             child_ready()
@@ -87,14 +85,12 @@ elif window in ('supervise','ignored_hup'):
         return original(*args,**kwargs)
     worker._supervise=supervise
 elif window=='timeout_grace':
-    # Pause inside the timeout termination sequence, after TERM reached the group.
     original=worker._signal_group
     def signal_group(pgid,pid,signum):
         original(pgid,pid,signum)
         if signum==signal.SIGTERM and not (root/'ready').exists(): pause()
     worker._signal_group=signal_group
 elif window=='restore':
-    # Pause after the receipt is final but before the launcher's handlers are removed.
     original=worker._SignalGuard.restore
     def restore(self):
         if not (root/'ready').exists(): pause()
@@ -118,7 +114,6 @@ spec={'backend':'claude','model':'fixture','effort':'high','profile':'analysis',
       'timeout_seconds':float(os.environ['TIMEOUT_SECONDS']),'term_grace_seconds':0.1}
 command=[sys.executable,str(root/'child.py')]
 if behavior=='missing_executable':
-    # A real spawn failure: Popen raises because the executable does not exist, so no child ever runs.
     command=[str(root/'missing-executable'),str(root/'child.py')]
 receipt=worker.run_process(spec,command,parse,stdin_text='fixture',
                            env={'PATH':os.defpath,'CASE_DIR':str(root),'STOP_WINDOW':window,'CHILD_BEHAVIOR':behavior})
@@ -201,7 +196,6 @@ class WorkerSignalTests(unittest.TestCase):
 
     def signal_and_release(self, root, proc, stop_signal):
         os.kill(proc.pid, stop_signal)
-        # Wait for the signal handler before releasing the deferred window.
         time.sleep(0.03)
         (root / 'release').write_text('continue')
         return proc.communicate(timeout=5)
@@ -245,7 +239,6 @@ class WorkerSignalTests(unittest.TestCase):
             self.assertFalse((root / 'child.pid').exists(), 'stop before launch must not spawn a child')
         elif window != 'receipt':
             self.assert_group_stopped(root, durable)
-        # Every completed interrupted attempt remains exclusively claimed.
         self.assert_claim_retained(root)
 
     def test_real_term_int_and_hup_while_supervising(self):
@@ -294,7 +287,6 @@ class WorkerSignalTests(unittest.TestCase):
         self.assert_claim_retained(root)
 
     def assert_cause_retained_through_finalization(self, root, stdout, cause, exit_code):
-        """The first stop signal arrived during the receipt write, after the attempt had ended by ``cause``."""
         durable = self.durable_receipt(root)
         self.assertEqual(json.loads(stdout), durable)
         self.assertEqual(cause, durable['status'])
@@ -337,7 +329,6 @@ class WorkerSignalTests(unittest.TestCase):
         stdout, stderr = self.signal_and_release(root, proc, signal.SIGTERM)
         self.assertEqual(1, proc.returncode, stderr)
         durable = self.assert_cause_retained_through_finalization(root, stdout, 'spawn_failed', 1)
-        # The cause is the real Popen failure, not the pre-spawn stop path that never calls Popen.
         self.assertTrue(any('FileNotFoundError' in error for error in durable['errors']), durable['errors'])
         self.assertIsNone(durable['pid'])
         self.assertIsNone(durable['pgid'])

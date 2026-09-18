@@ -312,6 +312,56 @@
         "disallowed_tools": "read_file,search_tool,use_tool"
       },
       "all_seven_permission_denies_retained": true
+    },
+    "strict_stdin_transport": {
+      "scope": "experimental strict-sandbox stdin transport; not production adapter acceptance",
+      "sidecar_sha256": "be5905e107d2b8b5f3c142d21ecfe4c8fd32a913d2fd551b788707930c4dc80d",
+      "sidecar_hash_unchanged": true,
+      "source_sha256_before": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "source_sha256_after": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "requested_sandbox": "strict",
+      "requested_permission_mode": "dontAsk",
+      "requested_model": "grok-4.6",
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "model_verified": true,
+      "complete": true,
+      "status": "success",
+      "result_matches": true,
+      "tool_call_count": 0,
+      "init": [
+        {
+          "tools": [],
+          "permissionMode": "dontAsk",
+          "cwd_matches": true
+        }
+      ],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "fixture_unchanged": true,
+      "project_files": [
+        "untouched.txt"
+      ],
+      "prompt_outside_cwd": true,
+      "prompt_absent_from_argv": true,
+      "argv_prompt_file": "/dev/stdin",
+      "stdin_sha256": "270c54386e1486e6cd851ce6e743f4df4016baaacd884da55e9ead88d7c451b7",
+      "prompt_sha256": "270c54386e1486e6cd851ce6e743f4df4016baaacd884da55e9ead88d7c451b7",
+      "global_grok_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [],
+      "passed": true,
+      "local_source_hashes_after": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "local_source_unchanged_from_copied_probe": true
     }
   },
   "final_sidecar_hash_matches": true,

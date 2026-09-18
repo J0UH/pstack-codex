@@ -132,15 +132,11 @@ class SecretError(ValueError):
         self.ident = ident
 
 
-# --------------------------------------------------------------------------- helpers
-
-
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
 
 def scrub(text: Any, secret: str | None) -> str:
-    """Return ``text`` with every occurrence of ``secret`` replaced.  Defensive last line."""
     text = str(text)
     if secret and secret in text:
         text = text.replace(secret, REDACTED)
@@ -152,7 +148,6 @@ def exit_code_for(status: str) -> int:
 
 
 def _os_reason(exc: OSError) -> str:
-    """A fixed C-library description of an OS error.  Never user, file or remote data."""
     return exc.strerror or type(exc).__name__
 
 
@@ -164,9 +159,6 @@ def _ident_of(path: str | None) -> tuple[int, int] | None:
     except OSError:
         return None
     return (st.st_dev, st.st_ino)
-
-
-# --------------------------------------------------------------------------- URL validation
 
 
 def validate_url(url: Any) -> dict[str, str]:
@@ -192,9 +184,6 @@ def validate_url(url: Any) -> dict[str, str]:
     if not match:
         raise ConfigError("url path must be /automations/webhook/<id> copied from the routine panel")
     return {"url": url, "host": DOCUMENTED_HOST, "path": parts.path, "routine_id": match.group("routine_id")}
-
-
-# --------------------------------------------------------------------------- config
 
 
 def _abs_path(value: Any, key: str) -> str:
@@ -301,11 +290,6 @@ def load_config(path: str) -> dict[str, Any]:
 
 
 def _trusted_config(config: Any) -> dict[str, Any]:
-    """Re-validate a caller-supplied config at the send boundary before any secret is read.
-
-    Only the documented host passes, whatever ``host`` or ``routine_id`` the
-    caller wrote; those are re-derived from ``url``.
-    """
     if not isinstance(config, dict):
         raise ConfigError("config must be the object returned by load_config or validate_config")
     if any(not isinstance(key, str) for key in config):
@@ -315,15 +299,7 @@ def _trusted_config(config: Any) -> dict[str, Any]:
     return validate_config(raw, config_path=config.get("config_path"))
 
 
-# --------------------------------------------------------------------------- private files
-
-
 def _open_private(path: str, flags: int, *, dir_fd: int | None = None) -> tuple[int, os.stat_result]:
-    """Open without following a final symlink; verify on the descriptor that it is a
-    regular file owned by this user with no group/other permission bits.
-
-    Nothing is chmodded or truncated.  Files are created 0600 when ``O_CREAT`` is given.
-    """
     try:
         fd = os.open(path, flags | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK, 0o600, dir_fd=dir_fd)
     except OSError as exc:
@@ -358,16 +334,12 @@ def _read_fd(fd: int, limit: int) -> bytes:
 
 
 def _write_all(fd: int, data: bytes, write: Callable[[int, Any], int] = os.write) -> None:
-    """Write every byte, looping over short writes."""
     view = memoryview(data)
     while len(view):
         written = write(fd, view)
         if not isinstance(written, int) or written <= 0:
             raise OSError(errno.EIO, "write made no progress")
         view = view[written:]
-
-
-# --------------------------------------------------------------------------- secret
 
 
 def _validate_key_text(text: Any, source: str, ident: tuple[int, int] | None = None) -> str:
@@ -435,9 +407,6 @@ def resolve_secret(config: dict[str, Any], environ: dict[str, str] | None = None
     raise SecretError("config names neither key_env nor key_file")
 
 
-# --------------------------------------------------------------------------- payload
-
-
 def validate_payload(payload: Any) -> dict[str, Any]:
     """Accept one JSON object of bounded size with JSON-native values.  No bytes, no media."""
     if not isinstance(payload, dict):
@@ -479,9 +448,6 @@ def encode_payload(payload: dict[str, Any]) -> bytes:
 
 
 def payload_contains(payload: Any, body: bytes, secret: str) -> bool:
-    """True when the sender key appears in any key or string value of the payload
-    object, or in its encoded bytes.  The object walk sees values before JSON
-    escaping, so a key containing quotes or backslashes cannot hide."""
 
     def walk(value: Any) -> bool:
         if isinstance(value, str):
@@ -495,18 +461,13 @@ def payload_contains(payload: Any, body: bytes, secret: str) -> bool:
     return walk(payload) or secret.encode("utf-8") in body
 
 
-# --------------------------------------------------------------------------- transport
-
-
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
-    """Refuse every redirect so the credential headers are never re-sent elsewhere."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: D401 - urllib hook
         return None
 
 
 def build_request(url: str, key: str, body: bytes) -> urllib.request.Request:
-    """Transport internal: the documented headers on one POST.  Callers use send_event."""
     request = urllib.request.Request(url, data=body, method="POST")
     request.add_unredirected_header("Authorization", f"Bearer {key}")
     request.add_unredirected_header("X-Automation-Key", key)
@@ -528,16 +489,11 @@ def default_opener(request: urllib.request.Request, timeout: float):
 def _close_quietly(response: Any) -> None:
     try:
         response.close()
-    except Exception:  # noqa: BLE001 - best-effort close of a foreign object
+    except Exception:
         pass
 
 
 def post_once(request: urllib.request.Request, timeout: float, opener: Callable | None = None) -> dict[str, Any]:
-    """Transport internal: exactly one attempt.  Reads the status only.
-
-    The response body and headers are never read.  Failures are classified by
-    kind and exception class name; no exception message is retained.
-    """
     opener = default_opener if opener is None else opener
     outcome: dict[str, Any] = {"kind": "network", "http_status": None, "error_class": None}
     try:
@@ -567,9 +523,6 @@ def post_once(request: urllib.request.Request, timeout: float, opener: Callable 
         else:
             outcome["error_class"] = "NoStatus"
     return outcome
-
-
-# --------------------------------------------------------------------------- failure queue
 
 
 def open_queue(queue_path: str, *, create: bool) -> tuple[int, os.stat_result]:
@@ -641,9 +594,6 @@ def inspect_queue(queue_path: str) -> dict[str, Any]:
         return report
     report["usable"] = True
     return report
-
-
-# --------------------------------------------------------------------------- send
 
 
 def _base_result(config: dict[str, Any] | None, probe: bool, started_at: str) -> dict[str, Any]:
@@ -766,8 +716,6 @@ def send_event(
                 return _finish(result, "invalid_config", clock_start, secret)
 
         if status is None:
-            if secret is None:  # unreachable: resolve_secret returned without a key
-                raise RuntimeError("no key")
             if payload_contains(payload, body, secret):
                 result["errors"].append("invalid_payload: the payload contains the sender key; it was not sent and not queued")
                 return _finish(result, "invalid_payload", clock_start, secret)
@@ -806,7 +754,7 @@ def send_event(
                 except OSError as exc:
                     result["errors"].append(f"queue_append_failed: {_os_reason(exc)}; the event was not preserved")
         return _finish(result, status, clock_start, secret)
-    except Exception as exc:  # noqa: BLE001 - keep the result contract; never emit a traceback or message
+    except Exception as exc:
         result["errors"].append(f"internal_error: {type(exc).__name__}")
         return _finish(result, "internal_error", clock_start, secret)
     finally:
@@ -824,9 +772,6 @@ def probe_event(config: dict[str, Any], *, opener: Callable | None = None, envir
         result["errors"] = ["invalid_config: provide an explicit probe_payload that the routine is known to ignore; no universal probe action is assumed"]
         return result
     return send_event(config, config["probe_payload"], probe=True, opener=opener, environ=environ)
-
-
-# --------------------------------------------------------------------------- readiness
 
 
 def check_config(path: str, environ: dict[str, str] | None = None) -> dict[str, Any]:
@@ -888,9 +833,6 @@ def check_config(path: str, environ: dict[str, str] | None = None) -> dict[str, 
     return report
 
 
-# --------------------------------------------------------------------------- CLI
-
-
 def _read_payload(args: argparse.Namespace) -> Any:
     if args.payload_file:
         with open(args.payload_file, "rb") as handle:
@@ -911,7 +853,6 @@ def _emit(payload: dict[str, Any]) -> None:
 
 
 class _Parser(argparse.ArgumentParser):
-    """argparse that never echoes the value of an unrecognized argument (e.g. a pasted key)."""
 
     def error(self, message: str) -> None:  # noqa: D401 - argparse hook
         if message.startswith("unrecognized arguments:"):
@@ -974,7 +915,7 @@ def main(argv: list[str] | None = None, *, opener: Callable | None = None, envir
             result = send_event(config, payload, opener=opener, environ=environ)
         _emit(result)
         return result["exit_code"]
-    except Exception as exc:  # noqa: BLE001 - no traceback on stderr; class name only
+    except Exception as exc:
         _emit({"schema": RESULT_SCHEMA, "status": "internal_error", "exit_code": 1, "errors": [f"internal_error: {type(exc).__name__}"]})
         return 1
 

@@ -549,7 +549,14 @@
       "failed": 0,
       "jsonschema": "4.23.0"
     },
-    "note": "Parent fixes and regression tests do not extend the reviewers approval to the changed code."
+    "note": "Parent fixes and regression tests do not extend the reviewers approval to the changed code.",
+    "resumed_poteto_pass": {
+      "companion_inclusion": "Verified in source, distribution and installed cache; record in companion-verification.json.",
+      "cleanup": "Accepted scoped comment-only review; parent simplified lifecycle discrimination and removed an unreachable secret guard.",
+      "tests_passed": 216,
+      "approval": "Final exact-commit Fable review pending.",
+      "fresh_fable_retry": "Provider session limit before tools or edits."
+    }
   },
   "next_fable_attempt": {
     "purpose": "Implement verified Grok launch controls and profile gates",

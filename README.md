@@ -23,6 +23,8 @@ flowchart LR
 
 The plugin is reusable across projects. Build commands, verification harnesses, deployment effects and business rules come from the current project. Activation and mode state are scoped to the conversation and project, not switched on globally for every chat.
 
+The external `cursor-team-kit` companions `deslop`, `control-cli`, and `control-ui` are included too. Poteto loads their bundled instructions when a workflow calls them. They do not need a separate install and are not registered as separate slash commands. Cursor's built-in authoring and automation tools have different portability limits. See [companion skills and built-ins](docs/companions.md).
+
 ## Status
 
 This is an early, tested port, **not a claim of complete Cursor runtime parity**. Read [verification](docs/verification.md) for the exact evidence and remaining gaps.

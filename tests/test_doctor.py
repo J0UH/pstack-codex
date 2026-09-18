@@ -1,4 +1,3 @@
-"""Injected-runner tests for the read-only prerequisite doctor.  No provider, login or network call."""
 
 import contextlib
 import io
@@ -19,8 +18,6 @@ def ok(stdout="", stderr="", returncode=0):
     return {"returncode": returncode, "stdout": stdout, "stderr": stderr, "error": None}
 
 
-# Synthetic reproductions of the 2026-09-18 host observations.  The wording is a
-# fixture for this test, not a contract of the installed CLIs.
 NOT_AUTH_LISTING = "You are not authenticated. Falling back to default models:\n  grok-4.6\n  grok-4.5\n"
 REAL_SANDBOX_STDERR = (
     "warning: sandbox could not be applied: socket deny resolution failed: "
@@ -50,7 +47,6 @@ class FakeRunner:
 
 
 def receipt_for(backend="grok", model="grok-4.6", **changes):
-    """A consistent successful worker receipt in the worker_common shape; ``changes`` break it deliberately."""
     receipt = {
         "schema": doctor.WORKER_RECEIPT_SCHEMA, "status": "success", "exit_code": 0, "lifecycle": "exited",
         "backend": backend, "requested_model": model, "observed_models": [model],
@@ -62,7 +58,6 @@ def receipt_for(backend="grok", model="grok-4.6", **changes):
 
 
 def startup_failure_receipt(**changes):
-    """The receipt shape the shared launcher wrote for the real pre-inference Grok failure."""
     failure = dict(
         status="process_failed", exit_code=1, returncode=1, observed_models=[], requested_model_verified=False, complete=False,
         errors=["process_failed: child exited with returncode 1", "incomplete: no terminal result event in the stream"],
@@ -82,7 +77,6 @@ class DoctorTests(unittest.TestCase):
         self.count = 0
 
     def report(self, runner=None, which=None, environ=None, **kwargs):
-        # Point at an absent bundle by default so the host's real /Applications never influences a test.
         kwargs.setdefault("grok_bot_app", str(self.root / "Absent.app"))
         return doctor.build_report(runner=runner or self.runner, which=which or BINARIES.get,
                                    environ={} if environ is None else environ, home=str(self.home), **kwargs)

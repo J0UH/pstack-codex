@@ -61,7 +61,6 @@ MAX_RECEIPT_BYTES = 4 * 1024 * 1024
 MAX_REPORTED_ERRORS = 10
 MAX_TEXT_CHARS = 300
 
-# Every command this tool may execute.  Each is a read-only version or list call.
 ALLOWED_COMMANDS: dict[str, tuple[str, ...]] = {
     "codex_version": ("codex", "--version"),
     "claude_version": ("claude", "--version"),
@@ -69,7 +68,6 @@ ALLOWED_COMMANDS: dict[str, tuple[str, ...]] = {
     "grok_models": ("grok", "models"),
 }
 
-# Names whose PRESENCE is reported.  Values are never copied into the report.
 OVERRIDE_ENV_NAMES = (
     "ANTHROPIC_API_KEY",
     "ANTHROPIC_AUTH_TOKEN",
@@ -82,7 +80,6 @@ OVERRIDE_ENV_NAMES = (
     "OPENAI_API_KEY",
     "XAI_API_KEY",
 )
-# Values of these names, when set, are additionally erased from every string in the report.
 SECRET_ENV_NAMES = ("ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "CLAUDE_CODE_OAUTH_TOKEN", "OPENAI_API_KEY", "XAI_API_KEY")
 
 GROK_BOT_APP_CANDIDATES = ("/Applications/Grok Bot.app", "~/Applications/Grok Bot.app")
@@ -146,9 +143,6 @@ class DoctorError(ValueError):
     """Invalid caller input (unreadable receipt, bad JSON)."""
 
 
-# --------------------------------------------------------------------------- text hygiene
-
-
 def utc_now() -> str:
     return datetime.now(timezone.utc).isoformat(timespec="milliseconds").replace("+00:00", "Z")
 
@@ -166,7 +160,6 @@ def extract_version(text: str) -> str | None:
 
 
 class Scrubber:
-    """Erases secret values, token-shaped strings, e-mail addresses and the home directory from report text."""
 
     def __init__(self, home: str, environ: dict[str, str]):
         self.home = home.rstrip(os.sep)
@@ -202,9 +195,6 @@ class Scrubber:
         return value
 
 
-# --------------------------------------------------------------------------- command execution
-
-
 def default_runner(argv: list[str], timeout: float) -> dict[str, Any]:
     """Run one allow-listed read-only command with stdin closed and bounded captured output."""
     try:
@@ -229,7 +219,6 @@ def default_runner(argv: list[str], timeout: float) -> dict[str, Any]:
 
 
 class CommandLog:
-    """Executes only ALLOWED_COMMANDS through the supplied runner and records what ran."""
 
     def __init__(self, runner: Runner, timeout: float, which: Which):
         self.runner = runner
@@ -242,7 +231,7 @@ class CommandLog:
         self.executed.append(list(template))
         try:
             result = self.runner([executable, *template[1:]], self.timeout)
-        except Exception as exc:  # noqa: BLE001 - a broken runner must not lose the report
+        except Exception as exc:
             return {"returncode": None, "stdout": "", "stderr": "", "error": f"runner {type(exc).__name__}"}
         if not isinstance(result, dict):
             return {"returncode": None, "stdout": "", "stderr": "", "error": "runner returned no result"}
@@ -259,14 +248,11 @@ def resolve_executable(name: str, which: Which, home: str) -> str | None:
     found = which(name)
     if found:
         return os.path.abspath(found)
-    if name == "grok":  # same fallback as grok_worker.build_command
+    if name == "grok":
         candidate = os.path.join(home, ".grok", "bin", "grok")
         if os.path.isfile(candidate) and os.access(candidate, os.X_OK):
             return candidate
     return None
-
-
-# --------------------------------------------------------------------------- classification
 
 
 def classify_grok_failure(text: str, scrubber: Scrubber) -> dict[str, Any]:
@@ -315,9 +301,6 @@ def classify_grok_models(result: dict[str, Any]) -> dict[str, Any]:
         "status": "unknown",
         "evidence": f"grok models exit {code} printed no not-authenticated marker; exit code and a model list are not proof of authentication",
     }
-
-
-# --------------------------------------------------------------------------- supplied receipts
 
 
 def load_receipt(path: Any) -> tuple[dict[str, Any], str]:
@@ -446,9 +429,6 @@ def analyze_worker_receipt(path: str, expected_backend: str, scrubber: Scrubber)
             blocked = classification["classification"] in BLOCKING_CLASSES
             summary["sandbox_probe"] = {"status": "blocked" if blocked else "failed_unclassified", **classification, "evidence_kind": "user_supplied_receipt"}
     return summary
-
-
-# --------------------------------------------------------------------------- components
 
 
 def check_cli(log: CommandLog, key: str, name: str, home: str, scrubber: Scrubber) -> dict[str, Any]:
@@ -607,9 +587,6 @@ def check_grok_bot(candidates: list[str] | tuple[str, ...], home: str, scrubber:
     }
 
 
-# --------------------------------------------------------------------------- report
-
-
 def summarize(components: dict[str, Any]) -> list[str]:
     def installed_text(component: dict[str, Any], noun: str) -> str:
         installed = component["installed"]
@@ -760,7 +737,7 @@ def main(
             claude_receipt=args.claude_receipt,
             grok_bot_app=args.grok_bot_app,
         )
-    except Exception as exc:  # noqa: BLE001 - never print a traceback; it could carry paths or output
+    except Exception as exc:
         scrubber = Scrubber(os.path.expanduser("~") if home is None else home, dict(os.environ) if environ is None else environ)
         _emit({"schema": REPORT_SCHEMA, "status": "error", "error": f"{type(exc).__name__}: {scrubber.text(exc, 200)}"})
         return 1
