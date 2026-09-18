@@ -1,18 +1,18 @@
 # pstack for Codex
 
 <p align="center">
-  <img src="docs/assets/pstack-orchestration-v2.png" alt="You talk to poteto-mode; Codex/Astra coordinates Fable and optional Grok workers inside a local sandbox; evidence comes back" width="100%" />
+  <img src="docs/assets/pstack-orchestration-v3.png" alt="You and poteto-mode; Codex/Astra; session sandbox; Fable and Grok Build workers; Grok Bot on its own computer for routines and webhook wakes; evidence back" width="100%" />
 </p>
 
-**Open-source workflow library for Codex.** You talk to poteto-mode. Astra coordinates. Workers (Codex, Fable, optional Grok) run in the sandbox and return evidence you can check.
+**Open-source workflow library for Codex** — a Codex port of [Lauren Tan’s (`@poteto`) pstack](https://github.com/cursor/plugins/tree/main/pstack). Potato energy, serious verification. Not an official Cursor, OpenAI, or xAI release.
+
+You talk to **poteto-mode**. **Astra** coordinates. Session work runs in a **sandbox**. Workers (**Fable** / Claude Code, optional **Grok Build**) return evidence. **Grok Bot** is the outer loop: its **own computer**, **routines**, and **webhook wakes** — the path that can keep working after you close the chat (see below for what this Codex port actually supports today).
 
 ```text
 $pstack-codex:poteto-mode <your task>
 ```
 
-That’s the verified activation form. Mentions elsewhere don’t reliably stick. Follow-ups continue the work; `new task` rematches; `exit poteto-mode` stops the mode.
-
-Independent port of [Lauren Tan’s pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2**. Skills, principles, playbooks, and agent roles preserved. Codex host adaptations are explicit and inspectable. **Not** an official Cursor, OpenAI, or xAI release.
+That’s the verified activation form. Follow-ups continue the work; `new task` rematches; `exit poteto-mode` stops the mode.
 
 <p align="center">
   <img src="docs/assets/pstack-codex-card-v2.png" alt="pstack for Codex — workflow library, open source" width="360" />
@@ -21,25 +21,42 @@ Independent port of [Lauren Tan’s pstack](https://github.com/cursor/plugins/tr
 ## How it works
 
 <p align="center">
-  <img src="docs/assets/pstack-loop-v2.png" alt="Activate poteto-mode, Astra coordinates Codex Fable Grok, verify evidence and return to parent" width="100%" />
+  <img src="docs/assets/pstack-loop-v2.png" alt="Activate, coordinate, verify" width="100%" />
 </p>
 
 ```mermaid
 flowchart LR
-    U[Your request] --> P[poteto-mode and playbook]
-    P --> A[Astra in Codex coordinates]
-    A --> N[Native Codex agents]
-    A --> C[Standalone Claude Code CLI / Fable]
+    U[Your request] --> P[poteto-mode]
+    P --> A[Astra in Codex]
+    A --> S[Session sandbox]
+    A --> F[Fable / Claude Code]
     A --> G[Optional Grok Build CLI]
-    N --> R[Parent reviews evidence and continues]
-    C --> R
-    G --> R
-    R --> P
+    A -.->|outer loop / wake<br/>host-dependent| B[Grok Bot own computer]
+    B --> R[Routines and webhooks]
+    S --> E[Evidence]
+    F --> E
+    G --> E
+    R --> E
+    E --> U
 ```
 
-**Workers** are backends Astra can call — native Codex, Claude Code (Fable), optional Grok Build — usually inside the local sandbox. They’re execution paths. The parent still reviews evidence before the next step.
+**Session sandbox** is the disposable workspace for the current turn. **Workers** are execution backends Astra can call. **Grok Bot** is different: upstream pstack’s `make-bot-ui` skill describes a **UI on the bot’s computer** that POSTs to a **webhook routine**, so the bot wakes with JSON — server holds the sender key, Tailscale can expose the page. That is the “keeps working when chat closes” machine.
 
-Poteto mode can move through `how`, `architect`, `arena`, implementation, review, and verification without you listing that sequence. The plugin is reusable across projects; build commands and business rules stay in the project you’re working on.
+Honest Codex-port note (from [`adapters/host.md`](adapters/host.md) + [`docs/verification.md`](docs/verification.md)): this package **preserves** those skills and contracts, but **does not ship a verified durable-wake / Grok Bot webhook adapter** for Codex alone. Current-turn work and bounded waits work; unattended continuation needs an authorized host adapter. We do not pretend local Codex is that computer.
+
+## Grok Bot’s computer
+
+<p align="center">
+  <img src="docs/assets/pstack-grokbot-computer.png" alt="Grok Bot computer — isolated machine, routines, webhooks, still working after chat closes" width="100%" />
+</p>
+
+From `skills/make-bot-ui`: build a page; a server **on this computer** POSTs to a webhook routine; the bot wakes on `[routine]` with a `<webhook_event>` body. Secrets stay out of the browser and out of chat. Optional Tailscale for reachability. That computer is shared across agents on the node — one Tailscale hostname, not a second invented box.
+
+## Install
+
+<p align="center">
+  <img src="docs/assets/pstack-install-v3.png" alt="Install — clone, build, plugin add; trust hooks; new session" width="100%" />
+</p>
 
 ## Status
 
@@ -48,7 +65,7 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
 - Claude analysis, writer and scoped local-Git reader profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
 - Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
-- Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
+- Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), **Grok Bot webhook wakes**, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations on this Codex host — **source and routes remain present** (see How it works). Missing capabilities do not become silent weaker substitutes.
 
 The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, Orchestrate, unattended Hillclimb, or Visual parity loops for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
 
