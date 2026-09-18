@@ -1,0 +1,82 @@
+{
+  "date": "2026-09-19",
+  "scope": "Production analysis and reader acceptance on the exact tested Linux build. Writer remains unsupported; no full-platform claim.",
+  "binary": "grok 1.0.34 (3736acbc8658) [alpha]",
+  "sha256": "be5905e107d2b8b5f3c142d21ecfe4c8fd32a913d2fd551b788707930c4dc80d",
+  "effort": "low for functional probes, not review effort",
+  "credentials_copied": false,
+  "global_cli_replaced": false,
+  "probes": {
+    "analysis": {
+      "scope": "Production Grok adapter public CLI acceptance on protected Linux synthetic fixture",
+      "profile": "analysis",
+      "status": "success",
+      "cli_exit_code": 0,
+      "complete": true,
+      "requested_model_verified": true,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tool_calls_by_name": {},
+      "effective_tools_match": true,
+      "required_calls_observed": true,
+      "fixture_unchanged": true,
+      "result_matches": true,
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "stdin_matches_original_prompt": true,
+      "prompt_absent_from_argv": true,
+      "binary_hash_unchanged": true,
+      "source_sha256": {
+        "grok_worker.py": "5a7705e10f753c49460acad9d696d9e4bf13bfaa4f6a4be69bca34f2d9ce9663",
+        "worker_common.py": "46ad8b397c357add5e47bfbd685b25936f4984db62bfc47196f77b842698f243"
+      },
+      "source_unchanged": true,
+      "errors": [],
+      "global_cli_version": "grok 1.0.5 (5115b46bc9) [stable]",
+      "passed": true
+    },
+    "reader": {
+      "scope": "Production Grok adapter public CLI acceptance on protected Linux synthetic fixture",
+      "profile": "reader",
+      "status": "success",
+      "cli_exit_code": 0,
+      "complete": true,
+      "requested_model_verified": true,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tool_calls_by_name": {
+        "read_file": 1,
+        "list_dir": 1,
+        "grep": 1
+      },
+      "effective_tools_match": true,
+      "required_calls_observed": true,
+      "fixture_unchanged": true,
+      "result_matches": true,
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "stdin_matches_original_prompt": true,
+      "prompt_absent_from_argv": true,
+      "binary_hash_unchanged": true,
+      "source_sha256": {
+        "grok_worker.py": "5a7705e10f753c49460acad9d696d9e4bf13bfaa4f6a4be69bca34f2d9ce9663",
+        "worker_common.py": "46ad8b397c357add5e47bfbd685b25936f4984db62bfc47196f77b842698f243"
+      },
+      "source_unchanged": true,
+      "errors": [],
+      "global_cli_version": "grok 1.0.5 (5115b46bc9) [stable]",
+      "passed": true
+    },
+    "old-version": {
+      "scope": "Actual installed older CLI rejection before task dispatch",
+      "status": "unsupported_profile",
+      "exit_code": 2,
+      "observed_version": "grok 1.0.5 (5115b46bc9) [stable]",
+      "confirmed_terminated": true,
+      "task_attempt_not_claimed": true,
+      "passed": true
+    }
+  }
+}

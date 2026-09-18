@@ -124,10 +124,10 @@
       "notes": "scripts/claude_worker.py profiles analysis, reader, writer. Receipts verify transport and model identity, not task correctness. The attempt directory keeps the private raw stream, which is the transcript evidence for CLI candidates."
     },
     "grok_worker": {
-      "status": "prerequisite",
-      "live_proof": "blocked",
-      "evidence": "docs/grok.md and evidence/grok-capability-probes.json: Mac sandbox startup blocked; protected Linux CLI capability tests passed, production controls still pending.",
-      "notes": "Optional production adapter remains unready. Empty --tools restores defaults and is rejected by its parser. Corrected analysis/reader CLI controls were proved separately on exact Linux 1.0.34. Reader/writer production profiles remain unsupported pending implementation, review and acceptance."
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/grok-adapter-acceptance.json: production public CLI analysis and file-reader acceptance on exact Linux Grok1.0.34; model, tools, unchanged files and cleanup verified.",
+      "notes": "Optional Linux analysis/reader only. Exact tested version is required. Writer, Bash, resumption and non-Linux dispatch remain unsupported. Read-only does not mean cwd-confined reading. Final source review pending."
     },
     "grok_bot_mcp": {
       "status": "unavailable",

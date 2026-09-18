@@ -169,12 +169,13 @@
       "bot": "approve",
       "record": "integration-review.json",
       "post_review_followups": "delta review pending",
-      "grok_implementation_attempt": "session limit before tools or edits"
+      "grok_implementation_attempt": "session limit before tools or edits",
+      "grok_implementation": "Astra implementation and real Linux acceptance complete; exact-commit Fable review pending"
     }
   },
   "tests": {
     "python": {
-      "passed": 216,
+      "passed": 223,
       "failed": 0,
       "pending_final_rerun": false,
       "jsonschema": "4.23.0",
@@ -369,9 +370,19 @@
       "record": "grok-capability-probes.json",
       "analysis": "passed with experimental corrected controls",
       "reader": "passed with exact file-tool inventory",
-      "production_adapter_ready": false,
+      "production_adapter_ready": "analysis and reader accepted; writer unsupported",
       "credentials_copied": false,
       "writer": "Inside edit completed; separate sibling and symlink negative probes refused writes. Terminal cancellation vs successful delivery with a tool error recorded separately."
+    },
+    "production_adapter_acceptance": {
+      "record": "grok-adapter-acceptance.json",
+      "host": "Linux",
+      "analysis": "passed",
+      "reader": "passed",
+      "writer": "unsupported",
+      "non_linux": "unsupported",
+      "author": "Astra with explicit user authorization",
+      "final_fable_review": "pending"
     }
   },
   "webhook_sender": {

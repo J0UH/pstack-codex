@@ -545,7 +545,7 @@
       "BOT-6"
     ],
     "tests": {
-      "python_passed": 216,
+      "python_passed": 223,
       "failed": 0,
       "jsonschema": "4.23.0"
     },
@@ -555,7 +555,18 @@
       "cleanup": "Accepted scoped comment-only review; parent simplified lifecycle discrimination and removed an unreachable secret guard.",
       "tests_passed": 216,
       "approval": "Final exact-commit Fable review pending.",
-      "fresh_fable_retry": "Provider session limit before tools or edits."
+      "fresh_fable_retry": "Provider session limit before tools or edits.",
+      "grok_implementation": {
+        "author": "Astra, explicitly authorized by user",
+        "supported_profiles": [
+          "analysis",
+          "reader"
+        ],
+        "host": "tested Linux Grok1.0.34 build",
+        "production_acceptance": "grok-adapter-acceptance.json",
+        "tests_passed": 223,
+        "final_fable_review": "pending"
+      }
     }
   },
   "next_fable_attempt": {

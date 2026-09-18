@@ -1,0 +1,110 @@
+{
+  "source": "Actual official Linux Grok1.0.34 experimental capability probes. All events retained.",
+  "sanitization": "Machine paths replaced with /fixture or /fixture-home; nonce values replaced with FIXTURE_NONCE; UUIDs replaced with stable fixture UUIDs; explicit identity/credential-named fields redacted. Text or JSON embedded as a string remains same wire type. Tool IDs retain linkage.",
+  "streams": {
+    "reader": {
+      "events": 5,
+      "init_keys": [
+        [
+          "type",
+          "subtype",
+          "session_id",
+          "apiKeySource",
+          "model",
+          "cwd",
+          "permissionMode",
+          "tools",
+          "slash_commands",
+          "mcp_servers",
+          "skills",
+          "uuid"
+        ]
+      ],
+      "cwd": [
+        "/fixture/reader-fixture/project/packages/a"
+      ],
+      "raw_sha256": "e88e42ff2ec46a316f0a9e93fa77b067fe0302fd0410520be65684e071811591"
+    },
+    "writer-positive": {
+      "events": 7,
+      "init_keys": [
+        [
+          "type",
+          "subtype",
+          "session_id",
+          "apiKeySource",
+          "model",
+          "cwd",
+          "permissionMode",
+          "tools",
+          "slash_commands",
+          "mcp_servers",
+          "skills",
+          "uuid"
+        ]
+      ],
+      "cwd": [
+        "/fixture/writer-positive-fixture/project/packages/a"
+      ],
+      "raw_sha256": "a5f2c6d886afd1aace03bc82a78ee9cf1fca3307ffb3170ae7e811a9b7462006"
+    },
+    "writer-sibling": {
+      "events": 4,
+      "init_keys": [
+        [
+          "type",
+          "subtype",
+          "session_id",
+          "apiKeySource",
+          "model",
+          "cwd",
+          "permissionMode",
+          "tools",
+          "slash_commands",
+          "mcp_servers",
+          "skills",
+          "uuid"
+        ]
+      ],
+      "cwd": [
+        "/fixture/writer-sibling-fixture/project/packages/a"
+      ],
+      "raw_sha256": "73c394bbe06b50834be1a37e9decdc0863fcce3900e9680096919229b5e95cc6"
+    },
+    "writer-symlink": {
+      "events": 5,
+      "init_keys": [
+        [
+          "type",
+          "subtype",
+          "session_id",
+          "apiKeySource",
+          "model",
+          "cwd",
+          "permissionMode",
+          "tools",
+          "slash_commands",
+          "mcp_servers",
+          "skills",
+          "uuid"
+        ]
+      ],
+      "cwd": [
+        "/fixture/writer-symlink-fixture/project/packages/a"
+      ],
+      "raw_sha256": "e0c4befba36d829d2801c41a6a79d536f1b34c7ce80b638b7140bfb2faf3ad48"
+    }
+  },
+  "additional_sanitization": [
+    "Opaque thinking signatures replaced with <redacted-signature>.",
+    "JSON embedded inside string content decoded, sanitized, and reserialized as a string.",
+    "Known stdout/stderr byte arrays decoded as UTF-8, machine paths and nonce replaced, and encoded back to byte arrays. Numeric-array wire types retained.",
+    "No events removed, inserted, or reordered in reader/writer streams."
+  ],
+  "analysis_fixture": "analysis-success.jsonl and analysis-default-tools.jsonl are earlier actual selected streams with init.cwd removed by the source sanitization. Tests explicitly label any inserted cwd as synthetic metadata.",
+  "analysis_complete": {
+    "source": "Actual corrected-controls Linux1.0.34 analysis capability run, all events retained.",
+    "raw_sha256": "f8f545622496f2196c3ece1ab7a3c56f0c20c66279d87c0621f5ad542ad63b4b",
+    "sanitization": "Machine paths mapped to /fixture and /fixture-home, UUIDs to stable fixture IDs, opaque signatures and identity/credential-named fields redacted. No cwd metadata inserted."
+  }
+}

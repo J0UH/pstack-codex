@@ -1,0 +1,3 @@
+{"type": "system", "subtype": "init", "model": "grok-4.6", "tools": [], "permissionMode": "dontAsk", "mcp_servers": [], "apiKeySource": "oauth"}
+{"type": "assistant", "message": {"model": "grok-4.6", "stop_reason": "end_turn", "content": [{"type": "text", "text": "PSTACK_GROK_PROBE_OK"}]}}
+{"type": "result", "subtype": "success", "is_error": false, "result": "PSTACK_GROK_PROBE_OK", "stop_reason": "end_turn"}

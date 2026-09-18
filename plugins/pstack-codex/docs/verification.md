@@ -10,7 +10,7 @@ The Codex plugin validator passes. During packaging it caught missing skill inte
 
 ## Automated tests
 
-- **216 Python tests passed in the latest integration pass:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
+- **223 Python tests passed in the latest integration pass:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
 - **52 unchanged upstream Bun tests passed:** orchestrator store/CLI and PR watcher policies/readers/CLI, with 206 expectations.
 - Provider-fake tests are explicitly synthetic. CI does not call paid model providers or perform deployments.
 
@@ -72,9 +72,9 @@ That check first hit a real permission boundary: the default workspace-write san
 
 Grok Build 1.0.34 was installed and listed `grok-4.6` and `grok-4.5`. The protected synthetic launch failed before inference because the read-only sandbox refused a Docker socket symlink. The adapter retained that failure, saved a `process_failed` receipt, and claimed neither a response model nor successful inference. No sandbox was disabled to make the test pass.
 
-Later protected Linux capability probes established exact Grok 4.6 inference with an empty tool inventory using corrected controls, plus file reading with an exact three-tool inventory. The unchanged production adapter's empty `--tools` argument instead exposes defaults and correctly fails receipt validation. Integrating the verified controls, adding real-stream fixtures and accepting each production profile remain pending. Reader/writer profiles are explicitly unsupported. See [Grok details](grok.md) and [capability evidence](../evidence/grok-capability-probes.json).
+Later protected Linux capability probes established exact Grok 4.6 inference, file reading, inside editing and denied outside writes on the inspected host. Astra then implemented supported analysis and reader controls, stdin transport, exact-version refusal and actual-stream parsing. The production adapter passed real analysis and reader calls through its public CLI. The reader recovered a file-only nonce with actual read/list/search calls, and both fixtures stayed unchanged. An older actual CLI was refused before task dispatch. [Production acceptance evidence](../evidence/grok-adapter-acceptance.json).
 
-The repaired adapter's exact current argv was also exercised, including the empty tool list and all seven deny rules. It again reached the sandbox startup error, with no unknown-option error. Its exact-argv SHA256 is published in the sanitized evidence. This removes the earlier command-drift gap but does not prove inference, an empty runtime tool inventory, or enforcement after startup. Protections were not weakened.
+Grok writer and shell dispatch remain unsupported because inherited permission grants and managed sandbox settings prevent a portable exclusive write boundary. Non-Linux dispatch is also refused. The earlier Mac argv/sandbox evidence remains historical evidence of a blocked attempt, not evidence that the new adapter runs on Mac. See [Grok details](grok.md).
 
 ## Latest integration pass
 
@@ -88,7 +88,7 @@ The updated trusted mode hooks were exercised in a fresh CLI task. A quoted exam
 
 Optional Grok Bot app handoff created a paused test routine and returned a screenshot of a public page on its cloud browser. No sender key was obtained and no real webhook was fired. The Mac Grok Build probe remains blocked at the socket-symlink sandbox error. Separate Linux inference used existing authenticated CLI access; no credentials were read or copied.
 
-Two source-only Fable reviews approved the integration candidate at `ad93276dcf570e68832af469abce7066b2d6edc3`, within their stated limits. Parent corrections to the reported follow-ups pass 216 Python tests but still require a delta review. Fable's subsequent Grok implementation attempt hit the Claude session limit before any tool calls or edits. The [integration review record](integration-review.md) distinguishes these completed reviews from pending work.
+Two source-only Fable reviews approved the integration candidate at `ad93276dcf570e68832af469abce7066b2d6edc3`, within their stated limits. The follow-up corrections and Astra-authored Grok implementation pass 223 Python tests but still require a delta review. Fable's subsequent Grok implementation attempt hit the Claude session limit before any tool calls or edits. The [integration review record](integration-review.md) distinguishes these completed reviews from pending work.
 
 ## Remaining limits
 

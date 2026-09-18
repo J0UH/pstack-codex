@@ -6,18 +6,18 @@ Both reviewers received original pstack instructions, candidate source and tests
 
 ## Follow-up fixes
 
-The coordinator addressed all twelve recorded follow-ups and added regression coverage. These include single-rule shell permission validation, fenced schedule detection, mode identity/home/quotation edge cases, finite payload values, secret redaction before JSON escaping, key/queue alias protection, queue directory checks and non-echoing argument errors. The resulting source passes **216 Python tests** with the standard JSON Schema validator. The **52 unchanged upstream Bun tests** passed in the earlier integration pass.
+The coordinator addressed all twelve recorded follow-ups and added regression coverage. These include single-rule shell permission validation, fenced schedule detection, mode identity/home/quotation edge cases, finite payload values, secret redaction before JSON escaping, key/queue alias protection, queue directory checks and non-echoing argument errors. Those repairs passed 216 Python tests. The latest Grok implementation brings the complete suite to **223 passing Python tests** with the standard JSON Schema validator. The **52 unchanged upstream Bun tests** passed in the earlier integration pass.
 
 These repairs still need a Fable delta review. The next requested Fable implementation run—for the separately verified Grok controls—stopped at the Claude session limit before any tools or edits. No implementation or approval is attributed to that failed run. The provider reported a reset at 1:30 a.m. Copenhagen time after the September 18 evening attempt.
 
-The resumed Poteto run verified the three external companions in the installed package and corrected two historical audit passages. It applied the bundled comment-review and deslop workflows, removed redundant comments, represented a skipped launch separately from a spawn failure, and removed an unreachable secret guard. All 216 tests still pass. These changes also await the final Fable review. A fresh Fable retry confirmed the same session limit before any edits.
+The resumed Poteto run verified the three external companions in the installed package and corrected two historical audit passages. It applied the bundled comment-review and deslop workflows, removed redundant comments, represented a skipped launch separately from a spawn failure, and removed an unreachable secret guard. All 216 tests passed at that cleanup checkpoint. These changes also await the final Fable review. A fresh Fable retry confirmed the same session limit before any edits.
+
+The user then authorized Astra to implement the remaining Grok adapter and retain Fable for later review. Astra completed Linux analysis and file-reader support. The production CLI passed both real acceptance calls, including actual file tools, unchanged project files, exact model identity, stdin hashes and cleanup. An actual older CLI was refused before prompt dispatch. Writer remains deliberately unsupported because inherited grants and managed sandbox settings prevent the claimed portable write boundary. [Acceptance evidence](../evidence/grok-adapter-acceptance.json).
 
 ## Before the next release
 
-1. Have Fable implement the verified Grok launch controls and version gate, using captured actual streams. Keep reader/writer and shell capabilities unsupported until each has sufficient evidence.
-2. Repeat the production-adapter acceptance tests on the protected Linux environment. Experimental CLI capability proofs alone do not accept the production adapter. The Mac sandbox incompatibility remains separate.
-3. Have Fable review the exact new commit, including the twelve follow-up fixes and any Grok implementation. Address findings and bind the verdict to that commit.
-4. Rebuild and validate the distribution, pass CI, publish the approved candidate and verify that exact installed package. The local development marketplace automatically refreshed its cache to this draft version during packaging, despite no explicit reinstall. A local development installation is not evidence of final approval or a published release.
+1. Have Fable review the exact new commit, including the follow-up fixes, Grok implementation and real acceptance evidence. Address findings and bind the verdict to that commit.
+2. Publish the approved candidate after distribution validation and CI pass, then verify that exact installed package. The local development marketplace can refresh its cache during packaging without an explicit reinstall. A local development installation is not evidence of final approval or a published release.
 
 ## Optional capabilities and external prerequisites
 
