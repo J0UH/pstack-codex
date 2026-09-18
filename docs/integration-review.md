@@ -15,7 +15,7 @@ These repairs still need a Fable delta review. The next requested Fable implemen
 1. Have Fable implement the verified Grok launch controls and version gate, using captured actual streams. Keep reader/writer and shell capabilities unsupported until each has sufficient evidence.
 2. Repeat the production-adapter acceptance tests on the protected Linux environment. Experimental CLI capability proofs alone do not accept the production adapter. The Mac sandbox incompatibility remains separate.
 3. Have Fable review the exact new commit, including the twelve follow-up fixes and any Grok implementation. Address findings and bind the verdict to that commit.
-4. Rebuild and validate the distribution, pass CI, publish the approved candidate and reinstall that exact package. The currently installed snapshot has not been silently replaced by these unreviewed changes.
+4. Rebuild and validate the distribution, pass CI, publish the approved candidate and verify that exact installed package. The local development marketplace automatically refreshed its cache to this draft version during packaging, despite no explicit reinstall. A local development installation is not evidence of final approval or a published release.
 
 ## Optional capabilities and external prerequisites
 
