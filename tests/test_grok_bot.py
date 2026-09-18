@@ -231,6 +231,37 @@ class UrlValidationTests(unittest.TestCase):
 
 
 class ConfigTests(Base):
+    def test_nonfinite_payload_is_invalid_before_transport(self):
+        for number in (float("inf"), float("-inf")):
+            result, opener = self.send(FakeResponse(200), payload={"number": number})
+            self.assertEqual(("invalid_payload", 2), (result["status"], result["exit_code"]))
+            self.assertEqual([], opener.calls)
+            self.assertFalse(self.queue_path.exists())
+
+    def test_refused_key_symlink_cannot_alias_the_failure_queue(self):
+        alias = self.root / "alias.key"
+        alias.symlink_to(self.key_file)
+        before = self.key_file.read_bytes()
+        self.write_config({"url": URL, "key_file": str(alias), "queue_path": str(self.key_file)})
+        result, opener = self.send(FakeResponse(500))
+        self.assertEqual("invalid_queue", result["status"])
+        self.assertEqual([], opener.calls)
+        self.assertEqual(before, self.key_file.read_bytes())
+        self.assertFalse(grok_bot.check_config(str(self.config_path))["queue_usable"])
+
+    def test_queue_requires_an_owned_directory_without_shared_write_access(self):
+        self.config_path.parent.chmod(0o777)
+        result, opener = self.send(FakeResponse(200))
+        self.assertEqual("invalid_queue", result["status"])
+        self.assertEqual([], opener.calls)
+        self.assertFalse(self.queue_path.exists())
+
+    def test_unknown_positional_argument_does_not_echo_a_key(self):
+        err = io.StringIO()
+        with contextlib.redirect_stderr(err), self.assertRaises(SystemExit):
+            grok_bot.main([KEY])
+        self.assertNotIn(KEY, err.getvalue())
+
     def test_probe_requires_an_explicit_payload_with_known_routine_semantics(self):
         self.write_config({"url": URL, "key_file": str(self.key_file)})
         opener = FakeOpener(FakeResponse(200))
@@ -751,11 +782,13 @@ class ErrorLeakRegressionTests(Base):
         self.assertEqual(json.loads(out.getvalue())["status"], "network_error")
 
     def test_finish_scrubs_if_a_field_ever_carried_the_key(self):
-        result = grok_bot._base_result(None, False, grok_bot.utc_now())
-        result["errors"].append(f"unexpected {KEY}")
-        cleaned = grok_bot._finish(result, "internal_error", time.monotonic(), KEY)
-        self.assert_no_secret(cleaned)
-        self.assertTrue(any("redacted" in e for e in cleaned["errors"]))
+        for secret in (KEY, TRICKY_KEY, LONG_KEY):
+            with self.subTest(secret_kind=len(secret)):
+                result = grok_bot._base_result(None, False, grok_bot.utc_now())
+                result["errors"].append(f"unexpected {secret}")
+                cleaned = grok_bot._finish(result, "internal_error", time.monotonic(), secret)
+                self.assert_no_secret(cleaned, secret)
+                self.assertTrue(any("redacted" in e for e in cleaned["errors"]))
 
 
 # --------------------------------------------------------------------------- acceptance (finding 5)

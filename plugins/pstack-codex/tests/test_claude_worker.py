@@ -78,6 +78,14 @@ class ClaudeWorkerTests(unittest.TestCase):
     def plan(self, **changes):
         return claude.plan_claude(self.spec(**changes), environ={"PATH": str(self.binary_dir)})
 
+    def test_one_bash_entry_cannot_smuggle_additional_permission_rules(self):
+        for profile in ("reader", "writer"):
+            for rule in ("Bash(true) Bash(*)", "Bash(x) Edit(//**)", "Bash(a)(b)", "Bash(?*)", "Bash([a-z]*)"):
+                with self.subTest(profile=profile, rule=rule):
+                    with self.assertRaises(claude.SpecError):
+                        self.plan(profile=profile, allowed_tools=[rule])
+            self.plan(profile=profile, allowed_tools=["Bash(git log:*)", "Bash(python3 -m unittest:*)"])
+
     def run_fixture(self, scenario="normal", **changes):
         return claude.run_claude(self.spec(**changes), environ={"PATH":str(self.binary_dir),
                                 "HOME":str(self.root), "FAKE_SCENARIO":scenario})

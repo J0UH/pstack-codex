@@ -41,6 +41,7 @@ import errno
 import hashlib
 import http.client
 import json
+import math
 import os
 import re
 import socket
@@ -317,14 +318,14 @@ def _trusted_config(config: Any) -> dict[str, Any]:
 # --------------------------------------------------------------------------- private files
 
 
-def _open_private(path: str, flags: int) -> tuple[int, os.stat_result]:
+def _open_private(path: str, flags: int, *, dir_fd: int | None = None) -> tuple[int, os.stat_result]:
     """Open without following a final symlink; verify on the descriptor that it is a
     regular file owned by this user with no group/other permission bits.
 
     Nothing is chmodded or truncated.  Files are created 0600 when ``O_CREAT`` is given.
     """
     try:
-        fd = os.open(path, flags | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK, 0o600)
+        fd = os.open(path, flags | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK, 0o600, dir_fd=dir_fd)
     except OSError as exc:
         if exc.errno == errno.ELOOP:
             raise UnsafeFileError("is a symbolic link (not followed)") from None
@@ -448,8 +449,8 @@ def validate_payload(payload: Any) -> dict[str, Any]:
         if depth > 16:
             raise PayloadError("payload nesting is too deep")
         if value is None or isinstance(value, (bool, int, float, str)):
-            if isinstance(value, float) and value != value:
-                raise PayloadError("payload contains NaN")
+            if isinstance(value, float) and not math.isfinite(value):
+                raise PayloadError("payload contains a non-finite number")
             return
         if isinstance(value, (bytes, bytearray, memoryview)):
             raise PayloadError("payload must not contain bytes; do not send media on the webhook")
@@ -581,8 +582,13 @@ def open_queue(queue_path: str, *, create: bool) -> tuple[int, os.stat_result]:
     if not os.path.isdir(os.path.dirname(queue_path)):
         raise QueueError("queue_path directory does not exist; this tool does not create directories")
     flags = (os.O_WRONLY | os.O_APPEND | os.O_CREAT) if create else os.O_RDONLY
+    directory_fd = None
     try:
-        return _open_private(queue_path, flags)
+        directory_fd = os.open(os.path.dirname(queue_path), os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
+        directory = os.fstat(directory_fd)
+        if directory.st_uid != os.getuid() or directory.st_mode & 0o022:
+            raise QueueError("queue directory must be owned by the current user and not writable by group or others")
+        return _open_private(os.path.basename(queue_path), flags, dir_fd=directory_fd)
     except UnsafeFileError as exc:
         raise QueueError(f"queue_path {exc}; it was left untouched") from None
     except FileNotFoundError:
@@ -591,6 +597,9 @@ def open_queue(queue_path: str, *, create: bool) -> tuple[int, os.stat_result]:
         raise
     except OSError as exc:
         raise QueueError(f"queue_path is not accessible: {_os_reason(exc)}") from None
+    finally:
+        if directory_fd is not None:
+            os.close(directory_fd)
 
 
 def append_queue_line(fd: int, body: bytes) -> None:
@@ -677,10 +686,16 @@ def _finish(result: dict[str, Any], status: str, clock_start: float, secret: str
     result["ended_at"] = utc_now()
     result["elapsed_seconds"] = round(time.monotonic() - clock_start, 3)
     if secret:
-        serialized = json.dumps(result, ensure_ascii=False)
-        if secret in serialized:
-            # Should be unreachable: every message above is a fixed phrase.  Fail closed anyway.
-            cleaned = json.loads(scrub(serialized, secret))
+        def redact(value):
+            if isinstance(value, str):
+                return scrub(value, secret)
+            if isinstance(value, list):
+                return [redact(item) for item in value]
+            if isinstance(value, dict):
+                return {key: redact(item) for key, item in value.items()}
+            return value
+        cleaned = redact(result)
+        if cleaned != result:
             cleaned["errors"].append("internal: a result field contained the sender key and was redacted")
             return cleaned
     return result
@@ -737,7 +752,7 @@ def send_event(
         try:
             secret, source, key_ident = resolve_secret(trusted, environ)
         except SecretError as exc:
-            key_ident = exc.ident
+            key_ident = exc.ident or _ident_of(trusted["key_file"])
             status = "secret_unavailable"
             result["errors"].append(f"secret_unavailable: {exc}")
         else:
@@ -855,7 +870,7 @@ def check_config(path: str, environ: dict[str, str] | None = None) -> dict[str, 
     try:
         _, source, key_ident = resolve_secret(config, environ)
     except SecretError as exc:
-        key_ident = exc.ident
+        key_ident = exc.ident or _ident_of(config["key_file"])
         report["errors"].append(f"secret_unavailable: {exc}")
     else:
         report["secret_source"] = source
@@ -898,12 +913,11 @@ def _emit(payload: dict[str, Any]) -> None:
 class _Parser(argparse.ArgumentParser):
     """argparse that never echoes the value of an unrecognized argument (e.g. a pasted key)."""
 
-    _FLAG_RE = re.compile(r"^--[A-Za-z][A-Za-z0-9-]{0,23}$")
-
     def error(self, message: str) -> None:  # noqa: D401 - argparse hook
         if message.startswith("unrecognized arguments:"):
-            flags = [tok for tok in message.split(":", 1)[1].split() if self._FLAG_RE.match(tok)]
-            message = "unrecognized arguments (values are never echoed): " + (" ".join(flags) or "<none named>")
+            message = "unrecognized arguments (values are never echoed)"
+        elif "invalid choice:" in message:
+            message = "invalid command or value (values are never echoed); use send, probe, or check"
         super().error(message)
 
 

@@ -50,10 +50,21 @@ def prose_lines(lines: list[str]) -> Iterator[tuple[int, str]]:
             continue
         if line.startswith(("    ", "\t")) or line.lstrip(" ").startswith(">"):
             continue
-        parts = DOUBLE_QUOTE.split(SINGLE_QUOTED.sub(_blank, INLINE_CODE.sub(_blank, line)))
-        visible = " ".join(part if (position % 2 == 0) != quoted else " " * len(part) for position, part in enumerate(parts))
-        quoted ^= len(parts) % 2 == 0
-        yield index, visible
+        masked = SINGLE_QUOTED.sub(_blank, INLINE_CODE.sub(_blank, line))
+        visible = list(masked)
+        start = 0
+        for quote in DOUBLE_QUOTE.finditer(masked):
+            at = quote.start()
+            if not quoted and quote[0] == '"' and at and masked[at - 1].isdigit():
+                continue
+            if quoted:
+                visible[start:at] = " " * (at - start)
+            visible[at] = " "
+            quoted = not quoted
+            start = at + 1
+        if quoted:
+            visible[start:] = " " * (len(visible) - start)
+        yield index, "".join(visible)
 
 
 def activation_mention(lines: list[str]) -> tuple[int, re.Match] | None:

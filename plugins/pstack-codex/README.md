@@ -29,12 +29,12 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
 - Claude analysis, writer and scoped local-Git reader profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
-- Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
+- Grok's adapter is optional. Protected Linux capability probes established real Grok 4.6 inference and file reading; incorporating the verified controls into the production adapter is pending. The Mac probe remains blocked by a sandbox startup error. Grok reader/writer profiles are not enabled.
 - Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
 
 The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Across-turn event bridges and isolated cloud workers remain separate prerequisites; timed polling and worktrees do not pretend to replace them. See the [23-playbook capability map](docs/workflow-capabilities.json).
 
-The earlier limited alpha received two Fable 5.1 approvals at its exact recorded commit. The subsequent implementation pass is recorded separately; that historical approval does not automatically cover new code. See the [review record](docs/fable-review.md).
+The integration candidate received two scoped Fable 5.1 approvals at its exact recorded commit. Follow-up fixes and the new Grok capability findings still need a final Fable pass; its latest implementation attempt stopped at the Claude session limit before making changes. See the [integration review and remaining work](docs/integration-review.md) and the [earlier alpha record](docs/fable-review.md). This development candidate is not a newly approved release.
 
 Use the [read-only doctor](docs/doctor.md) to distinguish installation, authentication and verified worker evidence. [Grok Bot](docs/grok-bot.md) is optional for cloud-computer and Bot-native work; ordinary coding and review do not require it.
 

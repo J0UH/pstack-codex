@@ -47,7 +47,7 @@ One JSON object. Unknown keys are rejected, including `expected_host`.
 
 - `url` is required. Only `https://api2.cursor.sh/automations/webhook/<id>` is accepted: exact host, no port, no userinfo, no query, no fragment, no extra path. There is no host override in the config, the API or the CLI.
 - Exactly one of `key_file` or `key_env`. `key_file` is an absolute path to a regular file owned by the current user with mode 0600 containing one line of printable ASCII. `key_env` names an environment variable of the sender process.
-- `queue_path` defaults to `failed-webhook-events.jsonl` next to the config file. Its directory must already exist. When the config is passed as a dict instead of a file, `queue_path` is required.
+- `queue_path` defaults to `failed-webhook-events.jsonl` next to the config file. Its directory must already exist, be owned by the sender user and have no group/other write bits. When the config is passed as a dict instead of a file, `queue_path` is required.
 - `probe_payload` must be explicit before using `probe`. Choose an action that the actual routine prompt is known to ignore; no universally harmless action is invented. Normal sends do not require this field.
 - `queue_path`, `key_file` and the config file must be three different files. This is checked by path when the config is loaded and by inode when files are opened.
 
@@ -60,7 +60,7 @@ python3 scripts/grok_bot.py send  --config /abs/bot.json --payload-file /abs/eve
 python3 scripts/grok_bot.py send  --config /abs/bot.json --stdin
 ```
 
-`check` makes no network call. It validates the config and URL, confirms the key is readable without printing it, and inspects the failure queue. `probe` and `send` print one JSON result. The key and the URL are never accepted as arguments, and unknown flags are reported by name without echoing their values.
+`check` makes no network call. It validates the config and URL, confirms the key is readable without printing it, and inspects the failure queue. `probe` and `send` print one JSON result. The key and the URL are never accepted as arguments. Unknown arguments and invalid choices produce fixed errors without echoing their values.
 
 Exit codes: 0 accepted, 1 rejected/redirect/network/internal, 2 invalid config, payload, queue or unavailable key, 124 timeout.
 
@@ -102,7 +102,7 @@ Removed from the previous draft: `expected_host`, the `queue` subcommand, the qu
 ## Limits
 
 - The 8 s value is urllib's socket timeout. It bounds the connect and each read separately. DNS resolution is not covered, and it is not a hard whole-attempt deadline. `elapsed_seconds` reports what actually happened.
-- Ownership checks refuse files owned by other users, but that path could not be exercised in tests without root. Directory ownership is not checked; the queue's directory is the config author's decision. If another user controls that directory they can deny service, but the descriptor checks and inode comparison still prevent writing into a symlink target, a foreign file, the key file or the config.
+- Ownership checks refuse files owned by other users, but that path could not be exercised in tests without root. The queue directory is required to be owned by the sender and not writable by group or others and held open while the queue is opened relative to its descriptor. These checks do not provide containment against a privileged process or other code running as the same user.
 - POSIX only (`O_NOFOLLOW`, `getuid`).
 - No test proves anything about the live routine. See "Current evidence".
 

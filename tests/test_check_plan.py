@@ -4,6 +4,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
 import unittest
 from pathlib import Path
@@ -120,6 +121,28 @@ class CheckPlanTests(unittest.TestCase):
                 result = self.check(self.plan, "--lanes-model", "claude-fable-5-1" + suffix, policy=None)
                 self.assertEqual(2, result.returncode)
                 self.assertIn("exact model token", result.stderr)
+
+    def test_raw_schedule_encoding_is_rejected_inside_fenced_plan_text(self):
+        text = self.plan + "\n```text\nRRULE:FREQ=MINUTELY;INTERVAL=30\n```\n"
+        self.assert_problem(self.check(text), RRULE_RULE)
+
+    def test_empty_and_tilde_codex_home_match_the_python_policy_resolver(self):
+        for configured in ("", "~/alternate"):
+            with self.subTest(configured=configured):
+                home = self.base / ("empty-home" if not configured else "tilde-home")
+                policy_home = home / (".codex" if not configured else "alternate")
+                policy_file = policy_home / "pstack/models.json"
+                policy_file.parent.mkdir(parents=True)
+                policy_file.write_bytes(POLICY.read_bytes())
+                env = {"HOME": str(home), "CODEX_HOME": configured}
+                result = run(CHECKER, CODEX_PLAN, env=env)
+                self.assert_passes(result)
+                self.assertIn("source=" + str(policy_file), result.stdout)
+                python_env = {k: v for k, v in os.environ.items() if k != "PSTACK_MODEL_CONFIG"}
+                python_env.update(env)
+                result = subprocess.run([sys.executable, str(ROOT / "scripts/pstack.py"), "models", "path"],
+                                        env=python_env, capture_output=True, text=True, check=True)
+                self.assertEqual(str(policy_file), result.stdout.strip())
 
     def test_cursor_form_passes_upstream_and_codex_form_is_not_forged_for_upstream(self):
         upstream_on_cursor = run(UPSTREAM_CHECKER, CURSOR_PLAN)
@@ -466,7 +489,7 @@ class CapabilityMapTests(unittest.TestCase):
         bridge = self.mechanisms["event_bridge"]
         self.assertEqual("unavailable", bridge["status"])
         self.assertEqual("pending", bridge["live_proof"])
-        self.assertIsNone(bridge["evidence"])
+        self.assertIn("did not start", bridge["evidence"])
         self.assertIn("not verified", bridge["notes"])
         self.assertNotIn("bridge verified", bridge["notes"])
         for stem in self.EVENT_DEPENDENT:
@@ -492,7 +515,10 @@ class CapabilityMapTests(unittest.TestCase):
         self.assertEqual("pending", skill_creator["live_proof"])
         self.assertIsNone(skill_creator["evidence"])
         grok_bot = self.mechanisms["grok_bot_mcp"]
-        self.assertEqual("pending", grok_bot["live_proof"])
+        self.assertEqual("unavailable", grok_bot["status"])
+        self.assertEqual("not-applicable", grok_bot["live_proof"])
+        self.assertEqual("live-tested", self.mechanisms["grok_bot_app"]["live_proof"])
+        self.assertEqual("pending", self.mechanisms["grok_bot_sender"]["live_proof"])
         self.assertNotIn("delivery verified", grok_bot["notes"])
         self.assertNotIn("RRULE:", self.text)
 

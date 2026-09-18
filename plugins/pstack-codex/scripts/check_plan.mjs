@@ -246,6 +246,7 @@ for (let i = start; i < raw.length; i++) {
 	const n = i + 1;
 	if (/^```/.test(text)) fence = !fence;
 	lines.push({ n, text, code: fence });
+	if (RAW_ENCODING.test(text)) fail(n, "raw RRULE string; state the cadence in words and keep the schedule encoding in the automation_update arguments");
 	if (fence) continue;
 	const prose = text
 		.replace(/`[^`]*`/g, "`")
@@ -254,7 +255,6 @@ for (let i = start; i < raw.length; i++) {
 	if (/[–—]/.test(prose)) fail(n, "long dash");
 	if (/[‘’“”]/.test(prose)) fail(n, "curly quote");
 	if (/: \S/.test(prose)) fail(n, "mid-sentence colon");
-	if (RAW_ENCODING.test(text)) fail(n, "raw RRULE string; state the cadence in words and keep the schedule encoding in the automation_update arguments");
 }
 
 const h2 = (l) => (!l.code && l.text.startsWith("## ") ? l.text.slice(3).trim() : null);

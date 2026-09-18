@@ -126,14 +126,14 @@
     "grok_worker": {
       "status": "prerequisite",
       "live_proof": "blocked",
-      "evidence": "docs/grok.md (read-only sandbox startup failure before inference)",
-      "notes": "Analysis profile only; reader and writer unsupported. Requires an environment repair without weakening the sandbox, then a repeated probe."
+      "evidence": "docs/grok.md and evidence/grok-capability-probes.json: Mac sandbox startup blocked; protected Linux CLI capability tests passed, production controls still pending.",
+      "notes": "Optional production adapter remains unready. Empty --tools restores defaults and is rejected by its parser. Corrected analysis/reader CLI controls were proved separately on exact Linux 1.0.34. Reader/writer production profiles remain unsupported pending implementation, review and acceptance."
     },
     "grok_bot_mcp": {
-      "status": "prerequisite",
-      "live_proof": "pending",
-      "evidence": "Parent report 2026-09-18: the separate Grok Bot UI is signed in and one paused webhook routine was created through that app. Webhook delivery has not been exercised and no adapter is linked.",
-      "notes": "Optional capability. No Grok Bot MCP is exposed to this coordinator. The Make Bot UI routine, secret-request card and webhook wake contract stay unavailable until the parent links the separate Bot adapter; a paused routine is not delivery evidence. Never invent an endpoint or paste a secret into chat."
+      "status": "unavailable",
+      "live_proof": "not-applicable",
+      "evidence": null,
+      "notes": "No Codex-native Bot MCP is exposed. It is not required for the separately verified app-UI handoff or the optional outbound sender."
     },
     "slack_event_trigger": {
       "status": "unavailable",
@@ -150,8 +150,8 @@
     "event_bridge": {
       "status": "unavailable",
       "live_proof": "pending",
-      "evidence": null,
-      "notes": "No mechanism wakes a finished turn when the forge changes. Inside the active turn the bounded watcher is the immediate event wake; across turns the heartbeat is time-based polling, not the event wake, and the event-dependent gates in Babysit drive, Shipping step 8, Orchestrate drains and Autonomous run step 2 stay unresolved. The parent is testing a native queue mechanism as a possible bridge; it is not verified and nothing is claimed here."
+      "evidence": "evidence/integration-verification.json native_queue: accepted message, unloaded task did not start; bridge not verified.",
+      "notes": "Across-turn event wake is not verified. The tested queue-only command did not start an unloaded task. Native timed heartbeat is available, but it is polling, not event-primary."
     },
     "codex_skill_creator": {
       "status": "native-mapped",
@@ -188,6 +188,18 @@
       "live_proof": "pending",
       "evidence": "tests/test_check_plan.py (unit-tested 2026-09-18); no real plan run recorded",
       "notes": "scripts/check_plan.mjs retains every upstream gate, binds the lane model to the explicit policy, keeps the own-cloud-VM boot recipe with a block statement, rejects a worktree-only lane placement without port, browser and data evidence, requires the cadence in words and rejects raw schedule strings, rejects a hold box that closes the goal, and requires reconciliation before a stuck lane's replacement. It verifies plan form, not runtime readiness. Upstream check-plan.mjs stays byte-identical."
+    },
+    "grok_bot_app": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/integration-verification.json grok_bot: app handoff, paused-routine creation and returned public-page screenshot observed.",
+      "notes": "Optional cloud-computer surface. No exact model identity or independent VM per Bot is inferred; no live webhook delivery proof."
+    },
+    "grok_bot_sender": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": "tests/test_grok_bot.py uses synthetic credentials and injected/loopback HTTP.",
+      "notes": "Optional outbound POST helper. A configured sender key, live harmless probe and routine-accessible failure queue are prerequisites for claiming the full webhook workflow."
     }
   },
   "playbooks": [

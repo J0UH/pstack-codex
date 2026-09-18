@@ -15,6 +15,10 @@ from model_config import validate_model_config
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def codex_home() -> Path:
+    return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex").expanduser()
+
+
 def config_path() -> Path:
     override = os.environ.get("PSTACK_MODEL_CONFIG")
     if override:
@@ -22,7 +26,7 @@ def config_path() -> Path:
         if not path.is_absolute():
             raise ValueError("PSTACK_MODEL_CONFIG must be an absolute path")
         return path
-    return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "pstack/models.json"
+    return codex_home() / "pstack/models.json"
 
 
 def state_root() -> Path:
@@ -31,7 +35,7 @@ def state_root() -> Path:
         if not path.is_absolute():
             raise ValueError("PSTACK_STATE_DIR must be an absolute path")
         return path
-    return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "pstack/state"
+    return codex_home() / "pstack/state"
 
 
 def identity(session: str, project: str) -> tuple[str, str]:
@@ -65,7 +69,10 @@ def resolve_identity(session: str | None, project: str | None) -> tuple[str, str
         candidate_project = candidate.get("project")
         if not isinstance(candidate_project, str):
             raise ValueError("Recorded session context is malformed; pass the authoritative --project")
-        resolved = identity(session, candidate_project)
+        try:
+            resolved = identity(session, candidate_project)
+        except ValueError as exc:
+            raise ValueError("A recorded context points at an invalid or missing directory; pass the authoritative --project") from exc
         if state_path(*resolved) != path:
             raise ValueError("Recorded session context has a mismatched state key")
         read_state(*resolved)

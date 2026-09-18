@@ -159,13 +159,22 @@
       "plan token escaping and terminal-whitespace validation",
       "private FIFO inputs rejected without blocking",
       "doctor no longer equates inference receipt success with sandbox verification",
-      "probe requires explicit known-harmless payload"
+      "probe requires explicit known-harmless payload",
+      "Fable final-review follow-ups: strict single-rule Bash grammar, fenced schedule rejection, home resolution, stale-context hint and inch-mark activation",
+      "Fable final-review follow-ups: finite numbers, pre-serialization redaction, key alias protection, owned queue directory and non-echoing argument errors"
     ],
-    "approval": "Final independent review pending; authoring is not approval."
+    "approval": {
+      "reviewed_commit": "ad93276dcf570e68832af469abce7066b2d6edc3",
+      "core": "approve",
+      "bot": "approve",
+      "record": "integration-review.json",
+      "post_review_followups": "delta review pending",
+      "grok_implementation_attempt": "session limit before tools or edits"
+    }
   },
   "tests": {
     "python": {
-      "passed": 207,
+      "passed": 216,
       "failed": 0,
       "pending_final_rerun": false,
       "jsonschema": "4.23.0",
@@ -354,7 +363,16 @@
     "sandbox_error": "runtime-socket deny path endpoint is a symlink",
     "protections_weakened": false,
     "auth": "Earlier models command reported unauthenticated; latest listing had no negative marker, which is not positive authentication proof.",
-    "live_inference_verified": false
+    "live_inference_verified": false,
+    "host": "macOS",
+    "linux_capability_probes": {
+      "record": "grok-capability-probes.json",
+      "analysis": "passed with experimental corrected controls",
+      "reader": "passed with exact file-tool inventory",
+      "production_adapter_ready": false,
+      "credentials_copied": false,
+      "writer": "Inside edit completed; separate sibling and symlink negative probes refused writes. Terminal cancellation vs successful delivery with a tool error recorded separately."
+    }
   },
   "webhook_sender": {
     "tests": "synthetic secrets and injected or loopback HTTP only",

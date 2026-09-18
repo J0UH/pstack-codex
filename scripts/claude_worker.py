@@ -99,7 +99,10 @@ def is_scoped_bash_rule(rule: str) -> bool:
     body = match.group("body").strip()
     if not body or body in ("*", ":*") or body.startswith("*") or body.startswith(":"):
         return False
-    if any(ch in body for ch in (",", "\n", "\r", "\x00")):
+    if any(ch in body for ch in (",", "\n", "\r", "\x00", "(", ")")):
+        return False
+    command = body.split()[0].removesuffix(":*")
+    if not re.fullmatch(r"[A-Za-z0-9_./-]+", command):
         return False
     return True
 

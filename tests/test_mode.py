@@ -127,6 +127,8 @@ class ModeTests(unittest.TestCase):
             "First `$poteto-mode` is only quoted here.\nNow really use $poteto-mode, thanks.",
             "The example:\n```\n$poteto-mode not this one\n```\nBut $poteto-mode this one.",
             '$poteto-mode fix the 5" display bug',
+            'Fix the 5" display.\nUse $poteto-mode.',
+            'The note says "panel 5".\nUse $poteto-mode.',
             'Use "$poteto-mode" as shown, then $poteto-mode for real.',
             'Docs say "use\n$poteto-mode" but really use $poteto-mode now.',
         ]
@@ -191,6 +193,22 @@ class ModeTests(unittest.TestCase):
         response = hook.handle(self.event("exit poteto-mode\nLater you may want $poteto-mode again."))
         self.assertIn("explicitly exited", response["hookSpecificOutput"]["additionalContext"])
         self.assertFalse(pstack.read_state("one", str(self.project))["active"])
+
+    def test_stale_recorded_project_requires_authoritative_project_hint(self):
+        hook.handle(self.event("/poteto-mode inspect"))
+        hook.handle(self.event("/poteto-mode inspect", project=self.other))
+        self.other.rmdir()
+        with self.assertRaisesRegex(ValueError, "--project"):
+            pstack.resolve_identity("one", None)
+
+    def test_empty_and_tilde_codex_home_are_normalized_for_config_and_state(self):
+        with patch.dict(os.environ, {"HOME": str(self.base), "CODEX_HOME": ""}):
+            os.environ.pop("PSTACK_STATE_DIR", None)
+            self.assertEqual(self.base / ".codex/pstack/models.json", pstack.config_path())
+            self.assertEqual(self.base / ".codex/pstack/state", pstack.state_root())
+            os.environ["CODEX_HOME"] = "~/alternate"
+            self.assertEqual(self.base / "alternate/pstack/models.json", pstack.config_path())
+            self.assertEqual(self.base / "alternate/pstack/state", pstack.state_root())
 
     def test_command_prefix_is_shell_safe_and_runs_without_placeholders(self):
         session = "thread 'one'"

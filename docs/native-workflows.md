@@ -113,7 +113,7 @@ The checker flags a Codex plan that still says `/loop`, `cloud-sleeper`, or `git
 ## Unresolved integrations awaiting capability evidence
 
 - **Across-turn event bridge.** Unavailable. The parent is testing a native queue mechanism as a possible bridge; nothing is claimed until that test is recorded.
-- **Grok Bot and Make Bot UI.** No Grok Bot MCP is exposed to this coordinator. The parent reports the separate Grok Bot UI signed in and one paused webhook routine created through that app; webhook delivery has not been exercised. This is an optional capability. The Make Bot UI routine, secret-request card, and webhook wake contract stay source text and report unavailable until the parent links the separate Bot adapter. Do not invent an endpoint or paste a secret into chat.
+- **Grok Bot and Make Bot UI.** The [optional Bot adapter](grok-bot.md) supplies app-handoff guidance and the outbound sender. Routine management, secure secret entry and wake handling remain Bot-app facilities. A real sender key, accepted live probe, webhook delivery and routine-side queue drain remain unverified.
 - **Slack and Benny.** No Slack tool or new-message event trigger is exposed to this coordinator. A time-based heartbeat is not a new-message trigger, so the dormant Benny pack stays dormant with its committed-file and fresh-project requirements intact.
 - **Grok Build inference.** Blocked before inference on this host; see [Grok status](grok.md). Roles configured for Grok report blocked rather than substituting another model.
 - **Native skill creator.** The native Codex skill creator is available on the host, so Authoring a skill and automate-me have their authoring facility. Its draft, test, and iterate flow has not been exercised end to end here; live proof pending, and no proof is claimed.
@@ -155,8 +155,8 @@ The parent records these live actions in the JSON map. Each stays labeled live p
 
 1. Create a goal on an explicit request for a goal, read it with `get_goal`, complete it with `update_goal` on a verified predicate. Pending.
 2. Create one bounded harmless heartbeat attached to a known task with a minute interval, observe a scheduled turn and its effect, pause it, and confirm the paused state. Verified by the parent on 2026-09-18 for one harmless local file operation with the matching `CODEX_THREAD_ID`; the automation was then paused and deleted. Scope: the timed wake and thread attachment only.
-3. Spawn one native bounded task and wait on it with the native read-only wait. Separately, call `read_thread` on one known app task id and record what it returns, summaries or a full transcript. Pending. A native agent id is never passed as a task id.
+3. Recorded. Native delegation/message/result collection and, separately, app `read_thread` status/summary retrieval on a known test task were exercised. These do not prove full tool traces, and a native agent id is never passed as an app task id.
 4. Run the watcher once with an authenticated `gh` inside a heartbeat tick and record its stop class. Pending.
 5. Run one Codex plan through `scripts/check_plan.mjs` against the real model policy and post its output as Multi-phase plan step 7 requires. Pending.
-6. Record the across-turn event bridge test, whatever its outcome. Pending; nothing is claimed until then.
+6. Recorded negative outcome. The queue command accepted a message but did not wake the unloaded task. This is evidence of a tested limitation, not a verified event bridge; see the queue record in integration-verification.json.
 7. Record whether an isolated runtime per lane is configured, or the operator's explicit approval of an alternative with its per-lane port, browser, and data evidence. Pending; until then the executor-dependent playbooks report blocked at spawn.

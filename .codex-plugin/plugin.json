@@ -1,6 +1,6 @@
 {
   "name": "pstack-codex",
-  "version": "0.1.0-alpha.1+codex.20260918194713",
+  "version": "0.1.0-alpha.1+codex.20260918205647",
   "description": "Faithful pstack workflow port for Codex with standalone Claude Code and optional Grok Build workers.",
   "author": {
     "name": "J0UH"
