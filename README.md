@@ -1,14 +1,10 @@
 # pstack for Codex
 
 <p align="center">
-  <img src="docs/assets/pstack-codex-banner.png" alt="pstack for Codex — You to poteto-mode to Astra to workers to evidence" width="100%" />
+  <img src="docs/assets/pstack-orchestration.png" alt="You talk to poteto-mode; Codex/Astra coordinates Fable and optional Grok workers inside a local sandbox; evidence comes back" width="100%" />
 </p>
 
-**Open-source workflow library for Codex.** One line activates a mode that picks the playbook, coordinates workers, and comes back with evidence you can actually check.
-
-<p align="center">
-  <img src="docs/assets/pstack-codex-card.png" alt="pstack for Codex — workflow library, open source" width="420" />
-</p>
+**Open-source workflow library for Codex.** You talk to poteto-mode. Astra coordinates. Workers (Codex, Fable, optional Grok) run in the sandbox and return evidence you can check.
 
 ```text
 $pstack-codex:poteto-mode <your task>
@@ -18,14 +14,22 @@ That’s the verified activation form. Mentions elsewhere don’t reliably stick
 
 Independent port of [Lauren Tan’s pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2**. Skills, principles, playbooks, and agent roles preserved. Codex host adaptations are explicit and inspectable. **Not** an official Cursor, OpenAI, or xAI release.
 
+<p align="center">
+  <img src="docs/assets/pstack-codex-card.png" alt="pstack for Codex — workflow library, open source" width="360" />
+</p>
+
 ## How it works
+
+<p align="center">
+  <img src="docs/assets/pstack-loop.png" alt="Activate poteto-mode, Astra coordinates Codex Fable Grok, verify evidence and return to parent" width="100%" />
+</p>
 
 ```mermaid
 flowchart LR
     U[Your request] --> P[poteto-mode and playbook]
     P --> A[Astra in Codex coordinates]
     A --> N[Native Codex agents]
-    A --> C[Standalone Claude Code CLI]
+    A --> C[Standalone Claude Code CLI / Fable]
     A --> G[Optional Grok Build CLI]
     N --> R[Parent reviews evidence and continues]
     C --> R
@@ -33,7 +37,7 @@ flowchart LR
     R --> P
 ```
 
-**Workers** means backends Astra can call: native Codex agents, the Claude Code CLI, and optionally Grok Build. They’re execution paths — not “fake vs real” code. The parent still reviews evidence before the next step.
+**Workers** are backends Astra can call — native Codex, Claude Code (Fable), optional Grok Build — usually inside the local sandbox. They’re execution paths. The parent still reviews evidence before the next step.
 
 Poteto mode can move through `how`, `architect`, `arena`, implementation, review, and verification without you listing that sequence. The plugin is reusable across projects; build commands and business rules stay in the project you’re working on.
 
