@@ -46,7 +46,7 @@ Two completed source reviews by `claude-fable-5-1` at requested `xhigh` assessed
 - **Workflow:** `changes_required`. There was no workflow approval. The reviewer required explicit durable-wakeup limitations, working default-prompt activation, authoritative hook/CLI state identity, and a concrete Codex model-setup procedure/schema.
 - **Runtime:** `approve` only for the stated limited alpha runtime scope. It excluded unproved parent-interruption behavior, autonomous investigator/verifier shell capabilities, safe-mode suppression and applied-effort claims; Grok was not approved as live-enabled.
 
-The repair tests and probes above address reported gaps, but they do not revise those historical verdicts. **Final Fable re-review of the repaired candidate is pending. The package is not yet jointly approved.** Internal reasoning effort remains unmeasured, and the reader proof is limited to local Git.
+The repaired candidate `64716ccce5b5` subsequently received **approve** from both final Fable reviews. The [approval record](fable-review.md) and [complete sanitized verdicts](../evidence/fable-review.json) bind that decision to its exact code commit and limited-alpha scope. These later verdicts do not rewrite the historical reviews. Internal reasoning effort remains unmeasured, and the reader proof is limited to local Git.
 
 Earlier experimental review attempts remain excluded from approval evidence: one tool-free run returned nonexecuted tool-request text, and one reader run timed out after actual reads without a verdict. They are distinct from the two completed source reviews above. Delivery success, task acceptance and approval scope remain separate.
 
@@ -80,7 +80,7 @@ The repaired adapter's exact current argv was also exercised, including the empt
 
 - No matched, side-by-side Cursor execution baseline was run. Current claims are source-contract preservation plus selected real Codex flows.
 - Cloud placement, Grok Bot webhooks, Benny event automations and some transcript integrations need real host adapters before use.
-- Durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes) are not supplied by this package. Autonomous run, Babysit drive, Shipping watch, both Autopilots and Orchestrate can do current-turn work with bounded waits but cannot promise unattended continuation without an authorized host wake adapter. Their stopping conditions are unchanged.
+- Durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes) are not supplied by this package. Autonomous run, Babysit drive, Shipping watch, both Autopilots, Orchestrate, unattended Hillclimb and Visual parity loops can do current-turn work with bounded waits but cannot promise unattended continuation without an authorized host wake adapter. Their stopping conditions are unchanged.
 - The upstream plan checker still has explicit model/host assumptions. It was retained, not weakened to make alternate plans pass.
 - Process groups do not contain deliberately escaped sessions or undo external side effects. Permission allowlists and worktrees are not OS security boundaries.
 - A hard-killed launcher can leave an unreconciled detached child. The invoking tool must allow time for the worker timeout and termination grace; incomplete process records require ownership/effect reconciliation before retrying.

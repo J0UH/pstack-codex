@@ -1,0 +1,522 @@
+{
+  "date": "2026-09-18",
+  "reviewed_code_commit": "64716ccce5b58e7195d20789aafaf7d9f88c7c61",
+  "upstream_revision": "5bf2b1544db739998121a306340631963c2ff3de",
+  "verdict": "approve",
+  "scope": "Source-contract fidelity and documented limited-alpha Codex adaptation, not complete Cursor runtime parity.",
+  "review_method": "Two independent source reviews via standalone Claude Code CLI; original-source instructions, prior findings, candidate files, diff, and parent-observed evidence supplied. Reviewers did not execute tests.",
+  "initial_verdicts": {
+    "commit": "7782ebe26fb150c5340c54dec4ade5f6e4825b12",
+    "workflow": "changes_required",
+    "runtime": "approve within limited runtime scope"
+  },
+  "reviews": {
+    "workflow": {
+      "report": {
+        "target_commit": "64716ccce5b58e7195d20789aafaf7d9f88c7c61",
+        "scope": "workflow: fidelity of the preserved pstack library, poteto-mode routing and stickiness, mode lifecycle/state identity, metadata/discovery, source generation and packaging, model-role setup semantics, and supported-versus-unsupported disclosure. Source-only re-review of the supplied candidate files and baseline-to-candidate diff; nothing executed; parent-observed live evidence read as claims, not reproduced. Runtime adapter internals (worker_common/claude_worker/grok_worker) are out of scope except where README/host.md describe them.",
+        "verdict": "approve",
+        "approval_scope": "Workflow scope of commit 64716ccce5b58e7195d20789aafaf7d9f88c7c61 as a limited alpha: (1) the byte-preserved upstream library (47 registered skills, 23 playbooks, 23 principles, 2 agent roles, 3 path-loaded companions, 3 dormant Benny skills) with only the two ledgered transformations; (2) explicit-only discovery matching upstream (46 false, setup-pstack true; companions carry no policy files); (3) conversation-local mode lifecycle whose activation fires from the published plugin and skill default prompts, whose hook context supplies the authoritative session/project identity and command prefix, and whose CLI resolves the recorded context instead of the shell cwd; (4) the Codex model-role setup procedure, JSON schema and validator preserving upstream role labels, panel-count and inheritance semantics with no model substitution; (5) limitation disclosure for durable wakeups, cloud placement, plan checker, transcripts, Benny, webhooks and Grok, with playbook stopping rules unchanged. NOT approved: unattended continuation of Autonomous run, Babysit drive, Shipping watch, either Autopilot, Orchestrate or unattended Hillclimb; Cursor runtime parity; Grok inference; end-to-end fidelity of the 21 playbooks not exercised live; runtime adapter correctness (other reviewer's scope); and any reading of this review as independent reproduction of the parent's live proofs. Approval assumes `python3 scripts/build.py --check` and `python3 scripts/package.py --check` pass at this exact commit, which the filtered diff did not let me confirm (adaptations.json, companion openai.yaml deletions and plugins/ copy were not shown). The four P3 findings may ship as recorded follow-ups.",
+        "summary": "All nine baseline workflow findings are resolved in the candidate by inspection of code, tests and docs, and no regression was found in the diff. WF-1: README Status, docs/verification.md Remaining limits and host.md Scheduling now state that /loop, /goal, timed audit ticks and watcher wakes are not supplied, name the affected playbooks, and keep their stopping conditions; no wake engine was added. WF-2: both published default prompts begin with `$pstack-codex:poteto-mode`; hooks/mode.py adds DOLLAR_MENTION with backtick/quote/indent/blockquote masking, and test_both_published_default_prompts_activate reads the actual plugin.json and openai.yaml strings. WF-3: `--project` no longer defaults to cwd; resolve_identity() requires exactly one recorded context for the session, verifies the state key, and errors loudly when missing or ambiguous; mode_context() prints the authoritative session ID, project, state directory and a shell-quoted command prefix; test_cli_uses_recorded_context_after_working_directory_changes runs the real CLI from another directory and asserts the next hook context shows the selected playbook; the workspace-write denial and narrow --add-dir grant are documented rather than bypassed. WF-4: docs/setup.md, schemas/models.schema.json and scripts/model_config.py define 18 roles (17 upstream labels plus coordinator), four panel roles as nonempty lists, per-backend effort vocabularies, native-only inherit-parent/auto without effort, CLI-only profiles, and partial overrides that never fill defaults; the setup-pstack host notice redirects to that procedure while the upstream body stays byte-identical; the Python validator and the JSON schema agree on every rule I traced. WF-5 through WF-9: continuation text no longer says rematch, companions are path-only in build/host/index/ADAPTATIONS, the `git show origin/main:pstack/<path>` re-read is mapped, the why-investigator packet limitation is stated in verification.md and evidence, and the sanitized sentences are grammatical. Catalog counts in build.py assertions, routing-index rows and ledger match upstream (47/23/23/46). Disclosure is honest: verification.md itself says final re-review is pending and joint approval is absent, effort is unmeasured, reader proof is local git only, Grok is blocked before inference. Remaining issues are P3: activation is recognized only for first-line, space-delimited mentions (a trailing colon or comma defeats it and README does not say so); README Status omits the reader probe and the named wake-dependent list omits unattended Hillclimb and Visual parity loops; schema and Python validator are dual-maintained with only a shallow cross-check; the injected command prefix quotes the `<action>` placeholder. None lets a workflow silently pass an unsupported gate.",
+        "checks": [
+          {
+            "requirement": "Reusable plugin across all Codex projects; activation conversation-local; no project or ERP content in shared policy",
+            "upstream_basis": "pstack installed once; poteto-mode sticky per conversation (skills/poteto-mode/SKILL.md mode/reminder; docs/guide/02).",
+            "port_evidence": ".codex-plugin/plugin.json; state key sha256([session, resolved project]) in scripts/pstack.py state_path; tests/test_mode.py test_conversation_and_project_separation; docs/playbook-routing-audit.md now reads 'The initial pilot is one project, not the package boundary'; no ERP string in any supplied file.",
+            "result": "pass",
+            "reason": "Global install, per-session/project state, sanitized audit prose; WF-9 resolved."
+          },
+          {
+            "requirement": "Poteto-mode automatic routing after activation preserved and sticky across continuation, resume and compaction",
+            "upstream_basis": "Router non-negotiables, playbook match, verbatim step copy, skip: reasons, principle leaf reads; guide: continue keeps playbook, only new task rematches.",
+            "port_evidence": "Generated skills/poteto-mode/SKILL.md body byte-identical after notice (tests/test_build.py fidelity test); hooks/mode.py injects host.md+router on activation and SessionStart, brief reminder otherwise; scripts/pstack.py mode_context fallback 'none recorded; continue the workflow already in progress...'; tests test_no_recorded_playbook_does_not_instruct_restart, test_continuation_is_brief_but_compaction_restores_sources.",
+            "result": "pass",
+            "reason": "WF-5 resolved; the continuation reminder no longer nudges a restart. Live resume/compaction restore is parent-observed, consistent with code."
+          },
+          {
+            "requirement": "All skills, principles, playbooks, agents, companions and dormant pack retained without simplification",
+            "upstream_basis": "47 registered SKILL.md, 23 playbooks, 23 principles, 2 agents, 3 cursor-team-kit companions, 3 Benny skills.",
+            "port_evidence": "scripts/build.py render() asserts 47/23/3 and 46 explicit-only; docs/routing-index.md lists 47 skill rows (13 workflow + 23 principle + 11) and 23 playbooks; tests/test_build.py test_complete_catalog_and_dormant_pack asserts 50 SKILL.md, byte-identical automations, 3 companions with no openai.yaml.",
+            "result": "pass",
+            "reason": "Counts confirmed from the generator assertions and the generated index, not from parent claims."
+          },
+          {
+            "requirement": "Workflow order, nested handoffs, feedback loops and stopping conditions preserved; unsupported wakes disclosed, not faked",
+            "upstream_basis": "autonomous-run step 2 (/loop), babysit step 6 (drive under /loop, rearm watcher), shipping step 8, autopilot-full/stack (/goal, 30-min tick), orchestrate wake chain, hillclimb step 5 unattended, visual-parity step 4.",
+            "port_evidence": "Playbook bodies unchanged; README Status bullet 4 plus new paragraph; docs/verification.md 'Remaining limits' durable-wakeups bullet; adapters/host.md Scheduling: 'This package does not ship a verified durable wake adapter... Preserve each playbook's stopping condition rather than silently reducing a requested background program to one poll.' Diff adds no scheduler or loop code.",
+            "result": "partial",
+            "reason": "WF-1 resolved as an accurately disclosed limitation. Stop rules intact; current-turn bounded waits (e.g. blocking watch-pr) remain. Unattended continuation is not supported and is not approved. Named list omits unattended Hillclimb and Visual parity loops (F2, generic sentence covers them)."
+          },
+          {
+            "requirement": "Cursor host mechanisms adapted to Codex (Task fields, AskQuestion, todo, paths, model rule, trunk re-read, companions, create-skill)",
+            "upstream_basis": "Task subagent_type/environment/readonly/run_in_background; ~/.cursor/rules/pstack-models.mdc; .cursor/skills; agent-transcripts; git show origin/main:pstack/...; /deslop from cursor-team-kit.",
+            "port_evidence": "adapters/host.md translation table now includes the `git show origin/main:pstack/<path>` row; companions declared path-loaded in host.md, docs/routing-index.md and adapters/ADAPTATIONS.md; setup notice in skills/setup-pstack/SKILL.md points to docs/setup.md; TypeScript path-trigger narrowing recorded in ADAPTATIONS.md.",
+            "result": "pass",
+            "reason": "WF-4, WF-6 and WF-7 resolved; every mapping either has a Codex counterpart or an explicit 'report blocked' instruction."
+          },
+          {
+            "requirement": "Published default prompts activate the mode; incidental, quoted or code mentions do not",
+            "upstream_basis": "Explicit /poteto-mode or poteto request activates; casual turns exempt (router reminder).",
+            "port_evidence": ".codex-plugin/plugin.json defaultPrompt and skills/poteto-mode/agents/openai.yaml default_prompt both '$pstack-codex:poteto-mode work through this task.'; scripts/build.py agent_metadata emits that string for poteto-mode; hooks/mode.py activation_mention masks backticks, straight/curly quotes, indented and blockquoted lines; tests test_both_published_default_prompts_activate and the extended negative list.",
+            "result": "pass",
+            "reason": "WF-2 resolved by code and tests reading the real published strings. Live default-prompt activation is parent-observed. Delimiter/first-line gaps are F1 (P3)."
+          },
+          {
+            "requirement": "CLI state-write identity matches the hook's key so playbook selection survives worktree cwd changes; sandbox boundary honored",
+            "upstream_basis": "Sticky playbook selection per conversation; Opening a PR moves work into worktrees.",
+            "port_evidence": "scripts/pstack.py resolve_identity(): explicit --project wins; otherwise exactly one recorded context whose state_path matches its file, else ValueError; --project has no cwd default; mode_context prints 'Authoritative session ID', 'Authoritative session project', state directory and shlex-joined prefix; test_cli_uses_recorded_context_after_working_directory_changes runs the CLI subprocess from another directory and asserts the next hook context contains 'current playbook: bug-fix'; test_ambiguous_context_requires_explicit_project; state_root() rejects relative PSTACK_STATE_DIR with test. host.md/README document workspace-write denial and the narrow --add-dir or absolute PSTACK_STATE_DIR grant; denial yields exit 2 error JSON, not silent success.",
+            "result": "pass",
+            "reason": "WF-3 resolved: identity semantics confirmed from code and unit test. Live worktree select/resume and the --add-dir grant are parent-observed (evidence/verification.json repaired_identity_live_proof) and consistent with the code; hook env inheritance of PSTACK_STATE_DIR is a host property I could not confirm."
+          },
+          {
+            "requirement": "setup-pstack has a Codex procedure and schema preserving inventory, budget, confirmation, panel-count, inheritance and partial-override semantics without Cursor rule writes or slug rewriting",
+            "upstream_basis": "upstream/pstack/skills/setup-pstack/SKILL.md steps 1-7: detect, load, budget (4 labels), map, confirm, validate, write rule, offer verification skill; panel list length = count; inherit-parent/auto omit model.",
+            "port_evidence": "docs/setup.md steps 1-6 mirror upstream steps with backend/model/effort separated and no suffix rewriting; schemas/models.schema.json 18 role properties, panel minItems 1, inheritance def without effort, native def without profile; scripts/model_config.py SINGLE_ROLES(14)+PANEL_ROLES(4), BACKEND_EFFORTS, alias rules, profile rules, optional_backends never becomes a role; tests/test_model_config.py covers unknown role/backend/effort, panel shapes, aliases, profiles, budget, malformed types, schema structure; `models validate`/`show` call validate_model_config; parent model_setup probe: cursor_rules_written false.",
+            "result": "pass",
+            "reason": "WF-4 resolved. Python and schema rules agree on every case I traced; dual maintenance is F3 (P3). Example file examples/models.astra-claude.json not in packet; its validation is asserted by test only."
+          },
+          {
+            "requirement": "Astra coordinates; standalone Claude Code CLI serves configured Fable roles; no automatic model fallback",
+            "upstream_basis": "Router Subagents: explicit model per role; interrogate closest-slug fallback (deliberately not carried).",
+            "port_evidence": "host.md 'Read the explicit model policy': report role blocked or obtain explicit choice, never substitute; docs/setup.md 'If a required role has no supported route, name that role and request a specific choice'; README 'There is no automatic model fallback.'; evidence receipts requested_model_verified true for Fable roles.",
+            "result": "pass",
+            "reason": "Contract unchanged from baseline pass; nothing in the diff weakens it."
+          },
+          {
+            "requirement": "Optional Grok reports unsupported/blocked honestly and is not faked",
+            "upstream_basis": "Upstream defaults Grok for code roles.",
+            "port_evidence": "evidence/verification.json grok.live_status blocked_before_inference, exact_current_argv_probe process_failed, inference_verified false, protections_weakened false; README 'Grok reader/writer profiles are not enabled'; docs/setup.md 'Require a verified invocation before advertising this route as usable'; schema marks optional_backends informational only.",
+            "result": "pass",
+            "reason": "No live claim, no downgrade, not a default."
+          },
+          {
+            "requirement": "No replacement of pstack by a simpler personal workflow; upstream routing graph and evidence semantics kept",
+            "upstream_basis": "n/a (user requirement).",
+            "port_evidence": "host.md 'Do not replace an upstream skill with a similarly named local skill'; routing index resolution rule; docs/playbook-routing-audit.md invariants 1-9; playbook bodies byte-identical.",
+            "result": "pass",
+            "reason": "Full library retained and routing points at packaged paths."
+          },
+          {
+            "requirement": "Authority and host permission boundaries preserved; granted autonomy not revoked; no sandbox or trust bypass",
+            "upstream_basis": "Router Autonomy section; principle-never-block-on-the-human.",
+            "port_evidence": "host.md 'Authority and honest completion' unchanged; new storage paragraph forbids changing global sandbox settings, granting the whole home directory or switching stores mid-session; README 'The plugin does not change your sandbox policy'; verification.md states no hook-trust bypass flag was used.",
+            "result": "pass",
+            "reason": "Repair added a narrower prerequisite, not a bypass."
+          },
+          {
+            "requirement": "Metadata and discovery match upstream invocation semantics",
+            "upstream_basis": "disable-model-invocation on 46 skills, absent on setup-pstack; companions not registered pstack skills.",
+            "port_evidence": "scripts/build.py agent_metadata from upstream flag; companion policy emission removed; tests test_explicit_discovery_and_normalized_skill_identity (46 explicit) and companion openai.yaml absence assertion; ADAPTATIONS.md invocation-policy row updated.",
+            "result": "pass",
+            "reason": "Exact mapping; WF-6 removed the misleading companion policies."
+          },
+          {
+            "requirement": "Source generation deterministic, fidelity-preserving, tamper-rejecting after the notice change",
+            "upstream_basis": "Pinned 0.15.2 rev 5bf2b15.",
+            "port_evidence": "scripts/build.py notice() adds a deterministic relative setup link only for skills/setup-pstack/SKILL.md; test_body_and_helper_fidelity splits on NOTICE_END so the upstream body must still match; relocation/repeat-build identity test unchanged; generated skills/setup-pstack/SKILL.md shows the notice followed by the byte-identical upstream body.",
+            "result": "pass",
+            "reason": "No text-rewriting introduced; ledger still records every transformation."
+          },
+          {
+            "requirement": "Packaging reproducible and complete at this commit",
+            "upstream_basis": "n/a.",
+            "port_evidence": "scripts/package.py adds 'schemas' to DIRECTORIES; package --check runs build --check first. The diff omits adaptations.json, deletion of companion-skills/*/agents/openai.yaml and plugins/pstack-codex/**, although generated skills/setup-pstack/SKILL.md, skills/poteto-mode/agents/openai.yaml and docs/routing-index.md do show regenerated content.",
+            "result": "unverified",
+            "reason": "Generated files that changed are consistent with a completed build, but the ledger and packaged copy were not in the packet; if stale, build --check and package --check fail loudly rather than misbehave. Approval assumes both pass at 64716cc."
+          },
+          {
+            "requirement": "Release claims supported by evidence at stated alpha scope; no overstatement",
+            "upstream_basis": "principle-prove-it-works.",
+            "port_evidence": "docs/verification.md item 4 now says the investigator used a coordinator-gathered packet and did not execute git/gh; 'Fable review status' states no workflow approval existed, final re-review pending, joint approval false; effort unmeasured; reader proof local git only; evidence/verification.json limitations mirror this.",
+            "result": "pass",
+            "reason": "WF-8 resolved; claims are separated by kind and bounded. README Status bullet 2 slightly understates (omits reader probe), see F2."
+          },
+          {
+            "requirement": "No workflow silently proceeds past a required unsupported gate",
+            "upstream_basis": "multi-phase-plan step 6 (check-plan), babysit/shipping watchers, autopilots /goal, why MCP discovery, eval transcripts, Benny triggers.",
+            "port_evidence": "host.md: plan checker must not be weakened or forged and a failed check is reported; transcripts summaries not equivalent; connector gaps reported; Benny reported blocked; wake gaps reported; CLI persistence failure returns error JSON exit 2; hook failure returns systemMessage exit 1.",
+            "result": "pass",
+            "reason": "Every unsupported gate has an explicit report-blocked instruction and a loud failure path; degradation to current-turn work is disclosed, not silent."
+          }
+        ],
+        "findings": [
+          {
+            "id": "workflow-F1",
+            "severity": "P3",
+            "file": "hooks/mode.py",
+            "location": "ACTIVATE lookahead `(?=$|[ \\t])`; DOLLAR_MENTION lookahead `(?=$|[^\\w:-])`; handle() evaluates only `first_line`",
+            "problem": "Activation is recognized only when the mention is on the first line and, for the slash form, followed by end/space/tab, or, for the dollar form, followed by anything except a word character, colon or hyphen. Prompts such as `$poteto-mode: fix the bug`, `/poteto-mode: ...`, `/poteto-mode, please`, or a two-paragraph task whose `$poteto-mode` mention is on line 2 load the skill in Codex but create no conversation-local state, so there is no compaction restore and no authoritative identity/prefix in context. host.md's manual `mode activate --project` fallback keeps this from being a silent bypass, but README does not disclose the first-line, space-delimited requirement.",
+            "evidence": "Regex definitions quoted above; tests/test_mode.py test_both_published_default_prompts_activate and test_documentation_and_similar_names_do_not_activate cover only space-delimited, first-line forms; README 'How it works' says only 'Activate `$pstack-codex:poteto-mode` and describe the outcome you want.'",
+            "fix": "Extend both lookaheads to `(?=$|[ \\t]|[.,;:!?](?:[ \\t]|$))`; optionally apply DOLLAR_MENTION to every non-code, non-quoted line of the prompt; add one README sentence stating where the mention must appear.",
+            "validation": "Add the four prompt forms to tests/test_mode.py asserting active state and full context, keep the negative list passing, re-run `python3 -m unittest discover -s tests`."
+          },
+          {
+            "id": "workflow-F2",
+            "severity": "P3",
+            "file": "README.md",
+            "location": "Status bullet 2 ('Claude analysis and writer profiles have been exercised'); wake-limitation paragraph naming five playbooks",
+            "problem": "Status bullet 2 omits the live reader probe that docs/verification.md and evidence/verification.json now record, and the named wake-dependent list (Autonomous run, Babysit drive, Shipping watch, both Autopilots, Orchestrate) omits Hillclimb's unattended mode (borrows the Autonomous run wake mechanism) and Visual parity's per-component `/loop`. The generic 'durable wakeups' sentence covers them, but a named list reads as exhaustive.",
+            "evidence": "upstream hillclimb.md step 5: 'borrow only the wake mechanism from the Autonomous run playbook'; visual-parity.md step 4: '`/loop` per component until the diff is zero'; verification.md 'Reader shell' probe.",
+            "fix": "Mention the reader profile (scoped local git only) in bullet 2; add 'unattended Hillclimb and Visual parity loops' to the named list in README and docs/verification.md.",
+            "validation": "Doc review."
+          },
+          {
+            "id": "workflow-F3",
+            "severity": "P3",
+            "file": "schemas/models.schema.json",
+            "location": "Entire file versus scripts/model_config.py constants (SINGLE_ROLES, PANEL_ROLES, BACKEND_EFFORTS, INHERITANCE_ALIASES, PROFILES, BUDGETS)",
+            "problem": "The published JSON Schema and the runtime validator are two hand-maintained rule sets; the only cross-check is tests/test_model_config.py test_schema_documents_role_and_backend_constraints (18 roles, one panel $ref, claude effort enum, native profile absence). They agree today on every rule I traced, but adding a role, effort token or field to one side will diverge silently and users who validate against the schema may get a different verdict from `models validate`.",
+            "evidence": "docs/setup.md step 4 tells users both 'reject unknown role names, unknown backends, invalid effort tokens, empty panels and panel/single shape mismatches'; no test exercises the schema with a JSON Schema validator.",
+            "fix": "Add a test that, when `jsonschema` is importable, validates every fixture in test_model_config.py plus examples/models.astra-claude.json against the schema and asserts accept/reject agreement with validate_model_config (skip cleanly if unavailable); or generate the schema's role/effort enums from model_config constants.",
+            "validation": "Run the test suite with and without jsonschema installed; mutate one enum on either side and confirm the test fails."
+          },
+          {
+            "id": "workflow-F4",
+            "severity": "P3",
+            "file": "scripts/pstack.py",
+            "location": "mode_context(): 'Mode command prefix: ' + shlex.join([... 'mode', '<action>', '--session', ...])",
+            "problem": "shlex.join quotes the placeholder, so every activation, continuation and compaction context injects `mode '<action>' --session ...`. A model that pastes the prefix literally gets an argparse invalid-choice error (loud, not silent), and the quoting invites confusion on every turn.",
+            "evidence": "shlex.quote wraps any token containing `<` or `>`; the injected line is asserted only for session/project substrings in tests.",
+            "fix": "Build the prefix as shlex.join([\"python3\", str(ROOT / \"scripts/pstack.py\"), \"mode\"]) + \" <action> \" + shlex.join([\"--session\", state[\"session\"], \"--project\", state[\"project\"]]).",
+            "validation": "Assert the continuation context contains 'mode <action> --session' in tests/test_mode.py."
+          }
+        ],
+        "limitations": [
+          "Source-only review; I executed nothing and did not open files outside the packet. Test counts (87/52), build/package checks, and all live Codex/Claude/Grok observations are the parent's reports, read for consistency with the code but not reproduced.",
+          "The baseline-to-candidate diff appears filtered: adaptations.json, deletion of companion-skills/*/agents/openai.yaml, the plugins/pstack-codex packaged copy, hooks/hooks.json, examples/models.astra-claude.json, scripts/claude_worker.py and docs/claude.md were not supplied. Ledger/package consistency at 64716cc must be confirmed with `python3 scripts/build.py --check && python3 scripts/package.py --check`.",
+          "Codex host semantics I cannot confirm from source: that plugin.json interface.defaultPrompt is submitted verbatim to UserPromptSubmit, that CODEX_THREAD_ID is set in tool shells and equals the hook session_id, that `--add-dir` is the correct CLI flag for an additional writable root, that trusted hooks inherit a launch-time PSTACK_STATE_DIR, and how Codex treats a non-zero UserPromptSubmit exit. The parent reports live observation of the first three.",
+          "docs/setup.md references a `--dry-run` option on scripts/claude_worker.py that I could not verify because the worker is not in my packet; confirm with `python3 scripts/claude_worker.py --help`.",
+          "Runtime findings runtime-01 through runtime-10 and the Bash rule syntax / Edit(/**) scoping questions are outside this scope; I checked only that README and host.md descriptions of reader shell rules and writer cwd scoping are consistent with the parent's receipts (reader init_tools Bash/Glob/Grep/Read; writer one denied outside Write, outside file unchanged).",
+          "Only Investigation and Bug fix were exercised live; the other 21 playbooks are assessed from preserved text plus the host contract. No side-by-side Cursor run exists, so fidelity is judged against upstream text, not observed Cursor behavior."
+        ],
+        "files_examined": [
+          "README.md",
+          "adapters/host.md",
+          "adapters/ADAPTATIONS.md",
+          "docs/verification.md",
+          "docs/setup.md",
+          "docs/routing-index.md",
+          "docs/playbook-routing-audit.md",
+          "evidence/verification.json",
+          ".codex-plugin/plugin.json",
+          "hooks/mode.py",
+          "scripts/pstack.py",
+          "scripts/model_config.py",
+          "scripts/build.py",
+          "scripts/package.py",
+          "schemas/models.schema.json",
+          "tests/test_mode.py",
+          "tests/test_model_config.py",
+          "tests/test_build.py",
+          "skills/poteto-mode/agents/openai.yaml",
+          "skills/setup-pstack/SKILL.md",
+          "upstream/pstack/.cursor-plugin/plugin.json",
+          "upstream/pstack/skills/poteto-mode/SKILL.md",
+          "upstream/pstack/agents/poteto-agent.md",
+          "upstream/pstack/skills/setup-pstack/SKILL.md",
+          "upstream/pstack/skills/why/SKILL.md",
+          "upstream/pstack/skills/arena/SKILL.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autonomous-run.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autopilot-full.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autopilot-stack.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/babysit.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/bug-fix.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/eval.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/feature.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/hillclimb.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/investigation.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/opening-a-pr.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/pause-safely.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/perf-issue.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/prototype.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/refactoring.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/runtime-forensics.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/session-pickup.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/shipping.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/trace-forensics.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/visual-parity.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/worktree-cleanup.md",
+          "baseline-to-candidate diff (7782ebe..64716cc, as supplied)"
+        ]
+      },
+      "execution": {
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "elapsed_seconds": 521.39,
+        "exit_code": 0,
+        "subtype": "success",
+        "is_error": false,
+        "structured": true,
+        "init": {
+          "model": "claude-fable-5-1",
+          "tools": [
+            "StructuredOutput"
+          ],
+          "permissionMode": "dontAsk",
+          "mcp_servers": []
+        }
+      },
+      "prompt_sha256": "38479c9c70440817f45a369ae8dfe8d3671677bdf12563dd1ad0e2354b214f44",
+      "raw_response_sha256": "44bd37e3a6a8efc009f8bd1a08e40149b4398e82c1025386165a2c739f70bd43"
+    },
+    "runtime": {
+      "report": {
+        "target_commit": "64716ccce5b58e7195d20789aafaf7d9f88c7c61",
+        "scope": "runtime: scripts/worker_common.py launcher, scripts/claude_worker.py and scripts/grok_worker.py adapters, tests/test_worker_common.py, tests/test_worker_signals.py, tests/test_claude_worker.py, tests/test_grok_worker.py, and the runtime claims in docs/claude.md, docs/grok.md, docs/verification.md, evidence/verification.json, README.md, adapters/host.md, adapters/ADAPTATIONS.md. Source-only re-review of the supplied candidate files, the baseline-to-candidate diff, and the parent-observed sanitized evidence. Nothing was executed. Workflow scope (hooks, build, mode identity, setup schema) is out of scope except where runtime docs overlap.",
+        "verdict": "approve",
+        "approval_scope": "Runtime layer of commit 64716ccce5b58e7195d20789aafaf7d9f88c7c61 as a limited alpha: the Claude analysis/reader/writer adapters over the installed-CLI login route with scoped Bash rules for readers and a single cwd-anchored Edit rule for writers; the common launcher's timeout, normal-exit and handled-signal (SIGINT/SIGTERM/SIGHUP) lifecycle as tested with real subprocesses; fail-closed model/tool/receipt evidence including retained-but-unaccepted partial output; and Grok gated as unsupported (reader/writer) or blocked-before-inference (analysis) with the uniform receipt schema. What I verified from source: adapter validation, argv construction, stream parsing, evaluate precedence, signal deferral and termination logic, and that the new tests assert the claimed behaviors. What I accept only as parent-observed sanitized evidence consistent with the code, not independently reproduced: that Edit(/**) governs Write and anchors at cwd on the installed Claude Code, that safe mode suppressed the sentinel hook/MCP/instruction in the probe, that the reader ran git log live, and that the exact Grok argv produced a sandbox error rather than an unknown-option error. Approval does NOT cover: Grok inference or any Grok profile as live; gh-authenticated or complete seven-source why investigations; effort as applied reasoning compute; managed-policy customizations under safe mode; Edit(/**) anchoring when cwd is a subdirectory of a larger repository; SIGKILL/hard-kill reconciliation beyond the documented procedure; Bash rule wildcard semantics beyond the forms live-tested (bare-wildcard and :* prefix); or any workflow-scope claim. The 87 Python and 52 Bun test passes are parent-reported; I counted 48 runtime tests by reading and did not run them.",
+        "summary": "All ten baseline runtime findings are resolved at this commit or accurately disclosed, and the diff introduces no regression I could identify. runtime-01: resolve_tools now treats reader and writer with one branch; a reader with Bash(git log:*) yields --tools Read,Glob,Grep,Bash and allow rules without Edit/Write, covered by test_reader_can_run_explicit_scoped_shell_without_edit_tools and a live reader-shell receipt whose init_tools were exactly Bash/Glob/Grep/Read with zero denials; gh and the seven-source why contract remain explicitly unproven in verification.md and evidence limitations. runtime-02/04: _SignalGuard now records the first handled signal instead of raising, _supervise polls at 50 ms and raises ParentSignal at a checkpoint, Popen is skipped if a signal is already pending, and a post-receipt-write check finalizes a late cancellation; tests/test_worker_signals.py sends real SIGTERM/SIGINT/SIGHUP to a wrapper at seven windows (claim, hash, output_file, popen, process_record, supervise, receipt) and asserts exit 130, matching public and durable interrupted receipts, kill_sent for a TERM-ignoring child, and ProcessLookupError on killpg. runtime-03: invoking-tool timeout, stale spawned records and hard-kill orphans are documented in docs/claude.md, host.md and verification.md. runtime-05: parse_claude_events retains last assistant text as partial_text with partial_unterminated evidence and status stays incomplete (tested). runtime-06: grok main() uses make_error_receipt, unsupported_profile is a STATUSES member with exit 2, build_env rejects XAI_API_KEY and GROK_CLI_CHAT_PROXY_BASE_URL by name and the launcher receives explicit env and auth-policy evidence (tested). runtime-07: the exact seven-deny argv was probed with no unknown-option error. runtime-08: docs now use the :* form for the investigator example but the writer example uses a space-plus-star glob that is not live-tested and will not match a bare command. runtime-09: safe mode was probed with a positive control and the CLI help was captured; effort remains requested-only and is disclosed; the help's admin-policy caveat is not in the docs. runtime-10: writer allow rules are Read, Glob, Grep, Edit(/**) with no bare Write/Edit (tested), and the live probe recorded one denied outside Write with the outside file unchanged. Receipt identity semantics are unchanged and correct: success and requested_model_verified require exited/returncode 0/complete/no error/no parse errors/every assistant model equal to the requested model, auxiliary usage is separated, and unexpected tools, MCP presence, non-none apiKeySource, wrong permission mode and cwd drift fail closed. No workflow silently proceeds past an unsupported gate in this scope. Eight P3 items remain: doc example semantics, nested-cwd anchor unproven, run_dir under cwd not rejected, managed-policy caveat undisclosed, denials not surfaced as warnings, Grok main lacks an internal_error path, minor lifecycle relabel and SIG_IGN edges, and evidence/doc staleness.",
+        "checks": [
+          {
+            "requirement": "Standalone Claude Code CLI serves configured Fable roles with explicit model/effort, and a reader profile can run scoped shell commands for why investigators and verifiers (runtime-01)",
+            "upstream_basis": "poteto-mode Subagents: explicit model per role, readonly explorers; why Step 2/3: investigators run git blame/log and gh but must not write; Shipping/Orchestrate verifiers run tests",
+            "port_evidence": "scripts/claude_worker.py resolve_tools: reader base (Read,Glob,Grep) plus is_scoped_bash_rule entries adds Bash to --tools and the rule to --allowedTools, never Edit/Write; tests/test_claude_worker.py test_reader_can_run_explicit_scoped_shell_without_edit_tools asserts tools == [Read,Glob,Grep,Bash] and no Write/Edit in allowed; evidence/verification.json repair_verification.reader-shell: init_tools [Bash,Glob,Grep,Read], Bash 1, denials 0, requested_model_verified true, gh_or_complete_why_search_verified false; docs/claude.md profile table and adapters/host.md 'Use a reader with explicit scoped Bash rules'",
+            "result": "pass",
+            "reason": "Implemented, unit-tested and live-proven for one local git log command at effort low. The gh and seven-source limits are stated in verification.md and evidence limitations rather than hidden."
+          },
+          {
+            "requirement": "No model substitution to satisfy an unavailable role; receipt identity semantics unchanged",
+            "upstream_basis": "Per-role model lines; a role with no available model is blocked, not remapped (host.md 'Read the explicit model policy')",
+            "port_evidence": "worker_common.evaluate: mismatched models -> model_mismatch, complete with no attribution -> unverified, verified requires observed nonempty and no mismatch; claude_worker strips STRIPPED_ENV names and errors on init model drift; grok parse_events errors unless models == [requested]; tests test_wrong_or_absent_message_models_cannot_verify, test_mismatch_is_failure_without_alias_fallback, test_shared_runner_rejects_complete_but_mismatched_response",
+            "result": "pass",
+            "reason": "Unchanged by the diff and still fail-closed on both backends; auxiliary usage models (Haiku in live receipts) are reported separately and never satisfy attribution."
+          },
+          {
+            "requirement": "Auth route and host permission boundaries preserved; writer edits scoped to the primary working directory (runtime-10)",
+            "upstream_basis": "User requirement: installed CLI subscription login, no bypass flags; arena/swarm rely on one writer per output location (principle-separate-before-serializing-shared-state)",
+            "port_evidence": "claude_worker.REJECTED_ENV raises by name; apiKeySource must be 'none'; fake CLI asserts no --bare/--dangerously-skip-permissions; resolve_tools writer allowed = [Read,Glob,Grep,Edit(/**)] + bash rules with no bare Write/Edit; test_writer_uses_one_primary_directory_edit_rule_for_edit_and_write; evidence repair_verification.writer-scope: Write 2, permission_denial_count 1, permission_denied_tools [Write], inside_changed true, outside_unchanged true; docs/claude.md documents Edit(/**) semantics and non-containment",
+            "result": "pass",
+            "reason": "Route pinned and audited from init. The live probe discriminates because under dontAsk an in-cwd Write needs a matching allow rule and the only file rule was Edit(/**). Nested-cwd anchoring and run_dir-under-cwd remain P3 gaps (RT-02, RT-03)."
+          },
+          {
+            "requirement": "Optional Grok reports unsupported/blocked honestly with uniform receipts, recorded env policy and a probed exact argv (runtime-06, runtime-07)",
+            "upstream_basis": "User requirement: Grok must not be faked",
+            "port_evidence": "grok_worker.build_command raises UnsupportedProfile for reader/writer or nonempty allowed_tools; main() uses worker_common.make_error_receipt; STATUSES gains unsupported_profile with exit code 2; build_env rejects XAI_API_KEY/GROK_CLI_CHAT_PROXY_BASE_URL by name; run() passes env and adapter_evidence; tests test_unsupported_profile_uses_the_common_error_receipt, test_auth_override_values_are_not_exposed, test_runner_uses_shared_launcher_without_changing_the_spec; evidence grok.exact_current_argv_probe: process_failed, all_seven_denies true, sandbox_error true, unknown_option_error false, inference_verified false; docs/grok.md states blocked and unverified semantics",
+            "result": "pass",
+            "reason": "No downgrade, alias or fake success; pre-launch receipts now share the Claude schema. The argv acceptance conclusion rests on the parent's stderr classification; its published sha256 covers machine-specific paths (RT-08)."
+          },
+          {
+            "requirement": "Timeout and parent-signal cancellation terminate the whole owned process group and always produce a receipt after claim (runtime-02, runtime-04)",
+            "upstream_basis": "Orchestrate Liveness: bounded retries, unknown cancellation retains ownership; docs/claude.md 'Cancellation and recovery'",
+            "port_evidence": "worker_common._SignalGuard records requested_signal; run_process installs the guard before claim_run_dir and restores in finally; _run_claimed_process skips Popen when a signal is pending, _supervise polls proc.wait(0.05) and raises ParentSignal at checkpoints, post-supervise and post-receipt-write checks relabel to interrupted; tests/test_worker_signals.py sends real SIGTERM/SIGINT/SIGHUP at claim, hash, output_file, popen, process_record, supervise and receipt windows asserting returncode 130, public == durable receipt, interrupt_signal name, confirmed_terminated, kill_sent for TERM-ignoring child, heartbeat stopped, killpg ProcessLookupError and exclusive claim retained; test_worker_common timeout/grandchild/normal-exit tests unchanged",
+            "result": "pass",
+            "reason": "By inspection the design is correct and the tests exercise the exact paths the baseline flagged as unproven. SIGKILL and unwritable storage are outside the guarantee and are stated in the docstring, docs/claude.md and verification.md. Minor edges remain (RT-07)."
+          },
+          {
+            "requirement": "Receipt evidence is bounded and honest, distinguishes delivery from acceptance, and retains partial output without accepting it (runtime-05)",
+            "upstream_basis": "poteto-mode: every claim carries evidence; TIMEBOX: return partial findings and stop; Verification: self-report is not a pass",
+            "port_evidence": "parse_claude_events sets result_text = last assistant text when no result event, plus evidence partial_chars/partial_unterminated and parsed partial_text; status stays incomplete via evaluate; test_partial_text_is_retained_without_claiming_completion; docs/claude.md 'On an incomplete stream...' paragraph; receipt still excludes raw transcript (test_stdin_spaces_launch_order_and_private_artifacts)",
+            "result": "pass",
+            "reason": "Partial output is now preserved and labeled; success still requires a terminal result. Permission denials are visible in permission_denial_count but not in warnings, so an exit-code-only consumer can miss them (RT-05)."
+          },
+          {
+            "requirement": "Retries are coordinator-owned and bounded; no silent runtime retry or resume",
+            "upstream_basis": "Orchestrate retry-by-mode; poteto-mode: respawn fresh rather than resume-chain",
+            "port_evidence": "No retry loop in run_process; validate_claude_spec rejects resume/session_id; docs/claude.md 'no automatic retry' and 'Automatic session resumption is not implemented'",
+            "result": "pass",
+            "reason": "Unchanged and consistent with upstream guidance."
+          },
+          {
+            "requirement": "Nested role handoffs preserved at the coordinator",
+            "upstream_basis": "how explorers then explainer; why investigators then synthesizer; orchestrate nesting to depth 3",
+            "port_evidence": "Agent/Task never in any profile tool list; live nested_how_explainer and pstack_bug_fix receipts; verification.md item 4 now states the investigator did not run its own queries; host.md maps why/reflect readonly:false to reader with scoped Bash",
+            "result": "partial",
+            "reason": "Handoff order is performed natively by the coordinator and Claude leaves cannot spawn sub-roles, a documented adaptation. Investigator depth is now possible via reader Bash but only local git log was proven; MCP-backed categories are host-connector questions outside this runtime."
+          },
+          {
+            "requirement": "ERP pilot must not leak into global runtime policy",
+            "upstream_basis": "User requirement",
+            "port_evidence": "No project-specific paths, prompts, rules or defaults in worker_common.py, claude_worker.py, grok_worker.py, the four runtime test files, docs/claude.md or docs/grok.md",
+            "result": "pass",
+            "reason": "Nothing project-specific in the runtime layer."
+          },
+          {
+            "requirement": "Safe-mode suppression and effort claims are evidenced or accurately bounded (runtime-09)",
+            "upstream_basis": "host.md: preserve an explicitly requested exact model and effort; docs/claude.md: safe mode suppresses automatic customizations",
+            "port_evidence": "evidence repair_verification.safe-mode: safe run hook_sentinel false, mcp_sentinel false, phrase absent, mcp_count 0; positive control without safe mode: both sentinels true, phrase present, mcp_count 1; captured CLI help lists --safe-mode disabling CLAUDE.md/skills/plugins/hooks/MCP and --effort levels low..max; evidence effort_evidence.internal_reasoning_compute_independently_verified false; verification.md states effort is a request",
+            "result": "partial",
+            "reason": "Safe-mode suppression is now demonstrated with a control and the effort limit is disclosed. The help's 'Admin-managed (policy) settings still apply' caveat is not in docs/claude.md and managed hooks would be invisible to the receipt (RT-04)."
+          },
+          {
+            "requirement": "Hard-kill, orphan and reconciliation limits are disclosed with a usable operator procedure (runtime-03)",
+            "upstream_basis": "Orchestrate: unknown cancellation retains ownership; principle-make-operations-idempotent",
+            "port_evidence": "docs/claude.md: tool timeout > timeout_seconds + term_grace_seconds + 10, process.json 'spawned' means unreconciled, verify pid/command/start time before signaling; adapters/host.md same rule; verification.md Remaining limits bullet; KILL_WAIT_SECONDS = 10 matches the stated margin",
+            "result": "pass",
+            "reason": "Accurately disclosed; the arithmetic matches the launcher constants."
+          },
+          {
+            "requirement": "Bash permission rule guidance is accurate and matches what was live-tested (runtime-08)",
+            "upstream_basis": "n/a (host adaptation); is_scoped_bash_rule accepts both forms",
+            "port_evidence": "docs/claude.md examples: Bash(python3 -m unittest *) and Bash(git log:*); tests use Bash(python3 -m unittest:*) and Bash(git log:*); original live writer succeeded with Bash(python3 -m unittest*) (evidence claude_writer Bash 4, denials 0)",
+            "result": "partial",
+            "reason": "The :* investigator example is live-tested. The space-plus-star writer example is not, and it will not match a bare 'python3 -m unittest' invocation, so a verifier could see an unexpected denial (RT-01). I could not check the cited permission docs."
+          },
+          {
+            "requirement": "Tests are honest, real, and support the release claims; counts are consistent",
+            "upstream_basis": "principle-prove-it-works; principle-test-behavior-not-implementation",
+            "port_evidence": "By reading: test_worker_common 9, test_worker_signals 7, test_claude_worker 13, test_grok_worker 19 = 48 runtime tests, all real subprocess or parser tests with literal assertions and labeled synthetic fixtures; verification.md and evidence report 87 Python and 52 Bun (206 expectations) passing; baseline runtime count was 36 so the +12 runtime delta is consistent with the reported +30 total only if the remaining +18 are workflow/model tests I did not receive",
+            "result": "partial",
+            "reason": "The tests I read are honest and match the documented claims. Execution results and the 87 total are parent-reported and not independently run; the non-runtime remainder was not supplied."
+          },
+          {
+            "requirement": "No workflow silently proceeds past a required unsupported gate in the runtime layer",
+            "upstream_basis": "User requirement: missing capabilities do not become silent weaker substitutes",
+            "port_evidence": "Grok reader/writer -> unsupported_profile before launch (exit 2); Grok analysis -> process_failed with stderr retained; Claude unknown init tool, MCP presence, permission-mode drift, non-none apiKeySource, cwd drift, missing model, forbidden tool call -> unverified/incomplete/model_mismatch; interrupted and timeout never verified; docs say success != acceptance",
+            "result": "pass",
+            "reason": "Every unsupported or unverifiable outcome is a non-success status with an errors entry. Denials do not fail delivery by design but are recorded in the receipt."
+          },
+          {
+            "requirement": "All baseline runtime findings 01-10 are resolved or accurately disclosed at this commit",
+            "upstream_basis": "Baseline runtime report approval carve-outs (a), (b), (c) and P3 list",
+            "port_evidence": "01 code+test+live; 02 real-signal tests; 03 docs; 04 deferral code+tests; 05 code+test+doc; 06 code+tests+doc; 07 evidence+doc; 08 doc updated with a semantic nit; 09 probe with control, help captured, effort disclosed; 10 code+test+live",
+            "result": "pass",
+            "reason": "The three approval carve-outs from the baseline are now evidenced. Remaining residue is P3 and listed in findings."
+          }
+        ],
+        "findings": [
+          {
+            "id": "runtime-RT-01",
+            "severity": "P3",
+            "file": "docs/claude.md",
+            "location": "Profiles section: 'Example writer allowed_tools: [\"Bash(python3 -m unittest *)\"]' and the sentence claiming both wildcard forms are supported",
+            "problem": "The space-plus-star glob requires at least one character after the space, so it does not match the bare 'python3 -m unittest' invocation a verifier commonly runs; under dontAsk that produces a permission denial the doc does not warn about. This exact form was never live-tested: the live writer used 'unittest*' and the tests use 'unittest:*'. The support claim cites permission docs I could not check.",
+            "evidence": "tests/test_claude_worker.py uses 'Bash(python3 -m unittest:*)'; evidence/verification.json claude_writer ran Bash 4 times with permission_denial_count 0 under the bare-wildcard form; is_scoped_bash_rule accepts all three forms without distinguishing them.",
+            "fix": "Use 'Bash(python3 -m unittest:*)' as the writer example (matches bare and argumented invocations and matches the tests). If the glob form is kept, state that it requires arguments after the space and has not been live-tested.",
+            "validation": "Doc diff; optionally a low-effort writer probe using the exact example rule that runs bare 'python3 -m unittest' and reports permission_denial_count 0."
+          },
+          {
+            "id": "runtime-RT-02",
+            "severity": "P3",
+            "file": "scripts/claude_worker.py",
+            "location": "resolve_tools comment 'CLI-supplied / patterns anchor at the primary working directory' and docs/claude.md 'anchors at the primary launch directory'",
+            "problem": "The probe shows Edit(/**) permits an in-cwd Write and denies an outside Write, but nothing records whether cwd was a repository root. If Claude Code resolves '/' patterns against the project root derived from the git toplevel rather than the launch cwd, a writer launched in a subdirectory of a monorepo could edit sibling packages, which is exactly the arena/swarm sibling-writer case the scoping is meant to prevent.",
+            "evidence": "evidence/verification.json repair_verification.writer-scope records inside_changed/outside_unchanged only; no cwd-vs-repo-root detail; docs/claude.md asserts anchoring without a nested-cwd case.",
+            "fix": "Probe with cwd = a subdirectory of a git repository and an attempted Write to a sibling directory in the same repository; publish the result. If the anchor is the repository root, emit 'Edit(//<realpath cwd>/**)' (absolute form) instead of 'Edit(/**)'.",
+            "validation": "Sanitized evidence entry showing the sibling-directory Write denied and the file unchanged, or the adapter switched to the absolute form with a unit test."
+          },
+          {
+            "id": "runtime-RT-03",
+            "severity": "P3",
+            "file": "scripts/worker_common.py",
+            "location": "validate_spec (cwd and run_dir checks) and claim_run_dir",
+            "problem": "Nothing rejects a run_dir located under cwd (or a cwd under run_dir). A writer's Edit(/**) then covers its own attempt directory, so the child could overwrite launch.json, process.json or the stdout.jsonl it is writing to, corrupting or shaping the evidence the receipt is derived from. The README example path is arbitrary, so coordinators may well place attempts under the project.",
+            "evidence": "validate_spec only checks cwd is a directory and run_dir does not exist; resolve_tools writer allowed includes Edit(/**); artifact files are 0600 but owned by the same user as the child.",
+            "fix": "In validate_spec, reject when os.path.realpath(run_dir) is inside os.path.realpath(cwd) or vice versa (SpecError before claim), and say so in README/docs/claude.md.",
+            "validation": "Unit test in tests/test_worker_common.py: spec with run_dir under cwd raises SpecError and leaves no directory; existing tests keep run_dir as a sibling of cwd or under a separate root."
+          },
+          {
+            "id": "runtime-RT-04",
+            "severity": "P3",
+            "file": "docs/claude.md",
+            "location": "Profiles section: 'Safe mode suppresses automatic customizations'",
+            "problem": "The captured CLI help says admin-managed (policy) settings still apply under --safe-mode. Managed hooks or MCP servers would not be suppressed; the receipt detects MCP presence from init but cannot see hooks at all. The doc states the suppression without this caveat, so an enterprise-managed host could inject behavior the operator believes is disabled.",
+            "evidence": "Captured help excerpt: 'Admin-managed (policy) settings still apply.'; parse_claude_events checks only init.mcp_servers; the safe-mode probe ran in a scratch project without managed settings.",
+            "fix": "Add one sentence: managed policy settings (including hooks and MCP servers) still apply under safe mode; MCP presence fails the receipt, hooks are not detectable, so managed hosts need a separate check.",
+            "validation": "Doc diff."
+          },
+          {
+            "id": "runtime-RT-05",
+            "severity": "P3",
+            "file": "scripts/worker_common.py",
+            "location": "_run_claimed_process receipt assembly: 'warnings' and 'permission_denial_count'",
+            "problem": "Permission denials are recorded only as a count and tool list; the receipt status stays success and the exit code is 0. A coordinator that gates on exit code or errors will not notice that the worker was blocked from part of its task. The docs tell the parent to inspect the count, but the receipt itself could carry the signal.",
+            "evidence": "evidence/verification.json repair_verification.writer-scope: status success, permission_denial_count 1, errors []; evaluate never reads permission_denial_count.",
+            "fix": "When the evidence permission_denial_count is greater than zero, append a warning such as 'permission_denials: N (tools: ...)' to the receipt warnings; keep status unchanged so delivery and acceptance remain separate.",
+            "validation": "Extend test_provider_failure_incomplete_stream_and_denials_are_distinct to assert the warning text is present for the permission_denial scenario."
+          },
+          {
+            "id": "runtime-RT-06",
+            "severity": "P3",
+            "file": "scripts/grok_worker.py",
+            "location": "main(): 'except (ValueError, OSError) as error'",
+            "problem": "Any other exception from run() (for example RuntimeError from run_process on a non-POSIX host, or an unexpected adapter bug) escapes with a traceback and no receipt, unlike claude_worker.main which emits an internal_error receipt. Coordinators reading receipts must special-case the Grok backend again for this path.",
+            "evidence": "claude_worker.main has 'except Exception' producing make_error_receipt(spec, 'internal_error', ...); grok_worker.main has no equivalent.",
+            "fix": "Add 'except Exception as error' after the ValueError/OSError clause that prints the traceback to stderr and emits make_error_receipt(spec, 'internal_error', [...]).",
+            "validation": "Unit test patching grok_worker.run to raise RuntimeError and asserting an internal_error receipt with exit code 1 on stdout."
+          },
+          {
+            "id": "runtime-RT-07",
+            "severity": "P3",
+            "file": "scripts/worker_common.py",
+            "location": "_run_claimed_process 'if guard.requested_signal is not None: lifecycle = \"interrupted\"'; run_process finally guard.restore(); _SignalGuard.install()",
+            "problem": "Three small lifecycle edges: (a) a first stop signal that arrives while the timeout termination sequence is running relabels lifecycle 'timeout' as 'interrupted', so the status and errors lose the timeout cause even though the termination record shows the TERM/KILL sequence; (b) a signal arriving after the post-receipt-write check but before guard.restore is recorded and then dropped, so the worker exits 0 with a success receipt despite a stop request; (c) install() replaces an inherited SIG_IGN disposition (for example SIGHUP under nohup-style launch) with a terminating handler, contrary to the convention of leaving ignored signals ignored. None affects child cleanup.",
+            "evidence": "_supervise returns lifecycle 'timeout' with record term_sent/kill_sent; the following unconditional override sets 'interrupted'; restore() reinstalls previous handlers without acting on a pending requested_signal; install() calls signal.signal for every handled name regardless of previous disposition.",
+            "fix": "Keep the original lifecycle and add an 'interrupted' error entry when a signal arrives after termination began; in run_process, after restore, record any still-pending signal into the returned receipt's late_parent_signals; skip installing a handler when the previous disposition is SIG_IGN.",
+            "validation": "Unit tests: timeout child plus SIGTERM during grace asserts status timeout with an interrupted error; SIGHUP set to SIG_IGN before run_process is left ignored."
+          },
+          {
+            "id": "runtime-RT-08",
+            "severity": "P3",
+            "file": "evidence/verification.json",
+            "location": "grok.exact_current_argv_probe.argv_sha256; repair_verification.* runtime_evidence; docs/claude.md 'checked on Claude Code 2.1.274' and 'Authentication and evidence'; README Status bullet 2; scripts/claude_worker.py RESTRICTED_TOOLS",
+            "problem": "Evidence and docs are slightly out of step: the Grok argv hash covers machine-specific absolute paths so a reviewer cannot compare it to build_command output; the Claude Code version asserted in docs/claude.md is not in the sanitized evidence even though parse_claude_events captures claude_code_version; docs/claude.md 'Authentication and evidence' and README Status still say only analysis and writer were exercised although the reader probe now exists; RESTRICTED_TOOLS is defined but never used.",
+            "evidence": "parse_claude_events sets evidence['claude_code_version']; repair_verification entries omit it; README: 'Claude analysis and writer profiles have been exercised'; grep of claude_worker.py shows no reference to RESTRICTED_TOOLS after its definition.",
+            "fix": "Publish claude_code_version in each repair_verification entry; publish the Grok control arguments with paths redacted (or hash only the non-path arguments); update the two stale sentences to include the reader probe; delete RESTRICTED_TOOLS or use it.",
+            "validation": "Evidence and doc diff; no test change required."
+          }
+        ],
+        "limitations": [
+          "I executed nothing. All live-host claims (Edit(/**) governing Write and anchoring at cwd, safe-mode suppression with positive control, the reader git log run, the Grok exact-argv sandbox error) are parent-observed sanitized evidence; I checked them for consistency with the code paths but did not reproduce them.",
+          "I could not consult the cited Claude Code permission documentation, so the claims that both Bash wildcard forms are supported, that Write(path) rules are ignored, and that CLI-supplied '/' patterns anchor at cwd are assessed only against the live probe results and the code.",
+          "The 87 Python and 52 Bun test results are parent-reported. I counted 48 runtime tests by reading the four runtime test files; the remaining suites (build, mode, model validation) were not supplied and are workflow scope.",
+          "Grok CLI flag semantics beyond the parent's report of no unknown-option error are unverified; Grok remains blocked and I do not assess it as live.",
+          "The Codex-side sandbox and network prerequisites for launching the worker are now documented in docs/claude.md but were not observed here beyond the workspace-write state-directory denial recorded for the mode CLI.",
+          "No side-by-side Cursor execution baseline exists; fidelity judgments compare the port to upstream text.",
+          "Workflow-scope findings WF-1 through WF-9 and the mode/identity/setup repairs were not re-reviewed here except where their documentation overlaps runtime files."
+        ],
+        "files_examined": [
+          "scripts/worker_common.py",
+          "scripts/claude_worker.py",
+          "scripts/grok_worker.py",
+          "tests/test_worker_common.py",
+          "tests/test_worker_signals.py",
+          "tests/test_claude_worker.py",
+          "tests/test_grok_worker.py",
+          "docs/claude.md",
+          "docs/grok.md",
+          "docs/verification.md",
+          "evidence/verification.json",
+          "README.md",
+          "adapters/host.md",
+          "adapters/ADAPTATIONS.md",
+          "upstream/pstack/.cursor-plugin/plugin.json",
+          "upstream/pstack/skills/poteto-mode/SKILL.md",
+          "upstream/pstack/agents/poteto-agent.md",
+          "upstream/pstack/skills/setup-pstack/SKILL.md",
+          "upstream/pstack/skills/why/SKILL.md",
+          "upstream/pstack/skills/arena/SKILL.md",
+          "upstream/pstack/skills/how/SKILL.md",
+          "upstream/pstack/skills/swarm/SKILL.md"
+        ]
+      },
+      "execution": {
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "elapsed_seconds": 613.62,
+        "exit_code": 0,
+        "subtype": "success",
+        "is_error": false,
+        "structured": true,
+        "init": {
+          "model": "claude-fable-5-1",
+          "tools": [
+            "StructuredOutput"
+          ],
+          "permissionMode": "dontAsk",
+          "mcp_servers": []
+        }
+      },
+      "prompt_sha256": "d567c5036f8642318c05e05ae810167ba1d0b92dff64b9c0165f47bb5c1cf3d7",
+      "raw_response_sha256": "4eae9959dec1d7df5fcaf31a4f1ecb43fd959398250daa08abcf5e041410aabf"
+    }
+  }
+}

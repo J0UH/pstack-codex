@@ -6,7 +6,7 @@ This is an independent port of [Lauren Tan's pstack](https://github.com/cursor/p
 
 ## How it works
 
-Activate `$pstack-codex:poteto-mode` and describe the outcome you want. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
+Start the first line with `$pstack-codex:poteto-mode` followed by a space and your task. This is the verified automatic-activation form; mentions elsewhere or colon-suffixed forms do not guarantee persistent mode. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
 
 ```mermaid
 flowchart LR
@@ -28,11 +28,13 @@ The plugin is reusable across projects. Build commands, verification harnesses, 
 This is an early, tested port, **not a claim of complete Cursor runtime parity**. Read [verification](docs/verification.md) for the exact evidence and remaining gaps.
 
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
-- Claude analysis and writer profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
+- Claude analysis, writer and scoped local-Git reader profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
 - Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
 - Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
 
-The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, or Orchestrate for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
+The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, Orchestrate, unattended Hillclimb, or Visual parity loops for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
+
+Two completed Fable 5.1 reviews approved the documented limited alpha after repairs. See the [exact commit, verdicts and limits](docs/fable-review.md).
 
 ## Install
 

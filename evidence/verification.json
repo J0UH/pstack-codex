@@ -186,7 +186,45 @@
       "requested_effort": "low",
       "profile": "analysis",
       "protections_weakened": false,
-      "inference_verified": false
+      "inference_verified": false,
+      "control_argv_with_paths_redacted": [
+        "<absolute-path>",
+        "--cwd",
+        "<absolute-path>",
+        "--prompt-file",
+        "<absolute-path>",
+        "--model",
+        "grok-4.6",
+        "--reasoning-effort",
+        "low",
+        "--output-format",
+        "streaming-messages-json",
+        "--tools",
+        "",
+        "--permission-mode",
+        "dontAsk",
+        "--no-subagents",
+        "--disable-web-search",
+        "--max-turns",
+        "1",
+        "--sandbox",
+        "read-only",
+        "--deny",
+        "Bash",
+        "--deny",
+        "Edit",
+        "--deny",
+        "Read",
+        "--deny",
+        "Grep",
+        "--deny",
+        "MCPTool",
+        "--deny",
+        "WebFetch",
+        "--deny",
+        "WebSearch"
+      ],
+      "argv_hash_scope": "Exact local argv including private absolute paths; not a portable reconstruction hash."
     }
   },
   "limitations": [
@@ -194,7 +232,6 @@
     "Not every playbook exercised end-to-end.",
     "Cloud placement, webhook automation and some history/plan integrations remain explicitly unsupported.",
     "Process groups are lifecycle control, not containment of escaped sessions or external effects.",
-    "Final Fable re-review of the repaired candidate is pending; there is no joint approval yet.",
     "Reader repair proof covers local git log only, not authenticated gh or a complete seven-source investigation.",
     "Requested effort is recorded; internal reasoning compute is not independently verified.",
     "Hard-killed launchers, escaped process sessions and unavailable artifact storage require separate reconciliation."
@@ -343,7 +380,8 @@
         }
       },
       "validated_operation": "one scoped local git log command",
-      "gh_or_complete_why_search_verified": false
+      "gh_or_complete_why_search_verified": false,
+      "claude_code_version": "2.1.274"
     },
     "writer-scope": {
       "status": "success",
@@ -385,7 +423,8 @@
           "claude-haiku-4-5-20251001": "firstParty"
         }
       },
-      "boundary_scope": "One permitted file write and one denied outside-workspace Write; not OS containment."
+      "boundary_scope": "One permitted file write and one denied outside-workspace Write; not OS containment.",
+      "claude_code_version": "2.1.274"
     },
     "safe-mode": {
       "status": "success",
@@ -430,7 +469,8 @@
           "claude-haiku-4-5-20251001": "firstParty"
         }
       },
-      "control": "The same synthetic project customizations ran without safe mode in a positive control."
+      "control": "The same synthetic project customizations ran without safe mode in a positive control.",
+      "claude_code_version": "2.1.274"
     },
     "model_setup": {
       "empty_config_reported": true,
@@ -495,8 +535,15 @@
         ]
       }
     ],
-    "repaired_candidate_review": "pending",
-    "joint_approval": false,
+    "repaired_candidate_review": "approve within documented limited-alpha scope",
+    "joint_approval": true,
     "note": "Repair evidence does not retroactively change the baseline verdicts."
+  },
+  "final_fable_approval": {
+    "reviewed_code_commit": "64716ccce5b58e7195d20789aafaf7d9f88c7c61",
+    "workflow": "approve",
+    "runtime": "approve",
+    "scope": "documented limited alpha",
+    "record": "fable-review.json"
   }
 }
