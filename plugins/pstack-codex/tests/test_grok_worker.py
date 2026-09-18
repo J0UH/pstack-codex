@@ -106,7 +106,18 @@ class GrokCommandTests(unittest.TestCase):
         root = Path(self.temp.name)
         prompt = root / "prompt with spaces.txt"
         prompt.write_text("Synthetic task")
-        self.spec = {"backend": "grok", "model": "grok-4.6", "effort": "low", "profile": "analysis", "cwd": str(root), "prompt_file": str(prompt), "run_dir": str(root / "run"), "timeout_seconds": 30}
+        # The worker's cwd and its attempt evidence are siblings, never nested.
+        project = root / "project"
+        project.mkdir()
+        self.spec = {"backend": "grok", "model": "grok-4.6", "effort": "low", "profile": "analysis", "cwd": str(project), "prompt_file": str(prompt), "run_dir": str(root / "run"), "timeout_seconds": 30}
+
+    def run_main(self, spec):
+        path = Path(spec["cwd"]) / "spec.json"
+        path.write_text(json.dumps(spec))
+        output, errors = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
+            code = main(["--spec", str(path)])
+        return code, json.loads(output.getvalue()), errors.getvalue()
 
     def test_command_pins_controls_and_preserves_argv_paths(self):
         command = build_command(self.spec, "/synthetic/grok")
@@ -167,6 +178,30 @@ class GrokCommandTests(unittest.TestCase):
         self.assertEqual(receipt["status"], "unsupported_profile")
         self.assertTrue(receipt["errors"])
         self.assertFalse(Path(self.spec["run_dir"]).exists())
+
+    def test_unexpected_runtime_failure_emits_the_common_internal_error_receipt(self):
+        with patch("grok_worker.run", side_effect=RuntimeError("synthetic adapter failure")):
+            code, receipt, stderr = self.run_main(self.spec)
+        self.assertEqual(code, 1)
+        self.assertEqual(receipt["schema"], "pstack-codex/worker-receipt/1")
+        self.assertEqual(receipt["status"], "internal_error")
+        self.assertEqual(receipt["exit_code"], 1)
+        self.assertEqual(receipt["backend"], "grok")
+        self.assertEqual(receipt["requested_model"], "grok-4.6")
+        self.assertEqual(receipt["errors"], ["RuntimeError: synthetic adapter failure"])
+        self.assertFalse(receipt["requested_model_verified"])
+        self.assertIn("RuntimeError: synthetic adapter failure", stderr)
+        self.assertFalse(Path(self.spec["run_dir"]).exists())
+
+    def test_attempt_directory_inside_cwd_is_rejected_by_the_shared_launcher(self):
+        spec = dict(self.spec, run_dir=str(Path(self.spec["cwd"]) / "run"))
+        with patch("grok_worker.shutil.which", return_value="/synthetic/grok"), \
+                patch("grok_worker.build_env", return_value=({"PATH": "/usr/bin"}, {"auth_route": "installed-cli-auth"})):
+            code, receipt, _ = self.run_main(spec)
+        self.assertEqual(code, 2)
+        self.assertEqual(receipt["status"], "invalid_spec")
+        self.assertTrue(any("inside cwd" in error for error in receipt["errors"]), receipt["errors"])
+        self.assertFalse(Path(spec["run_dir"]).exists())
 
     def test_auth_override_values_are_not_exposed(self):
         for name in ["XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL"]:

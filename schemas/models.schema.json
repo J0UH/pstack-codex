@@ -101,7 +101,7 @@
             "model": {
               "type": "string",
               "minLength": 1,
-              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$"
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])"
             },
             "effort": {
               "enum": [
@@ -161,7 +161,7 @@
             "model": {
               "type": "string",
               "minLength": 1,
-              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])",
               "not": {
                 "enum": [
                   "inherit-parent",
@@ -207,7 +207,7 @@
             "model": {
               "type": "string",
               "minLength": 1,
-              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])",
               "not": {
                 "enum": [
                   "inherit-parent",
@@ -257,7 +257,7 @@
         "model": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])",
           "not": {
             "enum": [
               "inherit-parent",
@@ -297,7 +297,7 @@
         "model": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])",
           "not": {
             "enum": [
               "inherit-parent",
@@ -341,7 +341,7 @@
         "model": {
           "type": "string",
           "minLength": 1,
-          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f\\u0085\\ufeff]+(?![\\s\\S])",
           "not": {
             "enum": [
               "inherit-parent",

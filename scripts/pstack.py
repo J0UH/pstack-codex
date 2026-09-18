@@ -138,6 +138,7 @@ def mode_context(state: dict, full: bool = True) -> str:
     host = ROOT / "adapters/host.md"
     if not router.is_file() or not host.is_file():
         raise ValueError("Plugin is not built: router or host adapter missing")
+    prefix = shlex.join(["python3", str(ROOT / "scripts/pstack.py"), "mode", "--session", state["session"], "--project", state["project"]])
     context = [
         "pstack-codex: poteto-mode remains active in this conversation and project.",
         "This retains the chosen style, not permission for new external actions. Honor the user's current scope, explicit opt-out and host policies.",
@@ -147,7 +148,8 @@ def mode_context(state: dict, full: bool = True) -> str:
         f"Shared mode state directory: {state_root()}. CLI mutations require host write permission here; hook trust alone does not grant it. If denied, report persistence unavailable and follow the host adapter's storage setup; do not disable the sandbox or silently change stores.",
         "Use this identity for mode commands even when editing a different worktree. Do not substitute a shell cwd or guessed task ID.",
         "Omitting --session/--project is supported when CODEX_THREAD_ID matches this session and exactly one recorded context exists; the CLI then uses this recorded project, not the shell cwd. Explicit flags are recommended, not mandatory in that case.",
-        "Mode command prefix: " + shlex.join(["python3", str(ROOT / "scripts/pstack.py"), "mode", "<action>", "--session", state["session"], "--project", state["project"]]),
+        f"Mode command prefix (shell-quoted for this session and project; use it unchanged): {prefix}",
+        f"Append exactly one action to that prefix: activate, deactivate, status, reset, or select --playbook followed by the playbook stem. Example: {prefix} status",
         f"Mode generation: {state['generation']}; current playbook: {state['playbook'] or 'none recorded; continue the workflow already in progress, or match one if none has started; record it with mode select'}.",
         "A casual turn need not run a playbook. New task rematches; it does not create a visible Codex task automatically.",
         "Read referenced pstack leaves from this installed package, not same-named unrelated skills.",

@@ -10,7 +10,7 @@ The Codex plugin validator passes. During packaging it caught missing skill inte
 
 ## Automated tests
 
-- **87 Python tests passed:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
+- **207 Python tests passed in the latest integration pass:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
 - **52 unchanged upstream Bun tests passed:** orchestrator store/CLI and PR watcher policies/readers/CLI, with 206 expectations.
 - Provider-fake tests are explicitly synthetic. CI does not call paid model providers or perform deployments.
 
@@ -76,12 +76,24 @@ The analysis adapter remains an optional candidate requiring a successful local 
 
 The repaired adapter's exact current argv was also exercised, including the empty tool list and all seven deny rules. It again reached the sandbox startup error, with no unknown-option error. Its exact-argv SHA256 is published in the sanitized evidence. This removes the earlier command-drift gap but does not prove inference, an empty runtime tool inventory, or enforcement after startup. Protections were not weakened.
 
+## Latest integration pass
+
+Fable 5.1 implemented the runtime, mode/schema, native workflow, optional Bot sender and prerequisite-doctor changes. Parent review reproduced and corrected additional edge cases before integration. Authoring success is separate from independent review approval. [Sanitized implementation and proof record](../evidence/integration-verification.json).
+
+The current checks cover absolute writer boundaries (including nested packages and spaces), disjoint attempt storage, handled and late signals, permission-denial warnings, schema parity against the standard validator, JavaScript/Python token consistency, plan gates, and secret-safe webhook transport with synthetic credentials. The webhook tests use an injected transport or loopback server, never a real Bot key.
+
+A real native heartbeat resumed its exact test task, wrote the expected local result under the workspace sandbox, and was then paused and deleted. A separate queue-only command did not wake an unloaded task. Native delegation/result collection and scoped app-task summaries were exercised separately; agent IDs are not app task IDs and summaries are not full transcripts.
+
+The updated trusted mode hooks were exercised in a fresh CLI task. A quoted example stayed inactive, an explicit multiline punctuated mention activated mode, and resumed developer hook context retained the authoritative identity. The original skill bodies still pass preservation checks.
+
+Optional Grok Bot app handoff created a paused test routine and returned a screenshot of a public page on its cloud browser. No sender key was obtained and no real webhook was fired. The Grok Build probe still stopped before inference at the socket-symlink sandbox error, with protections intact. Earlier CLI output reported unauthenticated; the latest model listing omitted that warning, which is not positive authentication proof.
+
 ## Remaining limits
 
 - No matched, side-by-side Cursor execution baseline was run. Current claims are source-contract preservation plus selected real Codex flows.
-- Cloud placement, Grok Bot webhooks, Benny event automations and some transcript integrations need real host adapters before use.
-- Durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes) are not supplied by this package. Autonomous run, Babysit drive, Shipping watch, both Autopilots, Orchestrate, unattended Hillclimb and Visual parity loops can do current-turn work with bounded waits but cannot promise unattended continuation without an authorized host wake adapter. Their stopping conditions are unchanged.
-- The upstream plan checker still has explicit model/host assumptions. It was retained, not weakened to make alternate plans pass.
+- Independent cloud-worker placement, Benny event automations and some full-transcript integrations still require real host facilities. The optional Bot sender is implemented and transport-tested, but real webhook delivery and queue access remain unverified.
+- Native goal and timed-heartbeat mappings are implemented, and a real timed wake with cleanup passed. Durable external event wake and isolated executor prerequisites remain distinct; periodic polling does not silently replace watcher-first behavior. Their stopping conditions are unchanged.
+- The original checker remains unchanged. A separate Codex checker retains the substantive gates while validating the chosen model and supported host mechanisms; format acceptance is not runtime readiness.
 - Process groups do not contain deliberately escaped sessions or undo external side effects. Permission allowlists and worktrees are not OS security boundaries.
 - A hard-killed launcher can leave an unreconciled detached child. The invoking tool must allow time for the worker timeout and termination grace; incomplete process records require ownership/effect reconciliation before retrying.
 - Correctness and authorization remain the coordinating agent's responsibility. A successful model receipt is not acceptance of a PR, deployment, or business decision.

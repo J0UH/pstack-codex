@@ -1,0 +1,1214 @@
+{
+  "schema_version": 1,
+  "recorded": "2026-09-18",
+  "description": "Per-playbook map of Cursor host facilities onto the Codex mechanisms actually exposed to the coordinator. Documentation of a mechanism is not proof that it fired; the parent updates live_proof entries with recorded evidence. Each live-tested entry names the exact scope that was exercised and nothing beyond it.",
+  "upstream": {
+    "package": "pstack",
+    "version": "0.15.2",
+    "revision": "5bf2b1544db739998121a306340631963c2ff3de"
+  },
+  "sources": [
+    "https://learn.chatgpt.com/docs/automations",
+    "https://learn.chatgpt.com/docs/long-running-work",
+    "adapters/host.md",
+    "docs/native-workflows.md",
+    "docs/verification.md",
+    "evidence/integration-verification.json"
+  ],
+  "parent_evidence": {
+    "automation_update_heartbeat": {
+      "recorded": "2026-09-18",
+      "record": "evidence/integration-verification.json",
+      "native_tool": "automation_update",
+      "kind": "heartbeat",
+      "attached_to": "a known disposable CLI/app task",
+      "interval": "one minute",
+      "scheduled_turn_observed": true,
+      "sentinel_verified": true,
+      "session_identity_matches": true,
+      "workspace_write_sandbox": true,
+      "pause_confirmed": true,
+      "delete_confirmed": true,
+      "one_shot_rule_rejected": true,
+      "scope": "one harmless local file operation written by the scheduled turn with the exact matching CODEX_THREAD_ID; not a goal, not cloud placement, not a watcher pass inside a tick, and not any full unattended playbook lifecycle"
+    },
+    "queue_probe": {
+      "queue_command_available": true,
+      "command_accepted_message": true,
+      "cold_task_started_by_queue": false,
+      "observed_task_state_after_queue": "notLoaded; prior completed turn unchanged",
+      "conclusion": "Queue acceptance is not a verified durable event wake. Native desktop send_message used only to drain the harmless test.",
+      "native_send_message_dispatch_completed": true,
+      "test_task_archived": true
+    }
+  },
+  "status_vocabulary": {
+    "native-mapped": "An implementable mapping onto an exposed Codex mechanism is documented and, where it is code, unit-tested. Not yet proven on the real host.",
+    "live-tested": "Exercised on the real host with recorded evidence for the stated scope only.",
+    "prerequisite": "Runs only after a named tool, harness, host capability or user authorization is present and verified.",
+    "unavailable": "No Codex mechanism is exposed. The route stays present and reports blocked instead of substituting a weaker behavior."
+  },
+  "live_proof_vocabulary": {
+    "live-tested": "Recorded evidence exists for the stated scope.",
+    "pending": "The parent has not yet run the real host action.",
+    "blocked": "A real attempt failed before the mechanism could be exercised.",
+    "not-applicable": "Nothing to prove because the mechanism is unavailable or belongs to the operator."
+  },
+  "field_meanings": {
+    "mapping": "Status of the playbook's required Codex host facilities.",
+    "unattended": "Status of continuation after the current turn, or not-applicable when the playbook has no wake step.",
+    "prerequisites": "Host-neutral tools and project inputs the playbook needs regardless of host.",
+    "dependencies": "Each Cursor facility the source names, its Codex counterpart and that counterpart's status.",
+    "stopping_rule": "The unchanged source stopping condition.",
+    "user_authority": "The unchanged source boundary on what the agent may do without a new request."
+  },
+  "host_mechanisms": {
+    "create_goal": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "create_goal({objective, token_budget?}). Only on an explicit request for a goal, or on the operator's explicit go on a reviewed plan whose checklist expressly calls create_goal. Run-until-done, keep-going and /loop-until phrases authorize continuation, not silent goal creation. Never inferred from ordinary work; the reply says when a goal exists."
+    },
+    "get_goal": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "get_goal({}) replaces re-reading the armed /goal at every tick when a goal exists."
+    },
+    "update_goal": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "update_goal({status: complete|blocked}). Complete only on the predicate verified on the real artifact. Blocked only after the same genuine blocker recurs on three consecutive goal turns. Never called for an operator hold or a pause; those stop writes, pause the heartbeat and leave the goal active."
+    },
+    "operator_slash_goal": {
+      "status": "native-mapped",
+      "live_proof": "not-applicable",
+      "evidence": null,
+      "notes": "The operator's own /goal command in the desktop app, CLI or IDE with pause, resume, edit and clear controls. Not an agent action."
+    },
+    "automation_update": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/integration-verification.json (2026-09-18): heartbeat attached to a known disposable task at a one-minute interval; the scheduled new turn ran under workspace-write and wrote the expected file with the exact matching CODEX_THREAD_ID; the parent observed the completed turn and the file, set the automation PAUSED, then deleted it.",
+      "notes": "Heartbeat create/view/update with mode, kind, name, prompt, rrule, status ACTIVE|PAUSED and destination thread. Minute intervals supported for thread follow-ups; the single-occurrence test rule had no future run; the successful probe used a recurring rule and explicit cleanup. Validate the actual host schedule rather than assuming all one-shot rules fail. The cadence is stated in words in plans and prompts; the rrule argument carries the encoding privately. Verified scope is the timed wake and thread attachment only; goal, cloud, watcher and full playbook lifecycles are not covered. Notification default is quiet unless something changed, a gate needs the operator, or the playbook step or approved plan names a per-tick report."
+    },
+    "automation_inventory": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "$CODEX_HOME/automations/*/automation.toml lists existing automations; inspect and prefer update over duplicate. The parent's deletion was confirmed through the tool, not by a recorded directory inspection."
+    },
+    "spawn_agent": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/integration-verification.json: Native delegation/message/result collection and separate known-app-task summary retrieval exercised; native IDs are not app task IDs, and summaries are not full tool traces.",
+      "notes": "Bounded native task with send_message, follow-up, interrupt, list and wait; poll with the native read-only list and wait. A native agent id is not an app task or thread id and is never passed to read_thread. Shares the local filesystem and runtime; a worktree gives write ownership only, not runtime isolation. Explicit model only where user, skill or AGENTS requested. Replacement of a stuck task waits for a confirmed stop and reconciled effects."
+    },
+    "create_thread": {
+      "status": "native-mapped",
+      "live_proof": "not-applicable",
+      "evidence": null,
+      "notes": "User-owned visible thread; only on an explicit request. Not a replacement for ephemeral subagents."
+    },
+    "read_thread": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/integration-verification.json: Native delegation/message/result collection and separate known-app-task summary retrieval exercised; native IDs are not app task IDs, and summaries are not full tool traces.",
+      "notes": "Scope-aware read of a known app task id. Returns recent status and turn summaries, not a guaranteed complete tool-by-tool transcript. Sufficient for Session pickup and known-session cross-checks; not sufficient for Eval step 6 or the show-me-your-work audit, which need the full authorized transcript or a CLI worker's private raw stream and otherwise report the evidence unavailable. Cursor agent-transcripts globs have no counterpart."
+    },
+    "claude_worker": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "docs/verification.md (analysis, writer, scoped local-Git reader; Claude Code 2.1.274)",
+      "notes": "scripts/claude_worker.py profiles analysis, reader, writer. Receipts verify transport and model identity, not task correctness. The attempt directory keeps the private raw stream, which is the transcript evidence for CLI candidates."
+    },
+    "grok_worker": {
+      "status": "prerequisite",
+      "live_proof": "blocked",
+      "evidence": "docs/grok.md (read-only sandbox startup failure before inference)",
+      "notes": "Analysis profile only; reader and writer unsupported. Requires an environment repair without weakening the sandbox, then a repeated probe."
+    },
+    "grok_bot_mcp": {
+      "status": "prerequisite",
+      "live_proof": "pending",
+      "evidence": "Parent report 2026-09-18: the separate Grok Bot UI is signed in and one paused webhook routine was created through that app. Webhook delivery has not been exercised and no adapter is linked.",
+      "notes": "Optional capability. No Grok Bot MCP is exposed to this coordinator. The Make Bot UI routine, secret-request card and webhook wake contract stay unavailable until the parent links the separate Bot adapter; a paused routine is not delivery evidence. Never invent an endpoint or paste a secret into chat."
+    },
+    "slack_event_trigger": {
+      "status": "unavailable",
+      "live_proof": "not-applicable",
+      "evidence": null,
+      "notes": "No Slack tool or new-message trigger exposed to this coordinator. ChatGPT web event triggers are web/mobile only and not a local substitute. A time-based heartbeat is not a new-message trigger."
+    },
+    "cloud_placement": {
+      "status": "unavailable",
+      "live_proof": "not-applicable",
+      "evidence": null,
+      "notes": "No Codex cloud placement, cloud VM per lane, cloud-sleeper wake chain or cloud-agent URL is exposed. The source's per-lane and per-PR isolated executors stay a prerequisite: the plan keeps each live lane on its own cloud VM and reports blocked until an isolated runtime per lane is configured or the operator explicitly approves an alternative with separate port, browser and data evidence per lane. A git worktree is write ownership, not runtime isolation; ten lanes on one host's port collide. The checker verifies plan form only, never runtime readiness."
+    },
+    "event_bridge": {
+      "status": "unavailable",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "No mechanism wakes a finished turn when the forge changes. Inside the active turn the bounded watcher is the immediate event wake; across turns the heartbeat is time-based polling, not the event wake, and the event-dependent gates in Babysit drive, Shipping step 8, Orchestrate drains and Autonomous run step 2 stay unresolved. The parent is testing a native queue mechanism as a possible bridge; it is not verified and nothing is claimed here."
+    },
+    "codex_skill_creator": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "The native Codex skill creator is available on the host and is the counterpart of Cursor create-skill for Authoring a skill and automate-me, preserving draft, test and iterate. Its authoring flow has not been exercised end to end here; no proof is claimed."
+    },
+    "mode_hooks": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "docs/verification.md (Codex CLI 0.154.0 activation, resume, compact, opt-out, new task, worktree identity)",
+      "notes": "Conversation-local poteto-mode context restoration through the two trusted plugin hooks."
+    },
+    "watch_pr": {
+      "status": "prerequisite",
+      "live_proof": "pending",
+      "evidence": "52 unchanged upstream Bun tests pass (docs/verification.md); no live authenticated gh run recorded",
+      "notes": "Bun launcher plus gh. GitHub-only; Origin uses its own commands. Bounded inside a turn as the immediate event wake, rearmed after every push wave and every acted-on verdict with the same frozen list. Across turns one bounded pass per heartbeat tick, which is polling. Stop classes unchanged: READY, queued WAITING merge-queue, ADVANCE, COMPLETE; Shipping ignores READY until mergedAt or MERGED."
+    },
+    "orch_cli": {
+      "status": "prerequisite",
+      "live_proof": "pending",
+      "evidence": "Upstream Bun tests pass; no live program run recorded",
+      "notes": "Bun plain-file store. The CLI never spawns, waits or wakes. Frontier command is Graphite-specific."
+    },
+    "graphite_gt": {
+      "status": "prerequisite",
+      "live_proof": "pending",
+      "evidence": null,
+      "notes": "Orchestrate stack safety requires gt while the other PR playbooks forbid requiring it. Source tension preserved, not resolved here."
+    },
+    "check_plan_codex": {
+      "status": "native-mapped",
+      "live_proof": "pending",
+      "evidence": "tests/test_check_plan.py (unit-tested 2026-09-18); no real plan run recorded",
+      "notes": "scripts/check_plan.mjs retains every upstream gate, binds the lane model to the explicit policy, keeps the own-cloud-VM boot recipe with a block statement, rejects a worktree-only lane placement without port, browser and data evidence, requires the cadence in words and rejects raw schedule strings, rejects a hold box that closes the goal, and requires reconciliation before a stuck lane's replacement. It verifies plan form, not runtime readiness. Upstream check-plan.mjs stays byte-identical."
+    }
+  },
+  "playbooks": [
+    {
+      "playbook": "authoring-a-skill",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "packaged": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": "Native skill creator available; its draft, test and iterate flow not exercised end to end"
+      },
+      "prerequisites": [
+        "gh or Origin for Opening a PR"
+      ],
+      "dependencies": [
+        {
+          "facility": "Cursor built-in create-skill",
+          "codex": "Native Codex skill creator per adapters/host.md, preserving draft, test and iterate; flow not yet exercised",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Project .cursor/skills/",
+          "codex": "Project .agents/skills/ with discovery verified from that project",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Validation of frontmatter, file references, cross-skill links",
+          "codex": "Local file checks in the coordinator",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends at Opening a PR with a summary, key design decisions and validation notes; structural tests only when the change is structural.",
+      "user_authority": "Authoring is scoped to the requested skill; no other skills are rewritten."
+    },
+    {
+      "playbook": "autonomous-run",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autonomous-run.md",
+      "packaged": "skills/poteto-mode/playbooks/autonomous-run.md",
+      "mapping": "native-mapped",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Project verifier for the predicate",
+        "gh or Origin when side fixes open PRs",
+        "Desktop app running and awake for unattended ticks"
+      ],
+      "dependencies": [
+        {
+          "facility": "Cursor /loop wake mechanism",
+          "codex": "automation_update heartbeat attached to the thread on the explicit unattended request, interval sized to when the result is worth re-checking; timed wake verified by the parent, this playbook's lifecycle not",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Event watcher subagent with heartbeat fallback",
+          "codex": "Immediate bounded watcher inside the active turn; across turns each tick polls once and no event bridge exists, so the event wake stays unresolved",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Durable predicate across turns",
+          "codex": "create_goal only on an explicit request for a goal; run-until-done alone authorizes continuation, not a goal. Without a goal the predicate lives in the heartbeat prompt and the trail; update_goal complete only on the verified predicate",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "show-me-your-work decision trail",
+          "codex": "Packaged skill and log.sh, unchanged; its transcript audit needs the full authorized transcript",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Side fixes in their own PRs",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Stop only when the predicate is met or at a genuine dead end; a plateau pivots; the predicate is never relaxed.",
+      "user_authority": "Only irreversible actions, genuine product or preference calls and real dead ends are escalated. Unattended continuation needs the explicit request that also justifies the heartbeat; a goal needs its own explicit request."
+    },
+    {
+      "playbook": "autopilot-full",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autopilot-full.md",
+      "packaged": "skills/poteto-mode/playbooks/autopilot-full.md",
+      "mapping": "prerequisite",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "gh or Origin",
+        "Project control skill harness for the live lane",
+        "Bun for the watcher",
+        "Desktop app running and awake for the 30-minute tick",
+        "Operator's full-autonomy merge grant",
+        "An isolated runtime per owner and per live lane, or the operator's explicit approval of an alternative with per-lane port, browser and data evidence"
+      ],
+      "dependencies": [
+        {
+          "facility": "Arm a /goal on the explicit go",
+          "codex": "create_goal with the full program objective on the operator's explicit go on the reviewed plan that names it",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "One Cursor cloud agent per PR",
+          "codex": "One independent executor per PR on its own isolated runtime; no cloud placement is exposed, so the program reports blocked at spawn until one is configured or an alternative is explicitly approved with evidence. A worktree gives write ownership only",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "30-minute audit tick, terminal /loop or cloud-sleeper chain",
+          "codex": "automation_update heartbeat every 30 minutes, destination thread, cadence in words; cloud root unavailable",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Re-read the playbook from trunk each tick",
+          "codex": "Re-read from the pinned installed package path",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Swarm verification at the merge-ready SHA",
+          "codex": "Parallel independent verifiers on isolated runtimes per the swarm skill and the model policy; blocked until the runtimes exist",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Stand a stuck lane down and dispatch a replacement at once",
+          "codex": "Interrupt, confirm the stop, reconcile branch, checkout and PR effects, then dispatch; report instead when ownership is uncertain",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Owner merges on a clean verdict",
+          "codex": "Forge CLI merge under the operator's explicit grant only",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Operator stop propagates a zero-writes hold",
+          "codex": "interrupt and send_message to every owner, heartbeat paused, goal left active",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Runs until the queue is done; operator-named items stop at merge-ready; an operator hold halts all writers immediately.",
+      "user_authority": "Merge authority comes only from the operator's explicit full-autonomy grant plus the root's clean verdict. Owners never merge operator items."
+    },
+    {
+      "playbook": "autopilot-stack",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autopilot-stack.md",
+      "packaged": "skills/poteto-mode/playbooks/autopilot-stack.md",
+      "mapping": "prerequisite",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "gh or Origin",
+        "Project control skill harness",
+        "Bun for the watcher",
+        "Desktop app running and awake for the 30-minute tick",
+        "An isolated runtime per owner and per verifier lane, or the operator's explicit approval of an alternative with per-lane port, browser and data evidence"
+      ],
+      "dependencies": [
+        {
+          "facility": "Arm a /goal on the explicit go",
+          "codex": "create_goal with the full program objective on the explicit go on the reviewed plan that names it",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "One Cursor cloud agent per PR",
+          "codex": "One independent executor per PR on its own isolated runtime; blocked at spawn until configured or explicitly approved with evidence. A worktree gives write ownership only",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "30-minute audit wake chain",
+          "codex": "automation_update heartbeat every 30 minutes, cadence in words",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Root as the only topology writer",
+          "codex": "Root runs git and forge CLI retargets itself; workers report tips",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Swarm verification at STACK-READY",
+          "codex": "Parallel verifiers on isolated runtimes per the swarm skill and policy; blocked until the runtimes exist",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "patch-id re-verification after drift",
+          "codex": "git patch-id, unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Operator stop is an immediate zero-writes hold",
+          "codex": "interrupt and send_message to every owner, heartbeat paused, goal left active",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Delivers one linear reviewed chain; no owner merges, arms auto-merge or closes; the operator lands it.",
+      "user_authority": "Landing authority is withheld by design; the operator reviews and lands."
+    },
+    {
+      "playbook": "babysit",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/babysit.md",
+      "packaged": "skills/poteto-mode/playbooks/babysit.md",
+      "mapping": "native-mapped",
+      "unattended": "prerequisite",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "gh or Origin",
+        "Bun for watch-pr on GitHub",
+        "Desktop app running and awake for timed polling across turns",
+        "An across-turn event bridge for the unattended event wake, not yet available"
+      ],
+      "dependencies": [
+        {
+          "facility": "Mode declaration before polling",
+          "codex": "Unchanged; check, background, threads-only, drive",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "watch-pr status and terminal polling",
+          "codex": "Bounded watcher inside the turn, the immediate event wake; --status-only for check",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "drive and background under /loop, rearm after every push wave",
+          "codex": "Inside the turn, rearm the watcher after every push wave and acted-on verdict with the frozen list. Across turns only timed polling exists, one bounded pass per heartbeat tick, so the unattended event wake stays unresolved and is reported as a gap",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Stop classes READY, queued WAITING merge-queue, ADVANCE, COMPLETE",
+          "codex": "Unchanged; the loop pauses its heartbeat at the stop class",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Bugbot reply through gh api or origin pr thread reply",
+          "codex": "Unchanged command APIs with the reply body as file data",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Never a second sleep loop",
+          "codex": "No nested poller inside a tick; the heartbeat is the only wake",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "GitHub READY, queued WAITING with merge-queue or COMPLETE ends the loop; ADVANCE continues; Origin stops at merge-ready. Only an explicit stop ends it earlier; questions are answered mid-loop.",
+      "user_authority": "Babysitting never authorizes merging; land, ship and merge-when-ready route to Shipping on an explicit request."
+    },
+    {
+      "playbook": "bug-fix",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/bug-fix.md",
+      "packaged": "skills/poteto-mode/playbooks/bug-fix.md",
+      "mapping": "native-mapped",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "live-tested",
+        "evidence": "docs/verification.md (local bug-fix handoffs: how, why roles, Fable implementation, same-surface verification, comment review)",
+        "scope": "Local project without the commit and PR stage; investigator worked from a coordinator-gathered packet, not its own git and gh queries"
+      },
+      "prerequisites": [
+        "Project control skill harness for same-surface reproduction",
+        "gh or Origin for Opening a PR"
+      ],
+      "dependencies": [
+        {
+          "facility": "Reproduce on the matching surface via the control skill",
+          "codex": "Packaged control-ui or control-cli with the host's browser or computer-use tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "how plus why investigation",
+          "codex": "Native or configured CLI workers per role policy",
+          "status": "live-tested"
+        },
+        {
+          "facility": "Cursor /loop for a stubborn hunt",
+          "codex": "Current-turn bounded loop; heartbeat only on the user's explicit unattended request",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Configured bug-fix model delegate",
+          "codex": "Claude writer profile or native task per policy",
+          "status": "live-tested"
+        },
+        {
+          "facility": "architect when crossing a function boundary",
+          "codex": "Panel per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "tdd and failing-repro-first commit order",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends at Opening a PR after the original repro passes on the same surface; inconclusive or wrong-surface is not a pass.",
+      "user_authority": "The user is asked to reproduce only under the narrow control-surface limitation in step 1."
+    },
+    {
+      "playbook": "eval",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/eval.md",
+      "packaged": "skills/poteto-mode/playbooks/eval.md",
+      "mapping": "prerequisite",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Model policy panels with a different judge family",
+        "Sanitized per-candidate worktrees",
+        "Full authorized transcripts for native candidates, or CLI raw streams, for step 6"
+      ],
+      "dependencies": [
+        {
+          "facility": "Parallel candidates on different models per arena Phase B",
+          "codex": "Native tasks or CLI workers per the arena runners panel",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Blinded judge on a different family",
+          "codex": "Cross-judge pool entry from the policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Read candidate transcripts under agent-transcripts/",
+          "codex": "Step 6 needs the files each candidate actually opened. read_thread returns summaries, which are not that evidence; CLI candidates have the attempt directory's private raw stream. Without a full authorized transcript the step reports its evidence unavailable and grades from code shape with the gap named; no cross-project globbing",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Sanitized isolated environments",
+          "codex": "Per-candidate worktrees with project-shaped names",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends with a promotion recommendation and synthesis; no automatic promotion or PR.",
+      "user_authority": "Candidates never see evaluation markers; the judge sees sanitized labels only."
+    },
+    {
+      "playbook": "feature",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/feature.md",
+      "packaged": "skills/poteto-mode/playbooks/feature.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Project control skill harness for same-surface proof",
+        "gh or Origin for Opening a PR"
+      ],
+      "dependencies": [
+        {
+          "facility": "how and architect panels",
+          "codex": "Native or CLI workers per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Mandatory code delegation to the configured feature model",
+          "codex": "Claude writer profile or native task in its own worktree; review separation preserved",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "arena when multiple valid shapes exist",
+          "codex": "Arena runners panel per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Same-surface verification",
+          "codex": "Packaged control skill with host browser or computer-use tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "interrogate for contested design",
+          "codex": "Interrogate reviewers panel per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends at Opening a PR after same-surface proof and small ordered commits.",
+      "user_authority": "Delegation is mandatory; the coordinator reviews the diff and owns the summary."
+    },
+    {
+      "playbook": "hillclimb",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/hillclimb.md",
+      "packaged": "skills/poteto-mode/playbooks/hillclimb.md",
+      "mapping": "native-mapped",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Repeatable measurement harness",
+        "gh or Origin for Opening a PR",
+        "Desktop app running and awake for unattended iterations"
+      ],
+      "dependencies": [
+        {
+          "facility": "how over the target",
+          "codex": "Native or CLI worker per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Configured hillclimb model delegate per hypothesis",
+          "codex": "Claude writer profile or native task, one worktree per parallel hypothesis for write ownership",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "decision.tsv via show-me-your-work",
+          "codex": "Packaged skill; the metric-column file and the canonical six-column trail are both kept, tension preserved",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Unattended wake borrowed from Autonomous run",
+          "codex": "Heartbeat only on the explicit unattended request, not Autonomous run's stop rule and not a goal",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR with accepted commits",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Stop at the predicate or when remaining ideas are marginal; never relax the target; never quit with cheap untried hypotheses.",
+      "user_authority": "The user's numbers set the target; otherwise the target is agreed before the loop."
+    },
+    {
+      "playbook": "investigation",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/investigation.md",
+      "packaged": "skills/poteto-mode/playbooks/investigation.md",
+      "mapping": "live-tested",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "live-tested",
+        "evidence": "docs/verification.md (nested explanation: Astra coordinator, Investigation route, packaged how, Fable explainer)",
+        "scope": "Read-only TypeScript question; why and connector-backed evidence categories not exercised"
+      },
+      "prerequisites": [],
+      "dependencies": [
+        {
+          "facility": "how explorer and explainer",
+          "codex": "Native or configured CLI workers per role policy",
+          "status": "live-tested"
+        },
+        {
+          "facility": "why with MCP evidence categories",
+          "codex": "Native or CLI investigators; connector lookups through supported host tools or an explicit gap report",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "unslop on the reply",
+          "codex": "Packaged skill",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Produces a cited explanation or recommendation; no PR, babysit or architect; a code change re-routes to Bug fix or Feature.",
+      "user_authority": "Read-only; the premise is pushed back on when wrong."
+    },
+    {
+      "playbook": "multi-phase-plan",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "packaged": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": "tests/test_check_plan.py (checker unit-tested 2026-09-18)",
+        "scope": "No real plan authored and checked on the host yet; the checker verifies plan form, not runtime readiness"
+      },
+      "prerequisites": [
+        "Node for the checker",
+        "Explicit model policy or --lanes-model",
+        "Project control skill for prototypes"
+      ],
+      "dependencies": [
+        {
+          "facility": "Prototype for open questions",
+          "codex": "See prototype",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "poteto-agent explorers with explicit models",
+          "codex": "Native or CLI workers per policy with the packaged role instructions",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "node pstack/skills/poteto-mode/scripts/check-plan.mjs",
+          "codex": "node <plugin>/scripts/check_plan.mjs <plan.md> --policy <models.json>; upstream checker byte-identical",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Ten lanes on grok-4.6-fast-xhigh",
+          "codex": "Ten lanes on the policy's swarm workers model; count, numbering, screenshot and predicate per lane unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Boot recipe, each live lane on its own cloud VM",
+          "codex": "Sentence kept verbatim plus a block statement; the plan reports blocked at boot until an isolated runtime per lane exists or an approved alternative carries per-lane port, browser and data evidence. Execution, not authoring, carries this prerequisite",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "/goal, git show origin/main:, 30-minute /loop, status message in the skeleton",
+          "codex": "create_goal on the go on this plan, pinned package path, 30-minute automation_update heartbeat with the cadence in words, status message; the hold box pauses the heartbeat and leaves the goal active; Close pauses the heartbeat and calls update_goal on the verified done condition",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "technical-writing then unslop",
+          "codex": "Packaged skills",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Hands back the plan path and the checker output, then stops until the operator's explicit go.",
+      "user_authority": "The plan is the deliverable; nothing is implemented and no PR is opened."
+    },
+    {
+      "playbook": "opening-a-pr",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/opening-a-pr.md",
+      "packaged": "skills/poteto-mode/playbooks/opening-a-pr.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": "Commit and PR stages were excluded from the recorded local live tests"
+      },
+      "prerequisites": [
+        "gh or Origin",
+        "Git worktree off trunk"
+      ],
+      "dependencies": [
+        {
+          "facility": "deslop before commit, no-comments before review",
+          "codex": "Packaged companion deslop and packaged no-comments with Comment Sicko",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "technical-writing then unslop for titles and bodies",
+          "codex": "Packaged skills",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Forge resolution, gh default with optional Origin",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Cloud-agent PR tools default to draft",
+          "codex": "Not applicable; gh and origin flags as written",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "PR-opening subagent runs interrogate",
+          "codex": "Interrogate reviewers panel per policy",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Posts the URL and continues building; never starts a babysit.",
+      "user_authority": "Bounded by the narrower playbooks that produce no PR: Investigation, forensics, Prototype, Multi-phase plan and Pause safely."
+    },
+    {
+      "playbook": "orchestrate",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+      "packaged": "skills/poteto-mode/playbooks/orchestrate.md",
+      "mapping": "prerequisite",
+      "unattended": "prerequisite",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Bun for orch",
+        "Graphite gt for the frontier command",
+        "gh or Origin",
+        "Desktop app running and awake for timed drains across turns",
+        "Isolated runtimes for workers that do not need this machine, or the operator's explicit approval of local execution with evidence",
+        "An across-turn event bridge for the frontier watcher wake, not yet available"
+      ],
+      "dependencies": [
+        {
+          "facility": "Agents spawned, resumed and drained only through the Task tool",
+          "codex": "spawn_agent with native list and wait; read_thread only for a known app task id; the orch CLI still never spawns or wakes",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Workers default to environment cloud",
+          "codex": "No cloud placement is exposed. The source's local exception covers only tasks that need this machine; every other worker needs an isolated runtime or the operator's explicit approval of local execution with evidence, and is otherwise blocked. A worktree gives write ownership only",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "orch store and frontier from gt",
+          "codex": "Bun CLI unchanged; frontier stays Graphite-specific",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Frontier watcher wake with a long heartbeat fallback",
+          "codex": "No across-turn event wake; a heartbeat tick at the long interval drains at the drain point, which is the fallback interval without the event wake it backed up",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Cloud agent status in the Cursor dashboard",
+          "codex": "Native list and wait read-only for native tasks; ledger, units.tsv, gh and pushed branches otherwise; no dashboard",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "After a Cursor restart, cloud work survives",
+          "codex": "Pushed branches, worktrees and the store survive; native tasks do not; reattach by PR and branch",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Closes when every spawned agent is reconciled, the predicate is confirmed on the real artifact and every landed PR has a current-head verdict; collapses to Autonomous run when one agent could finish in budget.",
+      "user_authority": "Escalations batch into the status page; irreversible actions and genuine product calls park as gates."
+    },
+    {
+      "playbook": "pause-safely",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/pause-safely.md",
+      "packaged": "skills/poteto-mode/playbooks/pause-safely.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": "docs/verification.md (mode context restored after a real /compact; pause steps themselves not exercised)",
+        "scope": "Compaction restoration of mode context only"
+      },
+      "prerequisites": [],
+      "dependencies": [
+        {
+          "facility": "Cancel nested subagents",
+          "codex": "interrupt native tasks and confirm they stopped; reconcile CLI worker groups; pause the heartbeat and record its id",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "WIP commit and resume note off-context",
+          "codex": "Unchanged; the goal stays active and is named in the note, never closed or marked blocked for a pause",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Compaction trigger",
+          "codex": "SessionStart compact hook restores mode context; compaction is not a cancellation, WIP commit or push",
+          "status": "live-tested"
+        }
+      ],
+      "stopping_rule": "Reports the resume point and durability, not completion; explicit only.",
+      "user_authority": "Keep going, going to bed and do not stop mean no pause."
+    },
+    {
+      "playbook": "perf-issue",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/perf-issue.md",
+      "packaged": "skills/poteto-mode/playbooks/perf-issue.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Project control skill harness for traces",
+        "Trace parsers",
+        "gh or Origin for Opening a PR"
+      ],
+      "dependencies": [
+        {
+          "facility": "Baseline and post-fix trace via the control skill",
+          "codex": "Packaged control skill with host browser or computer-use tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "how to ground hypotheses",
+          "codex": "Native or CLI worker per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Configured perf-issue model delegate",
+          "codex": "Claude writer profile or native task",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR with the measurement",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends at Opening a PR with baseline, post-fix number, delta and artifact; inconclusive is not a pass; sustained work routes to Hillclimb.",
+      "user_authority": "Every fix ties to a measurement, never to reading source instead."
+    },
+    {
+      "playbook": "prototype",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/prototype.md",
+      "packaged": "skills/poteto-mode/playbooks/prototype.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Project control skill for screenshots when the decision is visual"
+      ],
+      "dependencies": [
+        {
+          "facility": "Isolated scratch directory",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Screenshot each variant via the control skill",
+          "codex": "Packaged control skill with host browser tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Hand the chosen direction to Feature or architect",
+          "codex": "Unchanged routing",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends with the decision, tradeoffs, recommendation and throwaway artifact; no PR.",
+      "user_authority": "Empirical forks are settled by observation, not by asking the user."
+    },
+    {
+      "playbook": "refactoring",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/refactoring.md",
+      "packaged": "skills/poteto-mode/playbooks/refactoring.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Characterization test or equivalence harness",
+        "gh or Origin for Opening a PR"
+      ],
+      "dependencies": [
+        {
+          "facility": "how for the behavior contract",
+          "codex": "Native or CLI worker per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "architect for a boundary-crossing target shape",
+          "codex": "Panel per policy",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Configured refactoring model delegate",
+          "codex": "Claude writer profile or native task",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Equivalence proof on the real artifact",
+          "codex": "Project harness or packaged control skill",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends at Opening a PR with ordered subtraction, reshape and cleanup commits; reverts when reader load does not drop.",
+      "user_authority": "A discovered feature or bug is split out; large structural work routes to figure-it-out."
+    },
+    {
+      "playbook": "runtime-forensics",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/runtime-forensics.md",
+      "packaged": "skills/poteto-mode/playbooks/runtime-forensics.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Project control skill with CDP or profiler access"
+      ],
+      "dependencies": [
+        {
+          "facility": "Capture live CPU, heap or trace signal via the control skill",
+          "codex": "Packaged control skill with host browser or computer-use tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Parse large artifacts in a subagent",
+          "codex": "Native task or CLI reader profile",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "CDP eval instrumentation on the running process",
+          "codex": "Through the control skill's supported driver",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Delivers a cited diagnosis and artifacts; no fix unless asked; hands off to Bug fix or Perf issue.",
+      "user_authority": "Temporary live instrumentation is allowed; persistent changes are not."
+    },
+    {
+      "playbook": "session-pickup",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/session-pickup.md",
+      "packaged": "skills/poteto-mode/playbooks/session-pickup.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "A known prior app task id, or a pushed branch"
+      ],
+      "dependencies": [
+        {
+          "facility": "Local transcript under agent-transcripts/",
+          "codex": "read_thread on the known prior app task id returns recent status and turn summaries, which suffice to name the resume point together with git; no cross-project globbing and no native agent id passed as a task id",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Cloud-agent URL as the prior trail",
+          "codex": "No cloud agents; unavailable as an input",
+          "status": "unavailable"
+        },
+        {
+          "facility": "Pushed branch reconstruction with git",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Parse a long transcript in a subagent",
+          "codex": "Native task or CLI reader over an exported packet",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Ends when the remainder is routed to its playbook and the resume point is named; nothing finished is redone.",
+      "user_authority": "The prior trail is authoritative input, not proof; inherited claims are verified on the real artifact."
+    },
+    {
+      "playbook": "shipping",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/shipping.md",
+      "packaged": "skills/poteto-mode/playbooks/shipping.md",
+      "mapping": "prerequisite",
+      "unattended": "prerequisite",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "gh or Origin",
+        "Project control skill harness for each verifier",
+        "Bun for the watcher",
+        "Explicit land, ship or merge-when-ready request",
+        "An isolated runtime per verifier, or the operator's explicit approval of an alternative with per-verifier port, browser and data evidence",
+        "An across-turn event bridge for the unattended frontier watch, not yet available"
+      ],
+      "dependencies": [
+        {
+          "facility": "One Cursor cloud agent verifier per PR",
+          "codex": "One independent verifier per PR on its own isolated runtime, never the code author; blocked at step 1 until the runtimes exist or an alternative is explicitly approved with evidence. A worktree gives write ownership only",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "git patch-id verdict binding",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Frontier watch under /loop with the watcher as event wake",
+          "codex": "Inside the turn the bounded watcher is the immediate event wake and gh pr view is read after each pass, ignoring READY until mergedAt or MERGED. Across turns only timed polling exists, so the unattended watch is reported as a gap; hard-fail rules unchanged",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Squash merge or arm merge-when-ready",
+          "codex": "Forge CLI under the explicit request only",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Stops at the contiguous verified ceiling; queued readiness is not merged; extending the run is a new pass.",
+      "user_authority": "Merging requires the explicit land, ship or merge-when-ready request; CI green and bot approval are not verdicts."
+    },
+    {
+      "playbook": "trace-forensics",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/trace-forensics.md",
+      "packaged": "skills/poteto-mode/playbooks/trace-forensics.md",
+      "mapping": "native-mapped",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Trace or heap parser for the artifact format",
+        "sqlite"
+      ],
+      "dependencies": [
+        {
+          "facility": "Parse large artifacts in a subagent",
+          "codex": "Native task or CLI reader profile with the artifact path",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Transform into sqlite before reading",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Delivers a cited diagnosis, or the strongest supported hypothesis without a paired capture; no fix unless asked; never recaptures.",
+      "user_authority": "Read-only deliverable."
+    },
+    {
+      "playbook": "visual-parity",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/visual-parity.md",
+      "packaged": "skills/poteto-mode/playbooks/visual-parity.md",
+      "mapping": "native-mapped",
+      "unattended": "native-mapped",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "Visual regression harness with frozen baseline",
+        "Project control skill",
+        "gh or Origin for PRs"
+      ],
+      "dependencies": [
+        {
+          "facility": "One owner per component in its own worktree",
+          "codex": "Native task or CLI writer per component worktree, as the source itself specifies",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "/loop per component until the diff is zero",
+          "codex": "Current-turn bounded loop; heartbeat only on an explicit unattended request",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Image diff on the matching surface",
+          "codex": "Packaged control skill with host browser tools",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Opening a PR per component or batch",
+          "codex": "See opening-a-pr",
+          "status": "native-mapped"
+        }
+      ],
+      "stopping_rule": "Each component stops at a zero image diff; a suspect baseline prompts the operator rather than being edited.",
+      "user_authority": "No harness or baseline tampering; the baseline is the spec."
+    },
+    {
+      "playbook": "worktree-cleanup",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "packaged": "skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "mapping": "prerequisite",
+      "unattended": "not-applicable",
+      "live_proof": {
+        "status": "pending",
+        "evidence": null,
+        "scope": null
+      },
+      "prerequisites": [
+        "gh, jq and rg for the audit script",
+        "macOS xcrun for simulators",
+        "The user's pinned and active set"
+      ],
+      "dependencies": [
+        {
+          "facility": "worktree-audit.sh recent-chat column from Cursor transcripts",
+          "codex": "Transcript-derived liveness is not Codex evidence; use read_thread summaries over known app task ids and the user's pinned set",
+          "status": "prerequisite"
+        },
+        {
+          "facility": "Pinned and active chats from the sidebar",
+          "codex": "Use the host read-only task inventory and pin metadata when exposed, scoped to the requested cleanup. Ask the user only for information the host cannot supply.",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "git worktree remove, prune and df",
+          "codex": "Unchanged",
+          "status": "native-mapped"
+        },
+        {
+          "facility": "Simulator and cache cleanup",
+          "codex": "Unchanged macOS commands within the user's constraints",
+          "status": "prerequisite"
+        }
+      ],
+      "stopping_rule": "Removes only the confirmed set; wip and in-use pause for a decision; reports space reclaimed and each hold-back reason.",
+      "user_authority": "Deletion is irreversible; the evidence gates are the review."
+    }
+  ]
+}

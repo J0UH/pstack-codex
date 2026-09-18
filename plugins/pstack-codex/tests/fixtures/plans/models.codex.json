@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "description": "Test fixture. Partial policy whose swarm workers role names the exact model the ten live lanes run on.",
+  "roles": {
+    "swarm workers": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    }
+  }
+}

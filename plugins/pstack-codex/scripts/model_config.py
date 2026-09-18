@@ -5,6 +5,7 @@ from __future__ import annotations
 from copy import deepcopy
 
 
+SCHEMA_VERSION = 1
 SINGLE_ROLES = (
     "feature, refactoring", "bug-fix", "perf-issue", "hillclimb", "judgment and prose",
     "hardest tasks", "how explorer", "how explainer", "why investigators", "why synthesizer",
@@ -34,7 +35,9 @@ def _fields(value: dict, allowed: set[str], location: str) -> None:
 
 
 def _token(value: object, location: str) -> str:
-    if not isinstance(value, str) or not value or any(char.isspace() or ord(char) < 32 or ord(char) == 127 for char in value):
+    # Same rule as TOKEN_PATTERN in model_schema. U+FEFF (zero width no-break space) counts
+    # as whitespace, as it does for ECMAScript regex validators, so both engines agree.
+    if not isinstance(value, str) or not value or any(char.isspace() or ord(char) < 32 or ord(char) in (0x7F, 0xFEFF) for char in value):
         raise ValueError(f"{location} must be an exact nonempty token without whitespace or controls")
     return value
 
@@ -94,8 +97,13 @@ def validate_model_config(value: object) -> dict:
     """
     config = _object(value, "config")
     _fields(config, {"schema_version", "roles", "description", "profile_note", "budget", "optional_backends"}, "config")
-    if type(config.get("schema_version")) is not int or config["schema_version"] != 1:
-        raise ValueError("config.schema_version must be integer 1")
+    # JSON Schema's "integer" is the mathematical kind: 1.0 satisfies {"type": "integer",
+    # "const": 1}. Accept any JSON number equal to SCHEMA_VERSION so a config the schema
+    # accepts is never rejected for how its number is spelled. JSON booleans are not
+    # numbers, even though Python's bool subclasses int, so they stay rejected.
+    version = config.get("schema_version")
+    if isinstance(version, bool) or not isinstance(version, (int, float)) or version != SCHEMA_VERSION:
+        raise ValueError(f"config.schema_version must be the integer {SCHEMA_VERSION}")
     _text_fields(config, ("description", "profile_note"), "config")
     if "budget" in config and (not isinstance(config["budget"], str) or config["budget"] not in BUDGETS):
         raise ValueError("config.budget must be unlimited, large, medium, or small")

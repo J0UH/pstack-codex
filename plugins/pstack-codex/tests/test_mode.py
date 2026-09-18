@@ -1,6 +1,7 @@
 import importlib.util
 import json
 import os
+import shlex
 import sys
 import subprocess
 import tempfile
@@ -111,6 +112,102 @@ class ModeTests(unittest.TestCase):
             response = hook.handle(self.event(prompt, session=f"default-{number}"))
             self.assertIn("ROUTER_SOURCE_MARKER", response["hookSpecificOutput"]["additionalContext"])
             self.assertTrue(pstack.read_state(f"default-{number}", str(self.project))["active"])
+
+    def test_punctuated_and_later_line_mentions_activate(self):
+        prompts = [
+            "$poteto-mode: fix the bug",
+            "/poteto-mode: fix the bug",
+            "/poteto-mode, please fix the bug",
+            "/poteto-mode.",
+            "$pstack-codex:poteto-mode! fix the bug",
+            "(try $poteto-mode).",
+            "Context: the deploy fails at 03:00.\n\nUse $poteto-mode to find the root cause.",
+            "Here is the plan.\n$pstack-codex:poteto-mode: implement step 2.",
+            "  \n$poteto-mode fix the bug",
+            "First `$poteto-mode` is only quoted here.\nNow really use $poteto-mode, thanks.",
+            "The example:\n```\n$poteto-mode not this one\n```\nBut $poteto-mode this one.",
+            '$poteto-mode fix the 5" display bug',
+            'Use "$poteto-mode" as shown, then $poteto-mode for real.',
+            'Docs say "use\n$poteto-mode" but really use $poteto-mode now.',
+        ]
+        for number, prompt in enumerate(prompts):
+            session = f"punctuated-{number}"
+            with self.subTest(prompt=prompt):
+                response = hook.handle(self.event(prompt, session=session))
+                context = response["hookSpecificOutput"]["additionalContext"]
+                self.assertIn("ROUTER_SOURCE_MARKER", context)
+                self.assertIn(f"Authoritative session ID: {session}", context)
+                self.assertTrue(pstack.read_state(session, str(self.project))["active"])
+
+    def test_examples_code_and_similar_names_on_any_line_do_not_activate(self):
+        prompts = [
+            "Explain this example:\n```\n$poteto-mode fix the bug\n```",
+            "Example:\n~~~text\n$poteto-mode fix the bug\n~~~\nThanks",
+            "Nested:\n````md\n```\n$poteto-mode fix the bug\n```\n````",
+            "Unclosed fence:\n```\n$poteto-mode fix the bug",
+            "Short closer:\n````\n```\n$poteto-mode fix the bug",
+            "Tilde does not close backticks:\n```\n~~~\n$poteto-mode fix the bug",
+            "Docs:\n    $poteto-mode fix the bug",
+            "Docs:\n\t$poteto-mode fix the bug",
+            "Quote:\n> $poteto-mode fix the bug",
+            "Quote:\n  > $poteto-mode fix the bug",
+            'The doc says "run\n$poteto-mode first."',
+            'Docs say "use\n$poteto-mode" for that.',
+            "He wrote: “first,\n$poteto-mode second,\nthird.”",
+            'Compare "$poteto-mode" with "$poteto-mode" and `$poteto-mode`.',
+            "Later:\nSee `$poteto-mode: x` for the syntax.",
+            "Later:\n\\$poteto-mode is literal",
+            "Later:\n$poteto-mode-extra fix the bug",
+            "Later:\n$poteto-modes fix the bug",
+            "Later:\n$poteto-mode:foo fix the bug",
+            "Later:\n$poteto-mode.py is a file",
+            "Later:\nfoo$poteto-mode fix the bug",
+            "$poteto-mode:foo fix the bug",
+            "/poteto-mode.py is a file",
+            "/poteto-mode/README.md explains it",
+            "/poteto-mode-extra: inspect",
+        ]
+        for prompt in prompts:
+            with self.subTest(prompt=prompt):
+                self.assertEqual({}, hook.handle(self.event(prompt)))
+                self.assertFalse(pstack.read_state("one", str(self.project))["active"])
+        self.assertEqual({}, hook.handle(self.event("Later:\n/poteto-mode fix the bug")), "the slash form is explicit only on the first line")
+
+    def test_new_task_after_punctuated_or_later_line_mention_resets_playbook(self):
+        for prompt in ["$poteto-mode: new task. Find the cause", "Intro line.\n$poteto-mode new task: find the cause"]:
+            with self.subTest(prompt=prompt):
+                hook.handle(self.event("/poteto-mode investigate"))
+                pstack.change_state("select", "one", str(self.project), "investigation")
+                hook.handle(self.event(prompt))
+                state = pstack.read_state("one", str(self.project))
+                self.assertTrue(state["active"])
+                self.assertIsNone(state["playbook"])
+        pstack.change_state("select", "one", str(self.project), "investigation")
+        hook.handle(self.event("$poteto-mode: keep going"))
+        self.assertEqual("investigation", pstack.read_state("one", str(self.project))["playbook"])
+
+    def test_first_line_exit_wins_over_later_line_mention(self):
+        hook.handle(self.event("/poteto-mode investigate"))
+        response = hook.handle(self.event("exit poteto-mode\nLater you may want $poteto-mode again."))
+        self.assertIn("explicitly exited", response["hookSpecificOutput"]["additionalContext"])
+        self.assertFalse(pstack.read_state("one", str(self.project))["active"])
+
+    def test_command_prefix_is_shell_safe_and_runs_without_placeholders(self):
+        session = "thread 'one'"
+        hook.handle(self.event("/poteto-mode investigate", session=session))
+        context = hook.handle(self.event("continue", session=session))["hookSpecificOutput"]["additionalContext"]
+        self.assertNotIn("<action>", context)
+        prefix_line = next(line for line in context.splitlines() if line.startswith("Mode command prefix"))
+        prefix = shlex.split(prefix_line.split(": ", 1)[1])
+        self.assertEqual(["python3", str(self.source / "scripts/pstack.py"), "mode", "--session", session, "--project", str(self.project)], prefix)
+        self.assertIn("Append exactly one action to that prefix: activate, deactivate, status, reset, or select --playbook", context)
+        self.assertIn(f"Example: {prefix_line.split(': ', 1)[1]} status", context)
+        command = [sys.executable, str(ROOT / "scripts/pstack.py")] + prefix[2:]
+        status = json.loads(subprocess.run(command + ["status"], cwd=self.other, capture_output=True, text=True, check=True).stdout)
+        self.assertEqual((session, str(self.project), True), (status["session"], status["project"], status["active"]))
+        subprocess.run(command + ["select", "--playbook", "bug-fix"], cwd=self.other, capture_output=True, text=True, check=True)
+        continuation = hook.handle(self.event("continue", session=session))["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("current playbook: bug-fix", continuation)
 
     def test_cli_uses_recorded_context_after_working_directory_changes(self):
         hook.handle(self.event("/poteto-mode investigate"))

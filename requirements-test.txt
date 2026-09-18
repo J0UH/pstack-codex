@@ -1,0 +1,4 @@
+# Development/test-only dependencies. The runtime (scripts/, hooks/) stays standard library.
+# jsonschema provides the reference JSON Schema Draft 2020-12 validator that
+# tests/test_model_config.py runs the parity corpus against.
+jsonschema==4.23.0

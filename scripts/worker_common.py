@@ -5,15 +5,17 @@ Backend adapters (for example ``claude_worker.py``) validate their inputs,
 build an argv, and call :func:`run_process`.  Everything backend-independent
 lives here:
 
-* spec validation (types, absolute paths, finite timeout)
+* spec validation (types, absolute paths, finite timeout, run_dir disjoint from cwd)
 * exclusive claim of a NEW run_dir per attempt (atomic ``mkdir``)
 * launch intent persisted BEFORE the child is spawned
 * spawning with ``shell=False`` and its own process group / session
 * timeout enforcement: SIGTERM to the group, grace period, SIGKILL, wait
-* parent SIGINT / SIGTERM / SIGHUP handling so the child is not orphaned
+* parent SIGINT / SIGTERM / SIGHUP handling so the child is not orphaned; a
+  signal the launcher inherited as ignored stays ignored
 * raw stdout (JSONL) and stderr captured to files with 0600 permissions
 * JSONL parsing after confirmed exit, with parse errors preserved
-* a bounded receipt that never contains the raw transcript
+* a bounded receipt that never contains the raw transcript; permission
+  denials are surfaced as warnings without changing the delivery status
 
 The parser supplied by the adapter is called as
 ``parse_events(events, spec) -> dict`` and must return at least
@@ -194,6 +196,27 @@ def _require_abs_path(spec: dict, key: str) -> str:
     return value
 
 
+def _is_within(path: str, ancestor: str) -> bool:
+    """True when ``path`` equals ``ancestor`` or lies below it (both already resolved)."""
+    return path == ancestor or path.startswith(ancestor.rstrip(os.sep) + os.sep)
+
+
+def _require_disjoint_run_dir(cwd: str, run_dir: str) -> None:
+    """Reject a run_dir that overlaps cwd once symlinks and ``..`` are resolved.
+
+    A writer's file-tool rule covers its whole working directory, so an attempt
+    directory inside it would let the child rewrite the launch record, process
+    record and raw stream its own receipt is derived from.
+    """
+    real_cwd = os.path.realpath(cwd)
+    real_run_dir = os.path.realpath(run_dir)
+    if _is_within(real_run_dir, real_cwd) or _is_within(real_cwd, real_run_dir):
+        raise SpecError(
+            "run_dir must not be inside cwd or contain it (resolved paths overlap); "
+            "keep attempt evidence outside the worker's working directory"
+        )
+
+
 def _require_positive_number(spec: dict, key: str, default: float | None, maximum: float) -> float:
     value = spec.get(key, default)
     if isinstance(value, bool) or not isinstance(value, (int, float)):
@@ -241,6 +264,7 @@ def validate_spec(spec: Any) -> tuple[dict, list[str]]:
     run_dir = _require_abs_path(spec, "run_dir")
     if os.path.lexists(run_dir):
         raise SpecError("run_dir already exists; every attempt needs a new unique run_dir")
+    _require_disjoint_run_dir(cwd, run_dir)
 
     timeout = _require_positive_number(spec, "timeout_seconds", None, MAX_TIMEOUT_SECONDS)
     grace = _require_positive_number(spec, "term_grace_seconds", DEFAULT_TERM_GRACE_SECONDS, MAX_TERM_GRACE_SECONDS)
@@ -397,6 +421,12 @@ class _SignalGuard:
     Recording instead also protects directory claims and receipt writes. Supervision
     checks the pending signal regularly. Handlers can only be installed on the main
     thread; SIGKILL and indefinitely blocked system calls cannot be made recoverable.
+
+    A signal whose disposition was inherited as SIG_IGN (for example SIGHUP under a
+    nohup-style launch, or SIGINT for a shell background job) is left ignored, per
+    POSIX convention, and its name is recorded for the receipt. ``reported_signal``
+    is the first signal the receipt has accounted for; anything recorded after that
+    point is folded in by :func:`run_process` once the handlers are removed.
     """
 
     def __init__(self) -> None:
@@ -404,7 +434,9 @@ class _SignalGuard:
         self.installed = False
         self.terminating = False
         self.requested_signal: int | None = None
+        self.reported_signal: int | None = None
         self.late_signals: list[str] = []
+        self.ignored: list[str] = []
 
     def _handler(self, signum: int, _frame: Any) -> None:
         if self.requested_signal is not None:
@@ -417,8 +449,19 @@ class _SignalGuard:
             return
         for name in _HANDLED_SIGNAL_NAMES:
             signum = getattr(signal, name)
+            if signal.getsignal(signum) == signal.SIG_IGN:
+                self.ignored.append(name)
+                continue
             self.previous[signum] = signal.signal(signum, self._handler)
         self.installed = True
+
+    def unreported_signals(self, already_listed: int) -> list[str]:
+        """Names of recorded signals the receipt does not yet mention."""
+        names: list[str] = []
+        if self.requested_signal is not None and self.reported_signal != self.requested_signal:
+            names.append(_signal_name(self.requested_signal))
+        names.extend(self.late_signals[already_listed:])
+        return names
 
     def restore(self) -> None:
         for signum, previous in self.previous.items():
@@ -518,7 +561,9 @@ def _supervise(
     guard: _SignalGuard,
 ) -> tuple[str, bool, dict]:
     """Wait for the child, enforcing the timeout and reacting to parent signals."""
-    record: dict[str, Any] = {"term_sent": False, "kill_sent": False, "interrupt_signal": None}
+    record: dict[str, Any] = {
+        "term_sent": False, "kill_sent": False, "interrupt_signal": None, "stop_signal_after_termination": None,
+    }
     try:
         deadline = time.monotonic() + timeout_seconds
         while True:
@@ -701,11 +746,15 @@ def run_process(
 ) -> dict:
     """Run one bounded worker attempt and return its receipt (also written to run_dir).
 
-    Raises SpecError before anything is spawned when inputs are invalid or the run_dir
-    already exists. After claim, handled stop signals finalize an interrupted
-    receipt at a safe ownership checkpoint, provided the artifact storage remains
-    writable. SIGKILL, process crashes and indefinitely blocked calls cannot carry
-    that guarantee.
+    Raises SpecError before anything is spawned when inputs are invalid, the run_dir
+    already exists, or the run_dir overlaps cwd. After claim, handled stop signals
+    finalize an interrupted receipt at a safe ownership checkpoint, provided the
+    artifact storage remains writable. A stop signal that arrives after the attempt
+    already ended for another cause (timeout, spawn failure) or after the receipt is
+    final is recorded in the receipt rather than relabeling or dropping it. SIGKILL,
+    process crashes and indefinitely blocked calls cannot carry that guarantee, and a
+    signal that trips between handler removal and process exit follows the restored
+    disposition instead of being recorded.
     """
     if os.name != "posix":
         raise RuntimeError("run_process requires a POSIX platform (process-group lifecycle)")
@@ -722,10 +771,66 @@ def run_process(
     guard.install()
     try:
         claim_run_dir(normalized["run_dir"])
-        return _run_claimed_process(normalized, command, parse_events, stdin_text, env,
-                                    guard, warnings, adapter_evidence)
+        receipt = _run_claimed_process(normalized, command, parse_events, stdin_text, env,
+                                       guard, warnings, adapter_evidence)
     finally:
         guard.restore()
+    _record_late_signals(receipt, guard)
+    return receipt
+
+
+def _termination_view(termination: dict, guard: _SignalGuard) -> dict:
+    return {
+        **termination,
+        "late_parent_signals": list(guard.late_signals),
+        "ignored_parent_signals": list(guard.ignored),
+    }
+
+
+def _ended_by_own_cause(lifecycle: str, problems: list[str]) -> bool:
+    """True when the attempt already ended for a cause a later stop signal must not relabel.
+
+    A timeout has already terminated the child, and a spawn failure with a recorded
+    problem never started one. The default ``spawn_failed`` lifecycle without a
+    problem means Popen was skipped because a stop request was already pending;
+    that attempt is genuinely interrupted.
+    """
+    return lifecycle == "timeout" or (lifecycle == "spawn_failed" and bool(problems))
+
+
+def _stop_after_cause_error(signal_name: str, lifecycle: str) -> str:
+    return (
+        f"stop_signal: parent received {signal_name} after the attempt had already ended by "
+        f"{lifecycle}; {lifecycle} cause retained"
+    )
+
+
+def _record_late_signals(receipt: dict, guard: _SignalGuard) -> None:
+    """Fold stop signals that arrived after the receipt was finalized into it.
+
+    The child is already reaped and the status is final, so there is nothing left
+    to interrupt; the request is reported instead of silently discarded. The
+    durable copy is rewritten so the public and stored receipts still agree.
+    """
+    termination = receipt["termination"]
+    listed = list(termination.get("late_parent_signals") or [])
+    unreported = guard.unreported_signals(len(listed))
+    if not unreported:
+        return
+    termination["late_parent_signals"] = listed + unreported
+    receipt["warnings"] = (
+        list(receipt["warnings"])
+        + [
+            "late_parent_signals: " + ", ".join(unreported)
+            + " arrived after the receipt was finalized; the child had already ended and the status is unchanged"
+        ]
+    )[:MAX_ERRORS]
+    try:
+        atomic_write_json(receipt["receipt_path"], receipt)
+    except OSError as exc:
+        receipt["warnings"] = (receipt["warnings"] + [
+            f"receipt_rewrite_failed: durable receipt lacks the late signal note: {_short(exc, 120)}"
+        ])[:MAX_ERRORS]
 
 
 def _run_claimed_process(
@@ -772,7 +877,9 @@ def _run_claimed_process(
     pgid: int | None = None
     lifecycle = "spawn_failed"
     confirmed = True
-    termination: dict[str, Any] = {"term_sent": False, "kill_sent": False, "interrupt_signal": None}
+    termination: dict[str, Any] = {
+        "term_sent": False, "kill_sent": False, "interrupt_signal": None, "stop_signal_after_termination": None,
+    }
     problems: list[str] = []
     process_record: dict[str, Any] = {}
     try:
@@ -816,9 +923,18 @@ def _run_claimed_process(
             lifecycle, confirmed, termination = _supervise(
                 proc, pgid, normalized["timeout_seconds"], normalized["term_grace_seconds"], guard
             )
+        stop_after_cause: str | None = None
         if guard.requested_signal is not None:
-            lifecycle = "interrupted"
-            termination["interrupt_signal"] = _signal_name(guard.requested_signal)
+            signal_name = _signal_name(guard.requested_signal)
+            if _ended_by_own_cause(lifecycle, problems):
+                # The attempt already ended for its own cause; keep that cause and
+                # record the stop request beside it instead of relabeling.
+                stop_after_cause = signal_name
+                termination["stop_signal_after_termination"] = signal_name
+            else:
+                lifecycle = "interrupted"
+                termination["interrupt_signal"] = signal_name
+            guard.reported_signal = guard.requested_signal
         guard.terminating = True
         ended_at = utc_now()
         elapsed = round(time.monotonic() - clock_start, 3)
@@ -852,6 +968,8 @@ def _run_claimed_process(
             verified = False
             if status == "success":
                 status = "unverified"
+        if stop_after_cause is not None:
+            errors.append(_stop_after_cause_error(stop_after_cause, lifecycle))
 
         result_text = parsed.get("result_text") or ""
         write_restricted_text(paths["result"], result_text)
@@ -865,6 +983,16 @@ def _run_claimed_process(
             tool_histogram[key] = tool_histogram.get(key, 0) + 1
         evidence = parsed.get("evidence") if isinstance(parsed.get("evidence"), dict) else {}
         denial_count = evidence.get("permission_denial_count")
+        denial_warnings: list[str] = []
+        if isinstance(denial_count, int) and not isinstance(denial_count, bool) and denial_count > 0:
+            denied = evidence.get("permission_denied_tools")
+            denied_names = ", ".join(str(name) for name in denied) if isinstance(denied, list) and denied else "unknown"
+            # Delivery can succeed while the requested task was blocked; the receipt
+            # carries that signal without pretending the delivery failed.
+            denial_warnings.append(
+                f"permission_denials: {denial_count} (tools: {denied_names}); delivery status is unchanged, "
+                "inspect the denials before accepting the task"
+            )
 
         receipt = {
             "schema": RECEIPT_SCHEMA,
@@ -893,7 +1021,7 @@ def _run_claimed_process(
             "process_path": paths["process"],
             "parsed_path": paths["parsed"],
             "errors": errors[:MAX_ERRORS],
-            "warnings": (warnings + list(parsed.get("warnings") or []))[:MAX_ERRORS],
+            "warnings": (warnings + list(parsed.get("warnings") or []) + denial_warnings)[:MAX_ERRORS],
             "returncode": returncode,
             "pid": proc.pid if proc is not None else None,
             "pgid": pgid,
@@ -901,7 +1029,7 @@ def _run_claimed_process(
             "started_at": started_at,
             "ended_at": ended_at,
             "timeout_seconds": normalized["timeout_seconds"],
-            "termination": {**termination, "late_parent_signals": list(guard.late_signals)},
+            "termination": _termination_view(termination, guard),
             "stream": {
                 "event_count": len(stream["events"]),
                 "parse_error_count": len(stream["parse_errors"]),
@@ -921,16 +1049,27 @@ def _run_claimed_process(
             "command_argv": command,
         }
         atomic_write_json(paths["receipt"], receipt)
-        if guard.requested_signal is not None and receipt["status"] != "interrupted":
+        if guard.requested_signal is not None and guard.reported_signal is None:
             # A first stop request can arrive during parsing or the receipt write.
-            # Finalize that cancellation without discarding the captured artifacts.
-            termination["interrupt_signal"] = _signal_name(guard.requested_signal)
-            receipt.update(status="interrupted", exit_code=exit_code_for("interrupted"),
-                           lifecycle="interrupted", requested_model_verified=False,
-                           termination={**termination, "late_parent_signals": list(guard.late_signals)})
-            receipt["errors"].insert(0, "interrupted: parent received a stop signal while finalizing the attempt")
+            # Finalize it without discarding the captured artifacts, applying the
+            # same rule as the post-supervision path: an attempt that already ended
+            # by timeout or a real spawn failure keeps that cause and records the
+            # request beside it; anything else (including a success that is still
+            # finalizing) becomes interrupted.
+            guard.reported_signal = guard.requested_signal
+            signal_name = _signal_name(guard.requested_signal)
+            if _ended_by_own_cause(lifecycle, problems):
+                termination["stop_signal_after_termination"] = signal_name
+                receipt["errors"] = (receipt["errors"] + [_stop_after_cause_error(signal_name, lifecycle)])[:MAX_ERRORS]
+            else:
+                lifecycle = "interrupted"
+                termination["interrupt_signal"] = signal_name
+                receipt.update(status="interrupted", exit_code=exit_code_for("interrupted"),
+                               lifecycle="interrupted", requested_model_verified=False)
+                receipt["errors"].insert(0, "interrupted: parent received a stop signal while finalizing the attempt")
+            receipt["termination"] = _termination_view(termination, guard)
             if proc is not None:
-                process_record.update(lifecycle="interrupted", termination=termination)
+                process_record.update(lifecycle=lifecycle, termination=termination)
                 atomic_write_json(paths["process"], process_record)
             atomic_write_json(paths["receipt"], receipt)
         return receipt

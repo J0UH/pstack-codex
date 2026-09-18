@@ -6,7 +6,7 @@ This is an independent port of [Lauren Tan's pstack](https://github.com/cursor/p
 
 ## How it works
 
-Start the first line with `$pstack-codex:poteto-mode` followed by a space and your task. This is the verified automatic-activation form; mentions elsewhere or colon-suffixed forms do not guarantee persistent mode. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
+Use `$pstack-codex:poteto-mode` with your task. Explicit dollar-form mentions may appear on later prose lines and may end in punctuation; quoted examples and fenced code do not activate the mode. Slash-form activation stays on the first line. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
 
 ```mermaid
 flowchart LR
@@ -32,9 +32,11 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 - Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
 - Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
 
-The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, Orchestrate, unattended Hillclimb, or Visual parity loops for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
+The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Across-turn event bridges and isolated cloud workers remain separate prerequisites; timed polling and worktrees do not pretend to replace them. See the [23-playbook capability map](docs/workflow-capabilities.json).
 
-Two completed Fable 5.1 reviews approved the documented limited alpha after repairs. See the [exact commit, verdicts and limits](docs/fable-review.md).
+The earlier limited alpha received two Fable 5.1 approvals at its exact recorded commit. The subsequent implementation pass is recorded separately; that historical approval does not automatically cover new code. See the [review record](docs/fable-review.md).
+
+Use the [read-only doctor](docs/doctor.md) to distinguish installation, authentication and verified worker evidence. [Grok Bot](docs/grok-bot.md) is optional for cloud-computer and Bot-native work; ordinary coding and review do not require it.
 
 ## Install
 
@@ -99,7 +101,9 @@ The receipt verifies transport, response-model attribution and effective capabil
 ```sh
 python3 scripts/build.py
 python3 scripts/build.py --check
-python3 -m unittest discover -s tests -v
+python3 -m venv .local/tests
+.local/tests/bin/python -m pip install -r requirements-test.txt
+.local/tests/bin/python -m unittest discover -s tests -v
 python3 scripts/package.py
 python3 scripts/package.py --check
 ```

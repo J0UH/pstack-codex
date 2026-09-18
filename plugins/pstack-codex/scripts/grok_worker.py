@@ -8,6 +8,7 @@ import json
 import os
 import shutil
 import sys
+import traceback
 from pathlib import Path
 
 
@@ -219,6 +220,10 @@ def main(argv: list[str] | None = None) -> int:
     except (ValueError, OSError) as error:
         from worker_common import make_error_receipt
         receipt = make_error_receipt(spec, "unsupported_profile" if isinstance(error, UnsupportedProfile) else "invalid_spec", [str(error)])
+    except Exception as error:  # keep the common receipt contract even on adapter bugs
+        traceback.print_exc(file=sys.stderr)
+        from worker_common import make_error_receipt
+        receipt = make_error_receipt(spec, "internal_error", [f"{type(error).__name__}: {str(error)[:200]}"])
     print(json.dumps(receipt, ensure_ascii=False))
     if isinstance(receipt.get("exit_code"), int):
         return receipt["exit_code"]

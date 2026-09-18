@@ -31,6 +31,10 @@ class WorkerCommonTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory(prefix="pstack fake worker ")
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name).resolve()
+        # The worker's cwd and its attempt evidence are siblings, never nested.
+        self.project = self.root / "project"
+        self.project.mkdir()
+        self.attempts = self.root / "attempts"
         self.prompt = self.root / "prompt with spaces.txt"
         self.prompt.write_text("Synthetic prompt: quotes ' \" and unicode æ")
         self.count = 0
@@ -39,8 +43,8 @@ class WorkerCommonTests(unittest.TestCase):
         self.count += 1
         return {
             "backend": "claude", "model": "fixture-model", "effort": "xhigh", "profile": "analysis",
-            "cwd": str(self.root), "prompt_file": str(self.prompt),
-            "run_dir": str(self.root / f"attempt {self.count}"), "timeout_seconds": 3,
+            "cwd": str(self.project), "prompt_file": str(self.prompt),
+            "run_dir": str(self.attempts / f"attempt {self.count}"), "timeout_seconds": 3,
             "term_grace_seconds": 0.1, **changes,
         }
 
@@ -67,7 +71,7 @@ class WorkerCommonTests(unittest.TestCase):
         self.assertTrue(receipt["requested_model_verified"])
         self.assertEqual(payload, Path(receipt["result_path"]).read_text())
         self.assertEqual(hashlib.sha256(payload.encode()).hexdigest(), receipt["stdin_sha256"])
-        self.assertEqual(str(self.root), receipt["cwd"])
+        self.assertEqual(str(self.project), receipt["cwd"])
         self.assertNotIn(payload, json.dumps(receipt))
         for path in worker.artifact_paths(receipt["run_dir"]).values():
             self.assertEqual(0o600, Path(path).stat().st_mode & 0o777)
@@ -207,6 +211,48 @@ class WorkerCommonTests(unittest.TestCase):
                 with self.assertRaises(worker.SpecError):
                     self.run_child("raise RuntimeError('must not run')", spec)
                 self.assertFalse(Path(spec["run_dir"]).exists())
+
+    def test_run_dir_overlapping_cwd_is_rejected_before_claim(self):
+        alias = self.root / "alias"
+        alias.symlink_to(self.project, target_is_directory=True)
+        overlapping = {
+            "run_dir directly under cwd": self.spec(run_dir=str(self.project / "attempt")),
+            "run_dir nested under cwd": self.spec(run_dir=str(self.project / "evidence" / "attempt")),
+            "run_dir under a symlink alias of cwd": self.spec(run_dir=str(alias / "attempt")),
+            "cwd given through a symlink alias": self.spec(cwd=str(alias), run_dir=str(self.project / "attempt")),
+            "run_dir reaching cwd through dot-dot": self.spec(run_dir=str(self.attempts / ".." / "project" / "attempt")),
+        }
+        for label, spec in overlapping.items():
+            with self.subTest(label=label):
+                with self.assertRaisesRegex(worker.SpecError, "inside cwd"):
+                    self.run_child("raise RuntimeError('must not run')", spec)
+                self.assertFalse(Path(spec["run_dir"]).exists())
+                self.assertFalse((self.project / "attempt").exists())
+        sibling = self.spec(run_dir=str(self.root / "sibling attempts" / "attempt"))
+        receipt = self.run_child("print('{\"type\":\"result\",\"model\":\"fixture-model\"}')", sibling)
+        self.assertEqual("success", receipt["status"])
+        self.assertEqual(sibling["run_dir"], receipt["run_dir"])
+
+    def test_permission_denials_warn_without_changing_delivery_status(self):
+        def parse_with_denials(events, spec):
+            parsed = parse_fixture(events, spec)
+            parsed["evidence"] = {"permission_denial_count": 2, "permission_denied_tools": ["Write", "Bash"]}
+            return parsed
+
+        receipt = self.run_child(
+            "print('{\"type\":\"result\",\"model\":\"fixture-model\",\"text\":\"done\"}')", parser=parse_with_denials
+        )
+        self.assertEqual("success", receipt["status"])
+        self.assertEqual(0, receipt["exit_code"])
+        self.assertTrue(receipt["requested_model_verified"])
+        self.assertEqual(2, receipt["permission_denial_count"])
+        self.assertEqual([], receipt["errors"])
+        self.assertTrue(
+            any(warning.startswith("permission_denials: 2 (tools: Write, Bash)") for warning in receipt["warnings"]),
+            receipt["warnings"],
+        )
+        receipt = self.run_child("print('{\"type\":\"result\",\"model\":\"fixture-model\",\"text\":\"done\"}')")
+        self.assertFalse(any(warning.startswith("permission_denials") for warning in receipt["warnings"]))
 
 
 if __name__ == "__main__":
