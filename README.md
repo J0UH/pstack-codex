@@ -1,12 +1,24 @@
 # pstack for Codex
 
-The pstack workflow library, adapted for Codex orchestration with standalone Claude Code CLI workers and an optional Grok Build backend.
+<p align="center">
+  <img src="docs/assets/pstack-codex-banner.png" alt="pstack for Codex — You to poteto-mode to Astra to workers to evidence" width="100%" />
+</p>
 
-This is an independent port of [Lauren Tan's pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2** at `5bf2b1544db739998121a306340631963c2ff3de`. It preserves the original skills, principles, playbooks, references and agent-role instructions. The Codex host adaptations are explicit and inspectable. It is not an official Cursor, OpenAI or xAI release.
+**Open-source workflow library for Codex.** One line activates a mode that picks the playbook, coordinates workers, and comes back with evidence you can actually check.
+
+<p align="center">
+  <img src="docs/assets/pstack-codex-card.png" alt="pstack for Codex — workflow library, open source" width="420" />
+</p>
+
+```text
+$pstack-codex:poteto-mode <your task>
+```
+
+That’s the verified activation form. Mentions elsewhere don’t reliably stick. Follow-ups continue the work; `new task` rematches; `exit poteto-mode` stops the mode.
+
+Independent port of [Lauren Tan’s pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2**. Skills, principles, playbooks, and agent roles preserved. Codex host adaptations are explicit and inspectable. **Not** an official Cursor, OpenAI, or xAI release.
 
 ## How it works
-
-Start the first line with `$pstack-codex:poteto-mode` followed by a space and your task. This is the verified automatic-activation form; mentions elsewhere or colon-suffixed forms do not guarantee persistent mode. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
 
 ```mermaid
 flowchart LR
@@ -21,7 +33,9 @@ flowchart LR
     R --> P
 ```
 
-The plugin is reusable across projects. Build commands, verification harnesses, deployment effects and business rules come from the current project. Activation and mode state are scoped to the conversation and project, not switched on globally for every chat.
+**Workers** means backends Astra can call: native Codex agents, the Claude Code CLI, and optionally Grok Build. They’re execution paths — not “fake vs real” code. The parent still reviews evidence before the next step.
+
+Poteto mode can move through `how`, `architect`, `arena`, implementation, review, and verification without you listing that sequence. The plugin is reusable across projects; build commands and business rules stay in the project you’re working on.
 
 ## Status
 
