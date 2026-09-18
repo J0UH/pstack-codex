@@ -12,12 +12,13 @@
   },
   "tests": {
     "port_unittest": {
-      "passed": 57,
+      "passed": 87,
       "failed": 0
     },
     "upstream_bun": {
       "passed": 52,
-      "failed": 0
+      "failed": 0,
+      "expectations": 206
     }
   },
   "claude_analysis": {
@@ -149,7 +150,20 @@
     "actual_exit": true,
     "actual_compaction_restore": true,
     "new_task_reset": true,
-    "state_scope_tests": "distinct session and project keys; separate hook/CLI environment regression"
+    "state_scope_tests": "distinct session and project keys; separate hook/CLI environment regression",
+    "repaired_identity_live_proof": {
+      "status": "observed",
+      "published_default_prompt_activated": true,
+      "environment_thread_id_matched_trusted_hook_session": true,
+      "omitted_identity_flags_from_sibling_git_worktree_resolved_original_project": true,
+      "selected_playbook": "investigation",
+      "selected_generation": 2,
+      "resumed_transcript_developer_hook_contexts_confirming_identity_and_selection": 2,
+      "initial_default_workspace_write_state_access": "denied",
+      "authorized_narrow_state_directory_add_dir": "succeeded",
+      "workspace_sandbox_retained": true,
+      "private_paths_and_session_ids_published": false
+    }
   },
   "grok": {
     "cli": "1.0.34",
@@ -158,15 +172,32 @@
       "grok-4.5"
     ],
     "live_status": "blocked_before_inference",
-    "reason": "Read-only sandbox refused startup because /var/run/docker.sock is a symlink.",
+    "reason": "Read-only sandbox refused startup because the Docker socket path is a symlink.",
     "protections_weakened": false,
-    "response_model_verified": false
+    "response_model_verified": false,
+    "exact_current_argv_probe": {
+      "status": "process_failed",
+      "observed_models": [],
+      "all_seven_denies": true,
+      "sandbox_error": true,
+      "unknown_option_error": false,
+      "argv_sha256": "611257f29933900b3a1c1c140d08ad711aa7a843dbfbe70ec3fb6f045c3b4088",
+      "requested_model": "grok-4.6",
+      "requested_effort": "low",
+      "profile": "analysis",
+      "protections_weakened": false,
+      "inference_verified": false
+    }
   },
   "limitations": [
     "No side-by-side Cursor execution baseline.",
     "Not every playbook exercised end-to-end.",
     "Cloud placement, webhook automation and some history/plan integrations remain explicitly unsupported.",
-    "Process groups are lifecycle control, not containment of escaped sessions or external effects."
+    "Process groups are lifecycle control, not containment of escaped sessions or external effects.",
+    "Final Fable re-review of the repaired candidate is pending; there is no joint approval yet.",
+    "Reader repair proof covers local git log only, not authenticated gh or a complete seven-source investigation.",
+    "Requested effort is recorded; internal reasoning compute is not independently verified.",
+    "Hard-killed launchers, escaped process sessions and unavailable artifact storage require separate reconciliation."
   ],
   "captured_live_streams_reparsed_after_strict_profile_fix": true,
   "pstack_bug_fix": {
@@ -227,7 +258,8 @@
     "tests_unchanged": true,
     "tests_before_failed": 2,
     "independent_tests_after_passed": 3,
-    "commits_or_prs_created": false
+    "commits_or_prs_created": false,
+    "why_search_scope": "The investigator reasoned over coordinator-gathered source-control evidence; it did not execute its own queries in this baseline."
   },
   "final_review_attempts": [
     {
@@ -240,5 +272,231 @@
       "delivery": "timeout",
       "acceptance": "incomplete; actual file reads but no verdict"
     }
-  ]
+  ],
+  "test_run_status": "Both Python and unchanged upstream suites rerun after repairs.",
+  "effort_evidence": {
+    "initial_live_roles_requested_effort": "xhigh",
+    "repair_functional_probes_requested_effort": "low",
+    "reviewers_requested_effort": "xhigh",
+    "internal_reasoning_compute_independently_verified": false
+  },
+  "handled_signal_tests": {
+    "kind": "real OS signals to a fake-worker wrapper using the common launcher",
+    "signals": [
+      "SIGTERM",
+      "SIGINT",
+      "SIGHUP"
+    ],
+    "exit_code": 130,
+    "public_and_durable_receipts_match": true,
+    "status": "interrupted",
+    "confirmed_owned_group_terminated": true,
+    "heartbeat_stopped": true,
+    "exclusive_attempt_claim_preserved": true,
+    "additional_windows": [
+      "exclusive claim",
+      "prompt hashing",
+      "output-file creation",
+      "Popen ownership return",
+      "process-record write",
+      "receipt write"
+    ],
+    "limits": [
+      "SIGKILL and process crashes cannot finalize orderly receipts.",
+      "Indefinitely blocked system calls and unavailable storage are outside the guarantee.",
+      "Processes that escape the owned group and external side effects need separate reconciliation."
+    ]
+  },
+  "repair_verification": {
+    "reader-shell": {
+      "status": "success",
+      "requested_model": "claude-fable-5-1",
+      "requested_model_verified": true,
+      "profile": "reader",
+      "tool_calls_by_name": {
+        "Bash": 1
+      },
+      "permission_denial_count": 0,
+      "errors": [],
+      "requested_effort": "low",
+      "observed_models": [
+        "claude-fable-5-1"
+      ],
+      "auxiliary_models": [
+        "claude-haiku-4-5-20251001"
+      ],
+      "confirmed_terminated": true,
+      "runtime_evidence": {
+        "init_permission_mode": "dontAsk",
+        "init_tools": [
+          "Bash",
+          "Glob",
+          "Grep",
+          "Read"
+        ],
+        "init_mcp_server_count": 0,
+        "api_key_source": "none",
+        "permission_denied_tools": [],
+        "model_usage_providers": {
+          "claude-fable-5-1": "firstParty",
+          "claude-haiku-4-5-20251001": "firstParty"
+        }
+      },
+      "validated_operation": "one scoped local git log command",
+      "gh_or_complete_why_search_verified": false
+    },
+    "writer-scope": {
+      "status": "success",
+      "requested_model": "claude-fable-5-1",
+      "requested_model_verified": true,
+      "profile": "writer",
+      "tool_calls_by_name": {
+        "Read": 2,
+        "Write": 2
+      },
+      "permission_denial_count": 1,
+      "errors": [],
+      "inside_changed": true,
+      "outside_unchanged": true,
+      "requested_effort": "low",
+      "observed_models": [
+        "claude-fable-5-1"
+      ],
+      "auxiliary_models": [
+        "claude-haiku-4-5-20251001"
+      ],
+      "confirmed_terminated": true,
+      "runtime_evidence": {
+        "init_permission_mode": "dontAsk",
+        "init_tools": [
+          "Edit",
+          "Glob",
+          "Grep",
+          "Read",
+          "Write"
+        ],
+        "init_mcp_server_count": 0,
+        "api_key_source": "none",
+        "permission_denied_tools": [
+          "Write"
+        ],
+        "model_usage_providers": {
+          "claude-fable-5-1": "firstParty",
+          "claude-haiku-4-5-20251001": "firstParty"
+        }
+      },
+      "boundary_scope": "One permitted file write and one denied outside-workspace Write; not OS containment."
+    },
+    "safe-mode": {
+      "status": "success",
+      "requested_model": "claude-fable-5-1",
+      "requested_model_verified": true,
+      "profile": "analysis",
+      "tool_calls_by_name": {},
+      "permission_denial_count": 0,
+      "errors": [],
+      "safe_observation": {
+        "status": "success",
+        "model_verified": true,
+        "hook_sentinel_exists": false,
+        "mcp_sentinel_exists": false,
+        "project_phrase_in_answer": false,
+        "mcp_count": 0
+      },
+      "positive_control": {
+        "exit_code": 0,
+        "subtype": "success",
+        "hook_sentinel_exists": true,
+        "mcp_sentinel_exists": true,
+        "project_phrase_in_answer": true,
+        "mcp_count": 1
+      },
+      "requested_effort": "low",
+      "observed_models": [
+        "claude-fable-5-1"
+      ],
+      "auxiliary_models": [
+        "claude-haiku-4-5-20251001"
+      ],
+      "confirmed_terminated": true,
+      "runtime_evidence": {
+        "init_permission_mode": "dontAsk",
+        "init_tools": [],
+        "init_mcp_server_count": 0,
+        "api_key_source": "none",
+        "permission_denied_tools": [],
+        "model_usage_providers": {
+          "claude-fable-5-1": "firstParty",
+          "claude-haiku-4-5-20251001": "firstParty"
+        }
+      },
+      "control": "The same synthetic project customizations ran without safe mode in a positive control."
+    },
+    "model_setup": {
+      "empty_config_reported": true,
+      "validated": true,
+      "saved_config_roundtrip": true,
+      "target_was_isolated_absolute_override": true,
+      "provider_calls": 0,
+      "cursor_rules_written": false
+    }
+  },
+  "fable_review": {
+    "baseline_reviews": [
+      {
+        "scope": "workflow",
+        "target_commit": "7782ebe26fb150c5340c54dec4ade5f6e4825b12",
+        "verdict": "changes_required",
+        "approval_scope": "No approval at this commit for the workflow scope. The generation, fidelity and packaging layer is sound and would be approvable on its own. Approval is withheld because (a) the public limitation list omits a class of unsupported behavior the user explicitly requires preserved (feedback loops via /loop, /goal, timed audit ticks), (b) the plugin's own default prompts bypass the mode-activation mechanism, (c) the CLI state-write identity that playbook persistence depends on is undefined, and (d) the documented first step (setup-pstack) has no Codex-side procedure or schema. All four are small fixes. Re-review after WF-1 through WF-4; the P3 items may ship in alpha if recorded as limitations.",
+        "source_only": true,
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "transport_exit_code": 0,
+        "structured_verdict": true,
+        "finding_ids": [
+          "workflow-WF-1",
+          "workflow-WF-2",
+          "workflow-WF-3",
+          "workflow-WF-4",
+          "workflow-WF-5",
+          "workflow-WF-6",
+          "workflow-WF-7",
+          "workflow-WF-8",
+          "workflow-WF-9"
+        ]
+      },
+      {
+        "scope": "runtime",
+        "target_commit": "7782ebe26fb150c5340c54dec4ade5f6e4825b12",
+        "verdict": "approve",
+        "approval_scope": "Runtime layer of commit 7782ebe as an alpha: Claude analysis/reader/writer adapters over the installed-CLI login route, the common launcher's timeout and normal-exit lifecycle, fail-closed model/tool/receipt evidence, and Grok gated as unsupported/blocked. Approval does NOT cover: (a) the documented parent-interrupt (SIGINT/SIGTERM/SIGHUP) cancellation claim until runtime-02's experiment passes; (b) any claim that Claude-backed why investigators or verifiers can run git/gh/tests autonomously (runtime-01); (c) the \"safe mode suppresses automatic customizations\" and \"effort applied\" claims until runtime-09's probe is recorded. Grok remains not live-enabled.",
+        "source_only": true,
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "transport_exit_code": 0,
+        "structured_verdict": true,
+        "finding_ids": [
+          "runtime-01",
+          "runtime-02",
+          "runtime-03",
+          "runtime-04",
+          "runtime-05",
+          "runtime-06",
+          "runtime-07",
+          "runtime-08",
+          "runtime-09",
+          "runtime-10"
+        ]
+      }
+    ],
+    "repaired_candidate_review": "pending",
+    "joint_approval": false,
+    "note": "Repair evidence does not retroactively change the baseline verdicts."
+  }
 }

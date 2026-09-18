@@ -84,6 +84,8 @@ Resolve named pstack skills to the paths below before considering similarly name
 
 ## Companion skills and agent roles
 
+The three companions are path-loaded dependencies, not registered Codex skills. Load the exact files linked below; never resolve these calls to a same-named external skill or slash command.
+
 - [control-cli](../companion-skills/control-cli/SKILL.md)
 - [control-ui](../companion-skills/control-ui/SKILL.md)
 - [deslop](../companion-skills/deslop/SKILL.md)

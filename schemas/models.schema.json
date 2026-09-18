@@ -1,0 +1,425 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "pstack-codex model role configuration",
+  "description": "Validates configuration syntax only, not availability, authentication, model entitlement or profile enforcement. Missing roles remain unresolved partial overrides.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "roles"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "description": {
+      "type": "string"
+    },
+    "profile_note": {
+      "type": "string"
+    },
+    "budget": {
+      "enum": [
+        "unlimited",
+        "large",
+        "medium",
+        "small"
+      ]
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "feature, refactoring": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "bug-fix": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "perf-issue": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "hillclimb": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "judgment and prose": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "hardest tasks": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "how explorer": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "how explainer": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "why investigators": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "why synthesizer": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "reflect tooling": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "reflect judgment, divergent, synthesizer": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "swarm workers": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "coordinator": {
+          "$ref": "#/$defs/modelEntry"
+        },
+        "arena runners": {
+          "$ref": "#/$defs/panel"
+        },
+        "arena cross-judge pool": {
+          "$ref": "#/$defs/panel"
+        },
+        "architect runners": {
+          "$ref": "#/$defs/panel"
+        },
+        "interrogate reviewers": {
+          "$ref": "#/$defs/panel"
+        }
+      }
+    },
+    "optional_backends": {
+      "description": "Informational capability notes only. Does not activate a backend or provide role fallbacks.",
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "native": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "const": "native"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$"
+            },
+            "effort": {
+              "enum": [
+                "none",
+                "minimal",
+                "low",
+                "medium",
+                "high",
+                "xhigh",
+                "max",
+                "ultra"
+              ]
+            },
+            "description": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false,
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "model": {
+                    "enum": [
+                      "inherit-parent",
+                      "auto"
+                    ]
+                  }
+                },
+                "required": [
+                  "model"
+                ]
+              },
+              "then": {
+                "not": {
+                  "required": [
+                    "effort"
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        "claude": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "const": "claude"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+              "not": {
+                "enum": [
+                  "inherit-parent",
+                  "auto"
+                ]
+              }
+            },
+            "effort": {
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "xhigh",
+                "max"
+              ]
+            },
+            "description": {
+              "type": "string"
+            },
+            "profile": {
+              "enum": [
+                "analysis",
+                "reader",
+                "writer"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "grok": {
+          "type": "object",
+          "properties": {
+            "backend": {
+              "const": "grok"
+            },
+            "model": {
+              "type": "string",
+              "minLength": 1,
+              "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+              "not": {
+                "enum": [
+                  "inherit-parent",
+                  "auto"
+                ]
+              }
+            },
+            "effort": {
+              "enum": [
+                "low",
+                "medium",
+                "high",
+                "xhigh",
+                "max"
+              ]
+            },
+            "description": {
+              "type": "string"
+            },
+            "profile": {
+              "enum": [
+                "analysis",
+                "reader",
+                "writer"
+              ]
+            },
+            "status": {
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        }
+      }
+    }
+  },
+  "$defs": {
+    "native": {
+      "type": "object",
+      "properties": {
+        "backend": {
+          "const": "native"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "not": {
+            "enum": [
+              "inherit-parent",
+              "auto"
+            ]
+          }
+        },
+        "effort": {
+          "enum": [
+            "none",
+            "minimal",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max",
+            "ultra"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "backend",
+        "model",
+        "effort"
+      ],
+      "additionalProperties": false
+    },
+    "claude": {
+      "type": "object",
+      "properties": {
+        "backend": {
+          "const": "claude"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "not": {
+            "enum": [
+              "inherit-parent",
+              "auto"
+            ]
+          }
+        },
+        "effort": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "profile": {
+          "enum": [
+            "analysis",
+            "reader",
+            "writer"
+          ]
+        }
+      },
+      "required": [
+        "backend",
+        "model",
+        "effort"
+      ],
+      "additionalProperties": false
+    },
+    "grok": {
+      "type": "object",
+      "properties": {
+        "backend": {
+          "const": "grok"
+        },
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "pattern": "^[^\\s\\u0000-\\u001f\\u007f]+$",
+          "not": {
+            "enum": [
+              "inherit-parent",
+              "auto"
+            ]
+          }
+        },
+        "effort": {
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "profile": {
+          "enum": [
+            "analysis",
+            "reader",
+            "writer"
+          ]
+        }
+      },
+      "required": [
+        "backend",
+        "model",
+        "effort"
+      ],
+      "additionalProperties": false
+    },
+    "inheritance": {
+      "type": "object",
+      "required": [
+        "backend",
+        "model"
+      ],
+      "properties": {
+        "backend": {
+          "const": "native"
+        },
+        "model": {
+          "enum": [
+            "inherit-parent",
+            "auto"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "modelEntry": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/native"
+        },
+        {
+          "$ref": "#/$defs/claude"
+        },
+        {
+          "$ref": "#/$defs/grok"
+        },
+        {
+          "$ref": "#/$defs/inheritance"
+        }
+      ]
+    },
+    "panel": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/modelEntry"
+      }
+    }
+  }
+}

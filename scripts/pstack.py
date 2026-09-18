@@ -6,8 +6,11 @@ import argparse
 import hashlib
 import json
 import os
+import shlex
 import tempfile
 from pathlib import Path
+
+from model_config import validate_model_config
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -24,7 +27,10 @@ def config_path() -> Path:
 
 def state_root() -> Path:
     if os.environ.get("PSTACK_STATE_DIR"):
-        return Path(os.environ["PSTACK_STATE_DIR"]).expanduser()
+        path = Path(os.environ["PSTACK_STATE_DIR"]).expanduser()
+        if not path.is_absolute():
+            raise ValueError("PSTACK_STATE_DIR must be an absolute path")
+        return path
     return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "pstack/state"
 
 
@@ -41,6 +47,32 @@ def state_path(session: str, project: str) -> Path:
     session, project = identity(session, project)
     key = hashlib.sha256(json.dumps([session, project]).encode()).hexdigest()
     return state_root() / (key + ".json")
+
+
+def resolve_identity(session: str | None, project: str | None) -> tuple[str, str]:
+    if not isinstance(session, str) or not session.strip() or len(session) > 512:
+        raise ValueError("Pass --session from the mode hook's authoritative session ID; CODEX_THREAD_ID is only a convenience when the host exposes it")
+    if project is not None:
+        return identity(session, project)
+    matches = []
+    for path in state_root().glob("*.json"):
+        try:
+            candidate = json.loads(path.read_text())
+        except (OSError, ValueError):
+            continue
+        if not isinstance(candidate, dict) or candidate.get("session") != session:
+            continue
+        candidate_project = candidate.get("project")
+        if not isinstance(candidate_project, str):
+            raise ValueError("Recorded session context is malformed; pass the authoritative --project")
+        resolved = identity(session, candidate_project)
+        if state_path(*resolved) != path:
+            raise ValueError("Recorded session context has a mismatched state key")
+        read_state(*resolved)
+        matches.append(resolved)
+    if len(matches) != 1:
+        raise ValueError("Pass --project from the mode hook: session context is missing or ambiguous")
+    return matches[0]
 
 
 def atomic_json(path: Path, value: dict) -> None:
@@ -110,7 +142,13 @@ def mode_context(state: dict, full: bool = True) -> str:
         "pstack-codex: poteto-mode remains active in this conversation and project.",
         "This retains the chosen style, not permission for new external actions. Honor the user's current scope, explicit opt-out and host policies.",
         f"Plugin root: {ROOT}",
-        f"Mode generation: {state['generation']}; current playbook: {state['playbook'] or 'rematch the current request'}.",
+        f"Authoritative session ID: {state['session']}",
+        f"Authoritative session project: {state['project']}",
+        f"Shared mode state directory: {state_root()}. CLI mutations require host write permission here; hook trust alone does not grant it. If denied, report persistence unavailable and follow the host adapter's storage setup; do not disable the sandbox or silently change stores.",
+        "Use this identity for mode commands even when editing a different worktree. Do not substitute a shell cwd or guessed task ID.",
+        "Omitting --session/--project is supported when CODEX_THREAD_ID matches this session and exactly one recorded context exists; the CLI then uses this recorded project, not the shell cwd. Explicit flags are recommended, not mandatory in that case.",
+        "Mode command prefix: " + shlex.join(["python3", str(ROOT / "scripts/pstack.py"), "mode", "<action>", "--session", state["session"], "--project", state["project"]]),
+        f"Mode generation: {state['generation']}; current playbook: {state['playbook'] or 'none recorded; continue the workflow already in progress, or match one if none has started; record it with mode select'}.",
         "A casual turn need not run a playbook. New task rematches; it does not create a visible Codex task automatically.",
         "Read referenced pstack leaves from this installed package, not same-named unrelated skills.",
     ]
@@ -127,28 +165,34 @@ def main() -> int:
     mode = sub.add_parser("mode")
     mode.add_argument("action", choices=["activate", "deactivate", "status", "reset", "select", "context"])
     mode.add_argument("--session", default=os.environ.get("CODEX_THREAD_ID"))
-    mode.add_argument("--project", default=os.getcwd())
+    mode.add_argument("--project", help="Authoritative hook project; omitted only when one recorded context exists for the session")
     mode.add_argument("--playbook")
     models = sub.add_parser("models")
-    models.add_argument("action", choices=["path", "show"])
+    models.add_argument("action", choices=["path", "show", "validate"])
+    models.add_argument("--file", help="Explicit draft/configuration file for show or validate")
     args = parser.parse_args()
     try:
         if args.command == "models":
-            path = config_path()
+            if args.action == "path" and args.file:
+                raise ValueError("--file is supported by models show and validate, not path")
+            path = Path(args.file).expanduser().resolve() if args.file else config_path()
             if args.action == "path":
                 print(path)
             elif not path.is_file():
                 print(json.dumps({"status": "needs_setup", "path": str(path), "next": "Use the package's setup-pstack skill to confirm available role mappings."}))
                 return 2
             else:
-                value = json.loads(path.read_text())
-                if not isinstance(value, dict) or value.get("schema_version") != 1 or not isinstance(value.get("roles"), dict):
-                    raise ValueError("Invalid model configuration schema")
-                print(json.dumps(value, indent=2))
-        elif args.action == "context":
-            print(mode_context(read_state(args.session, args.project)))
+                value = validate_model_config(json.loads(path.read_text()))
+                if args.action == "validate":
+                    print(json.dumps({"status": "valid", "path": str(path), "configured_roles": len(value["roles"]), "capabilities_verified": False}))
+                else:
+                    print(json.dumps(value, indent=2))
         else:
-            print(json.dumps(change_state(args.action, args.session, args.project, args.playbook), indent=2))
+            session, project = resolve_identity(args.session, args.project)
+            if args.action == "context":
+                print(mode_context(read_state(session, project)))
+            else:
+                print(json.dumps(change_state(args.action, session, project, args.playbook), indent=2))
         return 0
     except (ValueError, OSError, TypeError) as exc:
         print(json.dumps({"status": "error", "error": str(exc)}))

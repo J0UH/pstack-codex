@@ -14,7 +14,7 @@ The build owns only `skills/`, `agents/`, `automations/`, `companion-skills/`, `
 |---|---|---|
 | `codex-frontmatter` | 47 registered SKILL.md files, two agent definitions, three companion skills | Emit supported `name` and `description`; normalize names to folder/file identity. Preserve original frontmatter verbatim in the ledger. Cursor mode/reminder/icon/color/paths/background flags are interpreted by the host adapter, not silently claimed as native Codex metadata. |
 | `host-contract-notice` | Those entrypoints plus all 23 playbooks | Insert one marked notice linking relatively to `adapters/host.md`. Preserve the original body bytes after it. |
-| `invocation-policy` | 47 registered skills and three companions | Add `agents/openai.yaml`. Preserve upstream explicit-only discovery: 46 pstack skills false, setup-pstack true; companions retain their source default. |
+| `invocation-policy` | 47 registered skills | Add `agents/openai.yaml`. Preserve upstream explicit-only discovery: 46 pstack skills false, setup-pstack true. Companions are path-loaded dependencies, not registered skills; they have no discovery policy files. |
 | `routing-index` | `docs/routing-index.md` | Generate a complete linked catalog, 23 playbooks, role definitions, companions, and dormant entrypoint without replacing the router's decisions. |
 | No transformation | Remaining copied references/helpers/assets; entire dormant Benny pack | Byte-for-byte copy. The host contract is loaded before entering the dormant pack. |
 
@@ -25,6 +25,8 @@ The build owns only `skills/`, `agents/`, `automations/`, `companion-skills/`, `
 The current user's Astra/Fable/optional-Grok policy is supplied separately by the coordinator's model configuration. The build never selects, substitutes or calls a provider. Missing role capability is reported, not hidden by choosing a cheaper or nearby model. Existing local skills are not replacements for pstack's own workflows. Built-in authoring and companion control contracts need explicit adapters where their host differs.
 
 ## Preserved limitations requiring separate proof
+
+The setup host notice points to `docs/setup.md` and the model schema. Original discovery, budget, confirmation and override decisions remain; Codex represents backend/model/effort separately. Mode starter prompts contain an explicit mention, hook context supplies authoritative session/project identity, and the CLI resolves recorded identity across worktree cwd changes. TypeScript path-trigger metadata is enforced inside active pstack workflows by the host contract; global path-trigger discovery outside the mode is not implemented.
 
 - The source plan checker is unchanged. It has fixed ten-lane, Grok-slug, `/goal`, trunk-command and timing markers. A different Codex plan cannot honestly pass by weakening or forging them. A reviewed parameterization remains future work.
 - The source worktree audit has Cursor transcript assumptions. Filesystem inspection alone does not make transcript-based liveness accurate on Codex.

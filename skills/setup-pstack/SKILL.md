@@ -3,7 +3,7 @@ name: setup-pstack
 description: "Configure which models pstack uses per role and at what reasoning budget. Detects your available models and writes an always-applied rule that overrides the skill defaults. Use for /setup-pstack, \"configure pstack models\", \"pstack budget\", or changing pstack's model choices."
 ---
 <!-- pstack-codex:host -->
-> **Codex host contract.** Read [../../adapters/host.md](../../adapters/host.md) before executing this workflow. It translates Cursor tools, paths, models, and activation without replacing the workflow below.
+> **Codex host contract.** Read [../../adapters/host.md](../../adapters/host.md) before executing this workflow. It translates Cursor tools, paths, models, and activation without replacing the workflow below. For model setup, follow the [Codex setup procedure](../../docs/setup.md) and its schema instead of the Cursor rule-file steps below; preserve the original discovery, budget, and confirmation decisions.
 <!-- /pstack-codex:host -->
 
 # Setup pstack

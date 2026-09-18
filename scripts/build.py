@@ -115,10 +115,14 @@ def frontmatter(data: bytes) -> tuple[dict, str, str]:
 
 def notice(output: str) -> str:
     relative = os.path.relpath("adapters/host.md", str(PurePosixPath(output).parent)).replace(os.sep, "/")
+    setup_notice = ""
+    if output == "skills/setup-pstack/SKILL.md":
+        setup_path = os.path.relpath("docs/setup.md", str(PurePosixPath(output).parent)).replace(os.sep, "/")
+        setup_notice = f" For model setup, follow the [Codex setup procedure]({setup_path}) and its schema instead of the Cursor rule-file steps below; preserve the original discovery, budget, and confirmation decisions."
     return (
         NOTICE_START +
         f"> **Codex host contract.** Read [{relative}]({relative}) before executing this workflow. "
-        "It translates Cursor tools, paths, models, and activation without replacing the workflow below.\n"
+        "It translates Cursor tools, paths, models, and activation without replacing the workflow below." + setup_notice + "\n"
         + NOTICE_END
     )
 
@@ -149,7 +153,7 @@ def agent_metadata(name: str, display_name: str, implicit: bool) -> bytes:
         "interface:\n"
         f"  display_name: {json.dumps(display_name)}\n"
         f"  short_description: {json.dumps(short)}\n"
-        f"  default_prompt: {json.dumps('Use $' + name + ' for this task.')}\n"
+        f"  default_prompt: {json.dumps('$pstack-codex:poteto-mode work through this task.' if name == 'poteto-mode' else 'Use $' + name + ' for this task.')}\n"
         "policy:\n"
         f"  allow_implicit_invocation: {str(implicit).lower()}\n"
     ).encode()
@@ -209,11 +213,6 @@ def render(root: Path) -> tuple[dict[str, tuple[bytes, int]], dict]:
         if path in expected_companions:
             name = PurePosixPath(path).parent.name
             data, operations, fields = adapt_entry(original, output, name)
-            policy_path = str(PurePosixPath(output).parent / "agents/openai.yaml")
-            implicit = not fields.get("disable-model-invocation", False)
-            add(policy_path, agent_metadata(name, fields["name"], implicit),
-                source="upstream/cursor-team-kit/" + path, original=original,
-                operations=[{"id": "invocation-policy", "allow_implicit_invocation": implicit}])
         add(output, data, source="upstream/cursor-team-kit/" + path, original=original, operations=operations)
 
     if sum(not s["implicit"] for s in skills) != 46:
@@ -235,6 +234,7 @@ def render(root: Path) -> tuple[dict[str, tuple[bytes, int]], dict]:
     index += ["", "## Playbooks", ""]
     index += [f"- [{PurePosixPath(p).stem}](../{p})" for p in playbooks]
     index += ["", "## Companion skills and agent roles", ""]
+    index += ["The three companions are path-loaded dependencies, not registered Codex skills. Load the exact files linked below; never resolve these calls to a same-named external skill or slash command.", ""]
     index += [f"- [{PurePosixPath(p).parent.name}](../companion-skills/{p.removeprefix('skills/')})" for p in sorted(expected_companions)]
     index += ["- [poteto-agent](../agents/poteto-agent.md)", "- [Comment Sicko](../agents/comment-sicko.md)", "",
               "## Dormant Benny pack", "",

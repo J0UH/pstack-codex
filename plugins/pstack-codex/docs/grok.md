@@ -52,6 +52,10 @@ The exact control arguments are:
 --deny MCPTool --deny WebFetch --deny WebSearch
 ```
 
+The Fable review follow-up reran this exact argument list, including all seven denies, through the common launcher. It reached the same sandbox error rather than an unknown-option error. This confirms argument acceptance on this host, not successful inference or tool-free semantics. Pre-launch errors now use the same receipt schema and `errors` array as Claude; `unsupported_profile` exits with code 2.
+
+The child receives an explicit inherited environment and an auth-policy record. Known `XAI_API_KEY` and `GROK_CLI_CHAT_PROXY_BASE_URL` overrides are rejected by name without exposing values. The adapter does not configure credentials, and it does not independently attest the route selected by the installed CLI's own configuration.
+
 The installed help, rather than a guessed flag, confirmed `streaming-messages-json` for Messages-format NDJSON and `streaming-json` for ACP updates. The adapter requests the former only. Official CLI guidance recommends checking installed help for the complete flag set. [CLI reference](https://docs.x.ai/build/cli/reference). Headless sessions persist through the installed Grok CLI and use its existing authentication; this wrapper does not manage either. [Headless scripting](https://docs.x.ai/build/cli/headless-scripting).
 
 ## Verification and limitations

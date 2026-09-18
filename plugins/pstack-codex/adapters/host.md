@@ -6,6 +6,8 @@ The plugin root is the parent of the `adapters` directory containing this file. 
 
 ## Resolve the intended skill
 
+The companions `deslop`, `control-cli`, and `control-ui` are path-loaded dependencies, not separately registered Codex slash skills. Read their exact packaged files for every companion call; never resolve them to a same-named external package.
+
 When an upstream workflow names a pstack skill, load `<plugin>/skills/<name>/SKILL.md`. Load its referenced files relative to that skill. Resolve the display names “Poteto Mode” and “Make Bot UI” to `poteto-mode` and `make-bot-ui`. Load `deslop`, `control-cli`, and `control-ui` from `<plugin>/companion-skills/<name>/SKILL.md`. These are the pinned companion implementations, not similarly named replacement skills.
 
 Resolve `poteto-agent` to `<plugin>/agents/poteto-agent.md` and “Comment Sicko” to `<plugin>/agents/comment-sicko.md`. These Markdown files are role instructions to load into a real delegated worker. Their presence does not register new native `subagent_type` values. Pass the role definition, exact task and scope, relevant skill paths or contents, and this host contract to the worker. Preserve the poteto wrapper's full-mode read and comment review's special scope.
@@ -16,7 +18,7 @@ Before reading or editing a `.ts` or `.tsx` file within an active pstack workflo
 
 ## Activate and resume the mode
 
-For an explicit poteto-mode activation, resolve the current real session/task ID and project. Use:
+The hook context supplies **Authoritative session ID**, **Authoritative session project**, and a shell-quoted mode command prefix from the actual hook event. Use that identity for every mode command, even inside a different worktree. `CODEX_THREAD_ID` is only a convenience where the host exposes it; do not guess an ID or assume that variable exists. Use:
 
 ```text
 python3 <plugin>/scripts/pstack.py mode activate --session <ID> --project <project>
@@ -28,13 +30,19 @@ python3 <plugin>/scripts/pstack.py mode deactivate --session <ID> --project <pro
 
 After routing, record the selected playbook with `select`. Its value must be the filename stem of an installed playbook or `figure-it-out`; selection requires active mode. On a new task, use `reset` before matching the request again. Reset clears the selected playbook while preserving active mode. It does not create a visible Codex task.
 
+When `--project` is omitted, the CLI resolves the one recorded context for that session instead of using the shell cwd. Omitting both flags is supported when `CODEX_THREAD_ID` equals the hook's authoritative session ID and exactly one context exists; this is not a substitution of identity. Explicit flags are recommended, not mandatory in that case. Missing or ambiguous contexts require the authoritative project explicitly. Initial manual activation requires an explicit project. No recorded playbook is not a reason to restart a workflow already in progress.
+
 Use `deactivate` on opt-out. The hook recognizes an explicit first-line directive such as `exit poteto-mode`; incidental or quoted mentions do not turn the mode off. Honor an explicit user opt-out through the CLI even when the hook did not recognize its wording. Activation is scoped to that session/project; installation across folders does not authorize activating unrelated tasks.
 
 The configured hooks inject the full host contract and mode instructions on activation and on SessionStart events for startup, resume, and compaction. Normal continuation receives a brief reminder with the current selection and paths to reload if needed. Casual turns remain exempt according to upstream. Mode metadata alone cannot implement this persistence. If actual hook trust, installation, or session identity is unavailable, report automatic restoration as unverified or unavailable and load the workflow explicitly; passing helper tests does not establish that live hooks are trusted or running.
 
 Both hooks and CLI use `$CODEX_HOME/pstack/state`, or `~/.codex/pstack/state` when `CODEX_HOME` is unset. `PSTACK_STATE_DIR` overrides that shared state directory. They ignore `PLUGIN_DATA` for mode state so hook and CLI calls cannot silently select different stores. Use the same override environment for both when testing.
 
+Trusted hooks run separately from the shell sandbox. Under `workspace-write`, their ability to save mode state does **not** grant shell tools permission to update the default home-directory store. Before relying on `select`, `reset` or CLI opt-out, the operator must authorize that exact state directory as an additional writable root (CLI: `--add-dir <absolute-state-directory>`), or launch Codex with an absolute `PSTACK_STATE_DIR` already within its authorized writable roots and inherited by both hooks and tools. Create the directory before launch. Do not change global sandbox settings, grant the whole home directory, or switch stores mid-session. If storage is denied, report the failed persistence action and retain the in-context workflow; do not claim durable selection or successful CLI opt-out. Explicit `exit poteto-mode` remains available through the trusted prompt hook.
+
 ## Read the explicit model policy
+
+Follow [the Codex setup procedure](../docs/setup.md) and [model schema](../schemas/models.schema.json). `models validate --file <draft>` and `models show` validate role names, scalar/panel shapes, backend, effort and inheritance. Structural validity does not prove entitlement or tool capability. Setup retains upstream inventory, budget, role confirmation and partial-override semantics.
 
 Resolve configuration with `python3 <plugin>/scripts/pstack.py models path`, then read the returned file or use `models show`. The default is `$CODEX_HOME/pstack/models.json`, or `~/.codex/pstack/models.json` when `CODEX_HOME` is unset. `PSTACK_MODEL_CONFIG` overrides the exact file for a project or test and must resolve to an absolute path. This is the replacement for `~/.cursor/rules/pstack-models.mdc`; never write that Cursor rule from Codex.
 
@@ -63,6 +71,8 @@ For a configured external provider, prepare a UTF-8 prompt file and the supporte
 
 Run `python3 <plugin>/scripts/claude_worker.py --spec <file>` or `grok_worker.py` for `backend: grok`. Profiles are `analysis`, `reader`, and `writer`; `allowed_tools` is optional under the worker's actual contract. Check that the selected profile is supported before dispatch. A tool-free analysis worker receives the complete necessary source packet. A reader or writer needs an independently verified tool/access profile. CLI workers do not inherit Codex browser sessions, connectors, attachments, context, or tool handles. Route connector lookups through supported host tools and relay evidence, or explicitly report a capability gap. Do not pass a local path to a worker on another host unless the file is actually available there.
 
+Use a reader with explicit scoped Bash rules when a `why` investigator needs its own git/gh queries or a verifier needs test commands. The reader has no built-in Edit/Write, but shell rules are not an OS read-only boundary. Writers' built-in edits are scoped to the primary working directory; authorized shell commands still require appropriate task scope. The invoking tool must allow enough time for `timeout_seconds + term_grace_seconds + 10` seconds of execution and cleanup. A hard-killed launcher or a stale `spawned` process record is unreconciled until its process identity/effects are checked; do not blindly retry it.
+
 Cursor `readonly` means the task must not mutate; it does not map to a known Codex sandbox flag. Conversely, why/reflect's `readonly: false` was used to retain Cursor MCP access, not to authorize writes. Preserve their no-write instructions and use the narrowest verified capabilities. A worktree, a prompt ban, or an allowlist alone is not an OS security boundary. Comment Sicko may edit scoped comments; do not incorrectly convert every reviewer into a tool-free analysis call.
 
 Preserve fan-out shape, prompt independence, candidate/rubric visibility, judge ordering and result aggregation. If total work exceeds available concurrency, queue it without changing the number of required results. Map cloud placement only when a real supported isolated remote execution service is configured. A connected host or visible Codex task is not proof of Cursor cloud equivalence. If cloud-specific behavior is essential and unavailable, keep the route and report it blocked rather than pretending local execution is cloud.
@@ -82,6 +92,7 @@ Use user-owned visible Codex tasks only when the user requested creation or gave
 | `scripts/orch/orch.ts` | `<plugin>/skills/poteto-mode/scripts/orch/orch.ts`. |
 | `scripts/watch-pr/watch-pr` | `<plugin>/skills/poteto-mode/scripts/watch-pr/watch-pr`. |
 | `pstack/skills/poteto-mode/scripts/check-plan.mjs` | `<plugin>/skills/poteto-mode/scripts/check-plan.mjs`. |
+| `git show origin/main:pstack/<path>` to re-read a workflow | Read `<plugin>/<path>` from the pinned installed package, never a same-named application-repo path. Refreshing the upstream pin is a separate reviewed update; application trunk drift does not update this workflow. |
 | Other bundled helper relative paths | Resolve relative to the owning bundled skill, then pass the current target project explicitly where the helper contract requires it. |
 | `.cursor/automations/benny/` | Proposed project copy at `.pstack/benny/`, only after the actual automation host supports the required committed-file and event-trigger contract. |
 | `.cursor/benny/` user configuration | `.pstack/benny-config/`, separate from source-managed pack files. |
@@ -102,6 +113,8 @@ Transcript-based skills must use authorized project/session data only. If the ho
 ## Scheduling, webhooks and dormant Benny
 
 `/loop`, `/goal`, watcher wakes, cloud continuation and Cursor routines are different facilities. A current-turn loop may use bounded waits. Durable goals or future wakeups require an actual supported host mechanism and applicable user authorization. Do not create a monitor merely because a playbook mentions one. Do not promise background continuation after the turn without an installed wake mechanism.
+
+This package does not ship a verified durable wake adapter. Autonomous run, Babysit drive, Shipping watch, both Autopilots and Orchestrate cannot be armed for unattended continuation on this package alone. Current-turn work and bounded waits are possible; required future wakes remain unavailable until an authorized host adapter exists. Preserve each playbook's stopping condition rather than silently reducing a requested background program to one poll.
 
 Benny remains dormant and byte-preserved. Before following its original Cursor setup, apply the path mapping above and confirm a real Slack event-trigger/automation adapter, thread-safe connector, compensating tracker write, control adapter, and completed feature map. A time-based heartbeat is not an exact new-message event trigger. Its committed same-repository instruction requirement and fresh-project dependency test remain required. Until supported, report the automation setup blocked while retaining all files and future routes.
 

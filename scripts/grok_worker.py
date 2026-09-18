@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -12,6 +13,16 @@ from pathlib import Path
 
 class UnsupportedProfile(ValueError):
     pass
+
+
+def build_env(environ: dict | None = None) -> tuple[dict, dict]:
+    env = dict(os.environ if environ is None else environ)
+    rejected = [name for name in ("XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL") if name in env]
+    if rejected:
+        raise ValueError("inherited Grok auth/routing overrides present (values not shown): " + ", ".join(rejected))
+    return env, {"auth_route": "installed-cli-auth", "adapter_configures_credentials": False,
+                 "checked_override_names": ["XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL"],
+                 "configuration_route_not_independently_verified": True}
 
 
 def build_command(spec: dict, executable: str | None = None) -> list[str]:
@@ -189,27 +200,25 @@ def parse_events(events: list[dict], spec: dict) -> dict:
 
 def run(spec: dict) -> dict:
     command = build_command(spec)
+    env, policy = build_env()
     from worker_common import run_process
-    return run_process(spec, command, parse_events)
+    return run_process(spec, command, parse_events, env=env,
+                       adapter_evidence={"backend": "grok", "auth_policy": policy, "sandbox_requested": "read-only"})
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--spec", required=True, type=Path)
     args = parser.parse_args(argv)
+    spec = {"backend": "grok"}
     try:
         spec = json.loads(args.spec.read_text())
         if not isinstance(spec, dict):
             raise ValueError("spec must be a JSON object")
         receipt = run(spec)
     except (ValueError, OSError) as error:
-        receipt = {
-            "backend": "grok",
-            "status": "unsupported_profile" if isinstance(error, UnsupportedProfile) else "error",
-            "is_error": True,
-            "complete": False,
-            "error": str(error),
-        }
+        from worker_common import make_error_receipt
+        receipt = make_error_receipt(spec, "unsupported_profile" if isinstance(error, UnsupportedProfile) else "invalid_spec", [str(error)])
     print(json.dumps(receipt, ensure_ascii=False))
     if isinstance(receipt.get("exit_code"), int):
         return receipt["exit_code"]

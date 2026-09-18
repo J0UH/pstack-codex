@@ -118,11 +118,6 @@ def resolve_tools(spec: dict) -> tuple[list[str], list[str]]:
         if requested:
             raise SpecError("analysis profile does not accept allowed_tools")
         return [], []
-    if profile == "reader":
-        for rule in requested:
-            if rule not in base:
-                raise SpecError(f"reader profile cannot allow tool rule {rule!r}; only Read, Glob, Grep are accepted")
-        return base, base
     bash_rules: list[str] = []
     for rule in requested:
         if rule in base:
@@ -132,11 +127,14 @@ def resolve_tools(spec: dict) -> tuple[list[str], list[str]]:
                 bash_rules.append(rule)
             continue
         raise SpecError(
-            f"writer profile cannot allow tool rule {rule!r}; only Read, Write, Edit, Glob, Grep "
+            f"{profile} profile cannot allow tool rule {rule!r}; only its named file tools "
             "and scoped Bash(<command>:*) rules are accepted"
         )
     tools = base + (["Bash"] if bash_rules else [])
-    return tools, base + bash_rules
+    # CLI-supplied / patterns anchor at the primary working directory. Edit path
+    # rules govern both Edit and Write; Write(path) rules are not enforced.
+    allowed = ["Read", "Glob", "Grep", "Edit(/**)"] if profile == "writer" else base
+    return tools, allowed + bash_rules
 
 
 def validate_claude_spec(spec: Any) -> tuple[dict, list[str]]:
@@ -401,6 +399,11 @@ def parse_claude_events(events: list[dict], spec: dict) -> dict:
         evidence["num_turns"] = num_turns if isinstance(num_turns, int) else None
     if missing_model:
         errors.append(f"{missing_model} assistant message(s) carried no model attribution")
+    if result is None and last_text is not None:
+        result_text = last_text
+        evidence["result_text_source"] = "partial_assistant_text"
+        evidence["partial_chars"] = len(last_text)
+        evidence["partial_unterminated"] = True
     unexpected_calls = sorted({str(call.get("name")) for call in tool_calls if call.get("name") not in expected_tools})
     if unexpected_calls:
         errors.append("assistant invoked tools outside this profile: " + ", ".join(unexpected_calls))
@@ -415,6 +418,7 @@ def parse_claude_events(events: list[dict], spec: dict) -> dict:
         "errors": errors,
         "warnings": warnings,
         "evidence": evidence,
+        "partial_text": last_text if result is None else None,
     }
 
 

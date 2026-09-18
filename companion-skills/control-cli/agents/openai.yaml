@@ -1,6 +1,0 @@
-interface:
-  display_name: "control-cli"
-  short_description: "Use pstack's control cli workflow."
-  default_prompt: "Use $control-cli for this task."
-policy:
-  allow_implicit_invocation: true

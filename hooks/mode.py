@@ -11,8 +11,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from pstack import change_state, mode_context, read_state
 
 ACTIVATE = re.compile(r"^ {0,3}[$/](?:pstack-codex:)?poteto-mode(?=$|[ \t])", re.I)
+DOLLAR_MENTION = re.compile(r"(?<![\w\\])\$(?:pstack-codex:)?poteto-mode(?=$|[^\w:-])", re.I)
 EXIT = re.compile(r"^ {0,3}(?:exit|disable|leave|stop using)[ \t]+(?:[$/])?(?:pstack-codex:)?poteto(?:-mode| mode)?[.!]?[ \t]*$", re.I)
 NEW_TASK = re.compile(r"^ {0,3}(?:[$/](?:pstack-codex:)?poteto-mode[ \t]+)?new task\b", re.I)
+
+
+def activation_mention(line: str) -> re.Match | None:
+    if line.startswith(("    ", "\t")) or line.lstrip(" ").startswith((">", "```", "~~~")):
+        return None
+    visible = re.sub(r"(`+).*?\1", lambda match: " " * len(match[0]), line)
+    visible = re.sub(r'"(?:\\.|[^"\\])*"|(?<!\w)\'(?:\\.|[^\'\\])*\'|“[^”]*”|‘[^’]*’', lambda match: " " * len(match[0]), visible)
+    return ACTIVATE.match(visible) or DOLLAR_MENTION.search(visible)
 
 
 def handle(event: dict) -> dict:
@@ -30,10 +39,12 @@ def handle(event: dict) -> dict:
     if EXIT.fullmatch(first_line):
         change_state("deactivate", session, project)
         return {"hookSpecificOutput": {"hookEventName": name, "additionalContext": "The user explicitly exited poteto-mode. Stop applying its style and automatic skill routing; retain the user's remaining task instructions."}}
-    activated = bool(ACTIVATE.match(first_line))
+    mention = activation_mention(first_line)
+    activated = mention is not None
     if activated:
         state = change_state("activate", session, project)
-    if NEW_TASK.match(first_line) and state["active"]:
+    new_task = NEW_TASK.match(first_line) or (mention is not None and NEW_TASK.match(first_line[mention.end():].lstrip()))
+    if new_task and state["active"]:
         state = change_state("reset", session, project)
     context = mode_context(state, full=activated or name == "SessionStart")
     return {"hookSpecificOutput": {"hookEventName": name, "additionalContext": context}} if context else {}

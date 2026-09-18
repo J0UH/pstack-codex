@@ -2,6 +2,7 @@ import importlib.util
 import json
 import os
 import sys
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -18,7 +19,7 @@ module_spec.loader.exec_module(hook)
 class ModeTests(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory()
-        self.base = Path(self.temp.name)
+        self.base = Path(self.temp.name).resolve()
         self.project = self.base / "project one"
         self.project.mkdir()
         self.other = self.base / "project two"
@@ -98,8 +99,44 @@ class ModeTests(unittest.TestCase):
                 self.assertEqual(hook.handle(self.event("continue")), {})
 
     def test_documentation_and_similar_names_do_not_activate(self):
-        for prompt in ["    /poteto-mode inspect\nExplain this example", "```\n/poteto-mode inspect\n```", "> /poteto-mode inspect", "/poteto-mode-extra inspect", "`/poteto-mode` means what?"]:
+        for prompt in ["    /poteto-mode inspect\nExplain this example", "```\n/poteto-mode inspect\n```", "> /poteto-mode inspect", "/poteto-mode-extra inspect", "`/poteto-mode` means what?", 'Explain "$poteto-mode"', "Explain '$poteto-mode'", "Use `$poteto-mode` as an example", r"Explain \$poteto-mode"]:
             self.assertEqual(hook.handle(self.event(prompt)), {})
+
+    def test_both_published_default_prompts_activate(self):
+        plugin = json.loads((ROOT / ".codex-plugin/plugin.json").read_text())["interface"]["defaultPrompt"]
+        metadata = (ROOT / "skills/poteto-mode/agents/openai.yaml").read_text()
+        prompt_line = next(line for line in metadata.splitlines() if line.strip().startswith("default_prompt:"))
+        skill = json.loads(prompt_line.split(":", 1)[1].strip())
+        for number, prompt in enumerate([plugin, skill, "Let's use $poteto-mode for this task."]):
+            response = hook.handle(self.event(prompt, session=f"default-{number}"))
+            self.assertIn("ROUTER_SOURCE_MARKER", response["hookSpecificOutput"]["additionalContext"])
+            self.assertTrue(pstack.read_state(f"default-{number}", str(self.project))["active"])
+
+    def test_cli_uses_recorded_context_after_working_directory_changes(self):
+        hook.handle(self.event("/poteto-mode investigate"))
+        env = {**os.environ, "CODEX_THREAD_ID": "one"}
+        command = [sys.executable, str(ROOT / "scripts/pstack.py"), "mode"]
+        result = subprocess.run(command + ["status"], cwd=self.other, env=env, capture_output=True, text=True, check=True)
+        state = json.loads(result.stdout)
+        self.assertEqual(state["project"], str(self.project))
+        subprocess.run(command + ["select", "--playbook", "bug-fix"], cwd=self.other, env=env, capture_output=True, text=True, check=True)
+        continuation = hook.handle(self.event("continue"))["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("current playbook: bug-fix", continuation)
+        self.assertIn("Authoritative session ID: one", continuation)
+        self.assertIn(f"Authoritative session project: {self.project}", continuation)
+
+    def test_ambiguous_context_requires_explicit_project(self):
+        hook.handle(self.event("/poteto-mode investigate"))
+        hook.handle(self.event("/poteto-mode investigate", project=self.other))
+        with self.assertRaisesRegex(ValueError, "ambiguous"):
+            pstack.resolve_identity("one", None)
+        self.assertEqual(pstack.resolve_identity("one", str(self.other)), ("one", str(self.other)))
+
+    def test_no_recorded_playbook_does_not_instruct_restart(self):
+        response = hook.handle(self.event("/poteto-mode investigate"))
+        context = response["hookSpecificOutput"]["additionalContext"]
+        self.assertIn("continue the workflow already in progress", context)
+        self.assertNotIn("rematch the current request", context)
 
     def test_exit_keeps_following_task_text_out_of_style(self):
         hook.handle(self.event("/poteto-mode inspect"))
@@ -121,6 +158,17 @@ class ModeTests(unittest.TestCase):
             pstack.read_state("one", str(self.project))
         with patch.dict(os.environ, {"PSTACK_MODEL_CONFIG": "models.json"}), self.assertRaises(ValueError):
             pstack.config_path()
+
+    def test_relative_state_override_rejected_before_activation(self):
+        previous_cwd = os.getcwd()
+        try:
+            os.chdir(self.base)
+            with patch.dict(os.environ, {"PSTACK_STATE_DIR": "relative-state"}):
+                with self.assertRaisesRegex(ValueError, "PSTACK_STATE_DIR must be an absolute path"):
+                    pstack.change_state("activate", "relative-state-probe", str(self.project))
+            self.assertFalse((self.base / "relative-state").exists())
+        finally:
+            os.chdir(previous_cwd)
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-DIRECTORIES = (".codex-plugin", "skills", "agents", "automations", "companion-skills", "adapters", "hooks", "scripts", "docs", "examples", "upstream", "tests", "evidence")
+DIRECTORIES = (".codex-plugin", "skills", "agents", "automations", "companion-skills", "adapters", "hooks", "scripts", "schemas", "docs", "examples", "upstream", "tests", "evidence")
 FILES = ("README.md", "LICENSE", "NOTICE.md", "adaptations.json", ".gitignore")
 SKIP = {"__pycache__", "node_modules", ".pytest_cache", ".DS_Store", ".poteto-mode-tools-install-key"}
 

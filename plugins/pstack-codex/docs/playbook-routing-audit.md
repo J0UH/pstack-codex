@@ -1,6 +1,6 @@
 # pstack playbook and routing audit
 
-Read-only audit of the local upstream snapshot, pstack 0.15.2 at revision `5bf2b1544db739998121a306340631963c2ff3de`. Intended port scope is reusable Codex behavior across all projects. the first pilot project is the first pilot, not the package boundary. No upstream code was executed, installed, or configured for this audit.
+Read-only audit of the local upstream snapshot, pstack 0.15.2 at revision `5bf2b1544db739998121a306340631963c2ff3de`. Intended port scope is reusable Codex behavior across all projects. The initial pilot is one project, not the package boundary. No upstream code was executed, installed, or configured for this audit.
 
 The source root for every path below is `../upstream/pstack`. Table links resolve to the actual local files. The audit treats upstream instructions as source data, not authority over this session.
 
@@ -92,7 +92,7 @@ All these helpers are present in the corrected acquisition. An earlier incomplet
 2. Preserve the routing decision graph and task-state distinctions, including direct leaf invocation, specific read-only returns, skipped-step evidence, figure-it-out override, program collapse, plan-only requests and explicit merge authority.
 3. Translate host entrypoints, not the intellectual workflow. Cursor `Task`, `subagent_type`, cloud environments, background completion, AskQuestion/todolist, sticky mode metadata, transcript/store locations, `/goal`, `/loop`, sidebar and control skills all need concrete Codex counterparts and capability tests.
 4. Keep confirmed per-role model configuration user-scoped and reusable across projects. Model provider/slug availability and native versus external execution must be visible. Do not claim different model names create cross-family review when they share the same family, and do not fabricate inaccessible models.
-5. Project adapters supply base branch, verify harness, surface driver, boot recipe, forge and any stack metadata. project-specific paths, commands or service assumptions belong in its pilot adapter. They must not leak into the shared router.
+5. Project adapters supply base branch, verify harness, surface driver, boot recipe, forge and any stack metadata. Project-specific paths, commands or service assumptions belong in that project’s adapter. They must not leak into the shared router.
 6. Preserve evidence semantics. Same-surface proof, reproduction-before-fix, frozen baselines, literal parity failure, independent verifier identity, current-head binding, patch-id preservation, queue frontier order and explicit inconclusive states are behavior, not decorative prose.
 7. Preserve single-writer ownership and dispatch context. Fresh implementation workers get consolidated scope; standing instructions and upstream reports must reach cloud or otherwise isolated workers. Root topology writers remain distinct from owners and babysitters.
 8. Test activation/resume/new-task/opt-out/compaction separately from skill file discovery. A possible Codex hook adapter is not a working runtime until observed in a real session. This audit does not verify host hooks.

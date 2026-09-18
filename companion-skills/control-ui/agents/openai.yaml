@@ -1,6 +1,0 @@
-interface:
-  display_name: "control-ui"
-  short_description: "Use pstack's control ui workflow."
-  default_prompt: "Use $control-ui for this task."
-policy:
-  allow_implicit_invocation: true

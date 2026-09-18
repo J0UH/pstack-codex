@@ -162,6 +162,31 @@ class ClaudeWorkerTests(unittest.TestCase):
         self.assertNotIn(self.prompt.read_text(),plan["argv"])
         self.assertEqual(str(self.binary_dir/"claude"),plan["argv"][0])
 
+    def test_reader_can_run_explicit_scoped_shell_without_edit_tools(self):
+        receipt = self.run_fixture(profile="reader", allowed_tools=["Bash(git log:*)"])
+        self.assertEqual(receipt["status"], "success")
+        tools = json.loads(Path(receipt["result_path"]).read_text())["tools"]
+        self.assertEqual(tools, ["Read", "Glob", "Grep", "Bash"])
+        self.assertNotIn("Write", receipt["adapter"]["allowed_tools"])
+        self.assertNotIn("Edit", receipt["adapter"]["allowed_tools"])
+
+    def test_writer_uses_one_primary_directory_edit_rule_for_edit_and_write(self):
+        plan = claude.plan_claude(self.spec(profile="writer"), environ={"PATH": str(self.binary_dir)})
+        allowed = plan["adapter"]["allowed_tools"]
+        self.assertIn("Edit(/**)", allowed)
+        self.assertNotIn("Edit", allowed)
+        self.assertNotIn("Write", allowed)
+        self.assertFalse(any(rule.startswith("Write(") for rule in allowed))
+
+    def test_partial_text_is_retained_without_claiming_completion(self):
+        receipt = self.run_fixture("incomplete")
+        self.assertEqual(receipt["status"], "incomplete")
+        self.assertFalse(receipt["requested_model_verified"])
+        self.assertEqual(Path(receipt["result_path"]).read_text(), "fixture answer")
+        parsed = json.loads(Path(receipt["parsed_path"]).read_text())
+        self.assertEqual(parsed["partial_text"], "fixture answer")
+        self.assertTrue(receipt["evidence"]["partial_unterminated"])
+
 
 if __name__ == "__main__":
     unittest.main()

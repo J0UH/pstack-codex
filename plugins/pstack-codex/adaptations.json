@@ -169,19 +169,6 @@
       "mode": "0o644",
       "operations": [
         {
-          "allow_implicit_invocation": true,
-          "id": "invocation-policy"
-        }
-      ],
-      "output": "companion-skills/control-cli/agents/openai.yaml",
-      "sha256": "ac115cd6b99e049d745dda11f03f67099a558f453e84a5dded5ea723bdfb481f",
-      "source": "upstream/cursor-team-kit/skills/control-cli/SKILL.md",
-      "source_sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2"
-    },
-    {
-      "mode": "0o644",
-      "operations": [
-        {
           "id": "codex-frontmatter",
           "name": "control-ui",
           "upstream_frontmatter": "name: control-ui\ndescription: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, or reproducing UI bugs."
@@ -192,19 +179,6 @@
       ],
       "output": "companion-skills/control-ui/SKILL.md",
       "sha256": "45d06ebfaeabde6fcc7de21a41424146ed640ea21a5cdb857dc0c72ebdfa5232",
-      "source": "upstream/cursor-team-kit/skills/control-ui/SKILL.md",
-      "source_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871"
-    },
-    {
-      "mode": "0o644",
-      "operations": [
-        {
-          "allow_implicit_invocation": true,
-          "id": "invocation-policy"
-        }
-      ],
-      "output": "companion-skills/control-ui/agents/openai.yaml",
-      "sha256": "31b7d7d60c68e98b9dcad5bc4124a3ea83db2e7fc26e8cc7dde9c7367b70643e",
       "source": "upstream/cursor-team-kit/skills/control-ui/SKILL.md",
       "source_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871"
     },
@@ -229,24 +203,11 @@
       "mode": "0o644",
       "operations": [
         {
-          "allow_implicit_invocation": true,
-          "id": "invocation-policy"
-        }
-      ],
-      "output": "companion-skills/deslop/agents/openai.yaml",
-      "sha256": "000d61241e5aa45838071ac564d897048cfc2c61680657d9baac69ecc20a6c17",
-      "source": "upstream/cursor-team-kit/skills/deslop/SKILL.md",
-      "source_sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810"
-    },
-    {
-      "mode": "0o644",
-      "operations": [
-        {
           "id": "routing-index"
         }
       ],
       "output": "docs/routing-index.md",
-      "sha256": "f4f3c648e541166ce5ad9bb4c619adf880d2ce037827f6efe97e397b92227cd9",
+      "sha256": "596edbc1a11588da9407c251d324b46d68a702e971e7d192d2cab19358c6791d",
       "source": null,
       "source_sha256": null
     },
@@ -732,7 +693,7 @@
         }
       ],
       "output": "skills/poteto-mode/agents/openai.yaml",
-      "sha256": "8101d00782c1a5dda6d9bcfd8363ac64305e2aaf42c03eb6e0886d5fcce71498",
+      "sha256": "316a2c7d151534a6d22935889a8571ea3772dbfd6bbc04dcbb9d80d96496527a",
       "source": "upstream/pstack/skills/poteto-mode/SKILL.md",
       "source_sha256": "b3c505602b82fb3641a3983e9c46fb974881faa12ece1af804fae27afb7be532"
     },
@@ -1975,7 +1936,7 @@
         }
       ],
       "output": "skills/setup-pstack/SKILL.md",
-      "sha256": "f71becae960f0a4122935f7426b57db5214da8b3c2fde13bd74ff68736d92c3d",
+      "sha256": "1dec856f42df644645e632d6e2c22615dab4a500349917f70aa18c2f12adf1f9",
       "source": "upstream/pstack/skills/setup-pstack/SKILL.md",
       "source_sha256": "2399a5670c6408e92a996299c9de9f22736997cb7e835c694309e7c6fc8c39bf"
     },

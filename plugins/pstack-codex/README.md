@@ -30,7 +30,9 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
 - Claude analysis and writer profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
 - Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
-- Cursor cloud placement, Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
+- Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
+
+The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, or Orchestrate for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
 
 ## Install
 
@@ -53,7 +55,11 @@ Use the packaged `setup-pstack` skill to inspect available models and confirm th
 python3 scripts/pstack.py models path
 ```
 
-The default is `~/.codex/pstack/models.json` (honoring the normal Codex home). `PSTACK_MODEL_CONFIG` can select an explicit absolute path. State defaults to the same Codex home under `pstack/state`; `PSTACK_STATE_DIR` is available for isolated runs.
+Follow the [Codex setup procedure](docs/setup.md). Validate proposed settings with `python3 scripts/pstack.py models validate --file <draft.json>`. This checks the [schema](schemas/models.schema.json), not account access or model capability. Choosing a coordinator in JSON does not change an already-running Codex session's model or effort.
+
+The default is `~/.codex/pstack/models.json` (honoring the normal Codex home). `PSTACK_MODEL_CONFIG` can select an explicit absolute path. State defaults to the same Codex home under `pstack/state`; `PSTACK_STATE_DIR` can select an absolute path for isolated runs. Relative overrides are rejected so changing the working directory cannot silently select different mode state.
+
+With Codex's `workspace-write` sandbox, CLI mode updates need explicit write access to the shared state directory. Hook trust alone is insufficient. Launch with `--add-dir <absolute-state-directory>` after authorizing that directory, or configure one absolute `PSTACK_STATE_DIR` inside an authorized writable root for both hooks and tools before launch. See the [storage contract](adapters/host.md#activate-and-resume-the-mode). The plugin does not change your sandbox policy.
 
 ## Which models?
 
@@ -82,7 +88,7 @@ Codex prepares a scoped prompt file and a worker specification. The adapter invo
 python3 scripts/claude_worker.py --spec /absolute/path/to/spec.json
 ```
 
-`analysis` has no tools; `reader` exposes file-reading tools; `writer` exposes file-editing tools and only caller-specified scoped shell rules. Each role still receives its pstack instructions and project context. Claude does not inherit Codex connectors or browser sessions. The adapter preserves the existing subscription-login route and refuses conflicting inherited API-key/gateway overrides. It does not install Claude or manage subscriptions.
+`analysis` has no tools. `reader` exposes file-reading tools and can add explicit scoped shell rules for investigator/verifier commands. `writer` adds file-editing tools with built-in permissions scoped to the primary working directory. Shell rules are permissions, not filesystem containment. Each role still receives its pstack instructions and project context. Claude does not inherit Codex connectors or browser sessions. The adapter preserves the existing subscription-login route and refuses conflicting inherited API-key/gateway overrides. It does not install Claude or manage subscriptions.
 
 The receipt verifies transport, response-model attribution and effective capabilities. It is not a correctness verdict. The parent checks the actual artifact and acceptance criteria. See [Claude profiles and lifecycle](docs/claude.md), [Grok limitations](docs/grok.md), and the [host contract](adapters/host.md).
 

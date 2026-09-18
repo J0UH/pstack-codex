@@ -49,6 +49,7 @@ class BuildTests(unittest.TestCase):
                 self.assertEqual(path.read_bytes(), (self.output / path.relative_to(source)).read_bytes())
         self.assertEqual([], list((self.output / "automations").rglob("openai.yaml")))
         self.assertEqual(3, len(list((self.output / "companion-skills").glob("*/SKILL.md"))))
+        self.assertEqual([], list((self.output / "companion-skills").rglob("openai.yaml")))
         self.assertTrue((self.output / "companion-skills/LICENSE").is_file())
         self.assertEqual(46, ledger["catalog"]["explicit_only_registered_skills"])
 

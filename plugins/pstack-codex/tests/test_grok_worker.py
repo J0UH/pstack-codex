@@ -1,6 +1,9 @@
 """Synthetic wire contract tests plus a sanitized real pre-inference failure."""
 
 import copy
+import contextlib
+import io
+import json
 import sys
 import tempfile
 import types
@@ -9,7 +12,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
-from grok_worker import UnsupportedProfile, build_command, parse_events, run
+from grok_worker import UnsupportedProfile, build_command, build_env, main, parse_events, run
 
 
 # Real 1.0.34 probe emitted zero JSON events and refused sandbox startup.
@@ -136,8 +139,8 @@ class GrokCommandTests(unittest.TestCase):
 
     def test_runner_uses_shared_launcher_without_changing_the_spec(self):
         calls = []
-        def shared_runner(spec, command, parse):
-            calls.append((spec, command, parse))
+        def shared_runner(spec, command, parse, **kwargs):
+            calls.append((spec, command, parse, kwargs))
             return {"status": "error", **parse(REAL_SANDBOX_FAILURE["events"], spec)}
         common = types.ModuleType("worker_common")
         common.run_process = shared_runner
@@ -147,8 +150,30 @@ class GrokCommandTests(unittest.TestCase):
         self.assertEqual(self.spec, before)
         self.assertIs(calls[0][0], self.spec)
         self.assertIs(calls[0][2], parse_events)
+        self.assertIsInstance(calls[0][3]["env"], dict)
+        self.assertEqual(calls[0][3]["adapter_evidence"]["auth_policy"]["auth_route"], "installed-cli-auth")
         self.assertFalse(receipt["complete"])
         self.assertTrue(receipt["errors"])
+
+    def test_unsupported_profile_uses_the_common_error_receipt(self):
+        path = Path(self.spec["cwd"]) / "spec.json"
+        path.write_text(json.dumps(dict(self.spec, profile="writer")))
+        output = io.StringIO()
+        with contextlib.redirect_stdout(output):
+            code = main(["--spec", str(path)])
+        receipt = json.loads(output.getvalue())
+        self.assertEqual(code, 2)
+        self.assertEqual(receipt["schema"], "pstack-codex/worker-receipt/1")
+        self.assertEqual(receipt["status"], "unsupported_profile")
+        self.assertTrue(receipt["errors"])
+        self.assertFalse(Path(self.spec["run_dir"]).exists())
+
+    def test_auth_override_values_are_not_exposed(self):
+        for name in ["XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL"]:
+            with self.assertRaises(ValueError) as error:
+                build_env({name: "synthetic-secret-never-print"})
+            self.assertIn(name, str(error.exception))
+            self.assertNotIn("synthetic-secret-never-print", str(error.exception))
 
     def test_shared_runner_persists_actual_startup_failure_shape(self):
         import worker_common

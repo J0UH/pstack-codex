@@ -69,6 +69,7 @@ SPEC_OPTIONAL_KEYS = ("allowed_tools", "resume", "session_id", "term_grace_secon
 STATUSES = (
     "success",
     "invalid_spec",
+    "unsupported_profile",
     "spawn_failed",
     "timeout",
     "interrupted",
@@ -79,7 +80,7 @@ STATUSES = (
     "unverified",
     "internal_error",
 )
-STATUS_EXIT_CODES = {"success": 0, "invalid_spec": 2, "timeout": 124, "interrupted": 130}
+STATUS_EXIT_CODES = {"success": 0, "invalid_spec": 2, "unsupported_profile": 2, "timeout": 124, "interrupted": 130}
 DEFAULT_FAILURE_EXIT_CODE = 1
 
 LIFECYCLES = ("spawn_failed", "exited", "timeout", "interrupted")
@@ -390,24 +391,26 @@ _HANDLED_SIGNAL_NAMES = tuple(name for name in ("SIGINT", "SIGTERM", "SIGHUP") i
 
 
 class _SignalGuard:
-    """Turns parent stop signals into :class:`ParentSignal` while a child is supervised.
+    """Defer handled signals until the launcher reaches an ownership checkpoint.
 
-    Once ``terminating`` is set, further signals are recorded instead of raised so that
-    the termination sequence and receipt writing can finish.  Handlers are only
-    installed from the main thread (a CPython restriction); otherwise the guard is inert.
+    Raising inside Popen can lose the returned child before its PID is assigned.
+    Recording instead also protects directory claims and receipt writes. Supervision
+    checks the pending signal regularly. Handlers can only be installed on the main
+    thread; SIGKILL and indefinitely blocked system calls cannot be made recoverable.
     """
 
     def __init__(self) -> None:
         self.previous: dict[int, Any] = {}
         self.installed = False
         self.terminating = False
+        self.requested_signal: int | None = None
         self.late_signals: list[str] = []
 
     def _handler(self, signum: int, _frame: Any) -> None:
-        if self.terminating:
+        if self.requested_signal is not None:
             self.late_signals.append(_signal_name(signum))
             return
-        raise ParentSignal(signum)
+        self.requested_signal = signum
 
     def install(self) -> None:
         if threading.current_thread() is not threading.main_thread():
@@ -517,13 +520,25 @@ def _supervise(
     """Wait for the child, enforcing the timeout and reacting to parent signals."""
     record: dict[str, Any] = {"term_sent": False, "kill_sent": False, "interrupt_signal": None}
     try:
-        proc.wait(timeout=timeout_seconds)
-        guard.terminating = True
-        if _group_alive(proc, pgid):
-            record["descendants_remained_after_leader_exit"] = True
-            confirmed = terminate_process_group(proc, pgid, grace_seconds, record)
-            return "exited", confirmed, record
-        return "exited", True, record
+        deadline = time.monotonic() + timeout_seconds
+        while True:
+            if guard.requested_signal is not None:
+                raise ParentSignal(guard.requested_signal)
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                raise subprocess.TimeoutExpired(proc.args, timeout_seconds)
+            try:
+                proc.wait(timeout=min(0.05, remaining))
+            except subprocess.TimeoutExpired:
+                continue
+            if guard.requested_signal is not None:
+                raise ParentSignal(guard.requested_signal)
+            guard.terminating = True
+            if _group_alive(proc, pgid):
+                record["descendants_remained_after_leader_exit"] = True
+                confirmed = terminate_process_group(proc, pgid, grace_seconds, record)
+                return "exited", confirmed, record
+            return "exited", True, record
     except subprocess.TimeoutExpired:
         lifecycle = "timeout"
     except KeyboardInterrupt:
@@ -687,7 +702,10 @@ def run_process(
     """Run one bounded worker attempt and return its receipt (also written to run_dir).
 
     Raises SpecError before anything is spawned when inputs are invalid or the run_dir
-    already exists.  After the run_dir is claimed, every outcome produces a receipt.
+    already exists. After claim, handled stop signals finalize an interrupted
+    receipt at a safe ownership checkpoint, provided the artifact storage remains
+    writable. SIGKILL, process crashes and indefinitely blocked calls cannot carry
+    that guarantee.
     """
     if os.name != "posix":
         raise RuntimeError("run_process requires a POSIX platform (process-group lifecycle)")
@@ -700,8 +718,27 @@ def run_process(
     if not callable(parse_events):
         raise SpecError("parse_events must be callable")
 
+    guard = _SignalGuard()
+    guard.install()
+    try:
+        claim_run_dir(normalized["run_dir"])
+        return _run_claimed_process(normalized, command, parse_events, stdin_text, env,
+                                    guard, warnings, adapter_evidence)
+    finally:
+        guard.restore()
+
+
+def _run_claimed_process(
+    normalized: dict,
+    command: list[str],
+    parse_events: Callable[[list[dict], dict], dict],
+    stdin_text: str | None,
+    env: dict | None,
+    guard: _SignalGuard,
+    warnings: list[str],
+    adapter_evidence: dict | None,
+) -> dict:
     run_dir = normalized["run_dir"]
-    claim_run_dir(run_dir)
     paths = artifact_paths(run_dir)
     prompt_sha256 = sha256_file(normalized["prompt_file"])
     stdin_bytes = stdin_text.encode("utf-8") if stdin_text is not None else None
@@ -731,8 +768,6 @@ def run_process(
     }
     atomic_write_json(paths["launch"], launch)
 
-    guard = _SignalGuard()
-    guard.install()
     proc: subprocess.Popen | None = None
     pgid: int | None = None
     lifecycle = "spawn_failed"
@@ -745,17 +780,21 @@ def run_process(
         err_fd = create_restricted(paths["stderr"])
         try:
             try:
-                proc = subprocess.Popen(
-                    command,
-                    cwd=normalized["cwd"],
-                    stdin=subprocess.PIPE if stdin_bytes is not None else subprocess.DEVNULL,
-                    stdout=out_fd,
-                    stderr=err_fd,
-                    env=env,
-                    start_new_session=True,
-                    close_fds=True,
-                    shell=False,
-                )
+                if guard.requested_signal is None:
+                    proc = subprocess.Popen(
+                        command,
+                        cwd=normalized["cwd"],
+                        stdin=subprocess.PIPE if stdin_bytes is not None else subprocess.DEVNULL,
+                        stdout=out_fd,
+                        stderr=err_fd,
+                        env=env,
+                        start_new_session=True,
+                        close_fds=True,
+                        shell=False,
+                    )
+                    # start_new_session makes the returned PID its process-group ID,
+                    # even when a short-lived leader exits before getpgid can run.
+                    pgid = proc.pid
             except (OSError, ValueError) as exc:
                 problems.append(f"spawn_failed: {type(exc).__name__}: {_short(exc, 200)}")
         finally:
@@ -763,10 +802,6 @@ def run_process(
             os.close(err_fd)
 
         if proc is not None:
-            try:
-                pgid = os.getpgid(proc.pid)
-            except ProcessLookupError:
-                pgid = None
             process_record = {
                 "stage": "spawned",
                 "pid": proc.pid,
@@ -781,6 +816,9 @@ def run_process(
             lifecycle, confirmed, termination = _supervise(
                 proc, pgid, normalized["timeout_seconds"], normalized["term_grace_seconds"], guard
             )
+        if guard.requested_signal is not None:
+            lifecycle = "interrupted"
+            termination["interrupt_signal"] = _signal_name(guard.requested_signal)
         guard.terminating = True
         ended_at = utc_now()
         elapsed = round(time.monotonic() - clock_start, 3)
@@ -883,10 +921,21 @@ def run_process(
             "command_argv": command,
         }
         atomic_write_json(paths["receipt"], receipt)
+        if guard.requested_signal is not None and receipt["status"] != "interrupted":
+            # A first stop request can arrive during parsing or the receipt write.
+            # Finalize that cancellation without discarding the captured artifacts.
+            termination["interrupt_signal"] = _signal_name(guard.requested_signal)
+            receipt.update(status="interrupted", exit_code=exit_code_for("interrupted"),
+                           lifecycle="interrupted", requested_model_verified=False,
+                           termination={**termination, "late_parent_signals": list(guard.late_signals)})
+            receipt["errors"].insert(0, "interrupted: parent received a stop signal while finalizing the attempt")
+            if proc is not None:
+                process_record.update(lifecycle="interrupted", termination=termination)
+                atomic_write_json(paths["process"], process_record)
+            atomic_write_json(paths["receipt"], receipt)
         return receipt
     finally:
         if proc is not None and _group_alive(proc, pgid):
             # Safety net for any unexpected exception path: never leave the child running.
             guard.terminating = True
             terminate_process_group(proc, pgid, normalized["term_grace_seconds"], termination)
-        guard.restore()
