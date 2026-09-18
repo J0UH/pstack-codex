@@ -1,0 +1,21 @@
+{
+  "name": "pstack-codex",
+  "version": "0.1.0-alpha.1+codex.20260918161019",
+  "description": "Faithful pstack workflow port for Codex with standalone Claude Code and optional Grok Build workers.",
+  "author": {
+    "name": "J0UH"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "pstack for Codex",
+    "shortDescription": "Poteto workflows, coordinated by Codex.",
+    "longDescription": "Preserves pstack skills and playbooks with explicit Codex host adaptations, Claude Code CLI workers, optional Grok Build, and conversation-local mode context.",
+    "developerName": "J0UH",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Use poteto-mode to work through this task."
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/J0UH/pstack-codex",
+  "repository": "https://github.com/J0UH/pstack-codex"
+}

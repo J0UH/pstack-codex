@@ -1,0 +1,7 @@
+{
+  "description": "Keep explicitly activated poteto-mode local to its conversation and project.",
+  "hooks": {
+    "SessionStart": [{"matcher": "startup|resume|compact", "hooks": [{"type": "command", "command": "python3 \"${PLUGIN_ROOT}/hooks/mode.py\"", "timeout": 10, "additionalContextLimit": 0}]}],
+    "UserPromptSubmit": [{"hooks": [{"type": "command", "command": "python3 \"${PLUGIN_ROOT}/hooks/mode.py\"", "timeout": 10, "additionalContextLimit": 0}]}]
+  }
+}

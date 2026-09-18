@@ -1,0 +1,134 @@
+{
+  "schema_version": 1,
+  "description": "Example explicit Astra/Claude role mapping; copy only after confirming available models and profiles. Exact upstream defaults remain recorded in source.",
+  "roles": {
+    "coordinator": {
+      "backend": "native",
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    },
+    "feature, refactoring": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "bug-fix": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "perf-issue": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "hillclimb": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "hardest tasks": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "judgment and prose": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "how explainer": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "why synthesizer": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "reflect judgment, divergent, synthesizer": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "how explorer": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "why investigators": {
+      "backend": "claude",
+      "model": "claude-fable-5-1",
+      "effort": "xhigh"
+    },
+    "reflect tooling": {
+      "backend": "native",
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    },
+    "arena runners": [
+      {
+        "backend": "native",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "backend": "claude",
+        "model": "claude-fable-5-1",
+        "effort": "xhigh"
+      }
+    ],
+    "arena cross-judge pool": [
+      {
+        "backend": "native",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "backend": "claude",
+        "model": "claude-fable-5-1",
+        "effort": "xhigh"
+      }
+    ],
+    "architect runners": [
+      {
+        "backend": "native",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "backend": "claude",
+        "model": "claude-fable-5-1",
+        "effort": "xhigh"
+      }
+    ],
+    "interrogate reviewers": [
+      {
+        "backend": "native",
+        "model": "gpt-6-astra",
+        "effort": "xhigh"
+      },
+      {
+        "backend": "claude",
+        "model": "claude-fable-5-1",
+        "effort": "xhigh"
+      }
+    ],
+    "swarm workers": {
+      "backend": "native",
+      "model": "gpt-6-astra",
+      "effort": "xhigh"
+    }
+  },
+  "optional_backends": {
+    "grok": {
+      "model": "grok-4.6",
+      "effort": "xhigh",
+      "profile": "analysis",
+      "status": "requires_local_validation",
+      "reason": "Grok Build read-only sandbox failed on the authoring host; not used as a default."
+    }
+  },
+  "profile_note": "Choose analysis/reader/writer from the task capability contract, not from the model identity. Writer Bash requires explicit scoped rules."
+}

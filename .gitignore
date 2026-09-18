@@ -1,0 +1,7 @@
+__pycache__/
+*.pyc
+.local/
+.DS_Store
+node_modules/
+.pytest_cache/
+*.log

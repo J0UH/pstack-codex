@@ -1,0 +1,6 @@
+interface:
+  display_name: "figure-it-out"
+  short_description: "Use pstack's figure it out workflow."
+  default_prompt: "Use $figure-it-out for this task."
+policy:
+  allow_implicit_invocation: false

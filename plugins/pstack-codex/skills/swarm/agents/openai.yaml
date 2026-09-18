@@ -1,0 +1,6 @@
+interface:
+  display_name: "swarm"
+  short_description: "Use pstack's swarm workflow."
+  default_prompt: "Use $swarm for this task."
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,6 @@
+interface:
+  display_name: "principle-foundational-thinking"
+  short_description: "Use pstack's principle foundational thinking workflow."
+  default_prompt: "Use $principle-foundational-thinking for this task."
+policy:
+  allow_implicit_invocation: false

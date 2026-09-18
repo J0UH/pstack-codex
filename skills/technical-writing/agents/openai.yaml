@@ -1,0 +1,6 @@
+interface:
+  display_name: "technical-writing"
+  short_description: "Use pstack's technical writing workflow."
+  default_prompt: "Use $technical-writing for this task."
+policy:
+  allow_implicit_invocation: false

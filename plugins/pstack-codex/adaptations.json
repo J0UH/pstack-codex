@@ -1,0 +1,2387 @@
+{
+  "adaptation_notes": "adapters/ADAPTATIONS.md",
+  "catalog": {
+    "companion_skills": 3,
+    "dormant_skills": 3,
+    "explicit_only_registered_skills": 46,
+    "playbooks": 23,
+    "principles": 23,
+    "registered_skills": 47
+  },
+  "companion_manifest_sha256": "909fa199e1004dfced730242d373d1dac2902e9e01547560f9091da34c18f072",
+  "files": [
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "comment-sicko",
+          "upstream_frontmatter": "name: Comment Sicko\ndescription: A deranged comment-hater that savors deletion and condemns workaround code."
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "agents/comment-sicko.md",
+      "sha256": "6a68f9ef2d15d8ad265ffdfe00b730bae9570b72ee3495245742e1d5b722792b",
+      "source": "upstream/pstack/agents/comment-sicko.md",
+      "source_sha256": "c0fd0383008da45fc78cfac17b9007d62c42f87ad1c8d5c2fb658b1fd01f7c82"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "poteto-agent",
+          "upstream_frontmatter": "name: poteto-agent\ndescription: Routing target for `/poteto-mode` and any request for poteto's style. Resume an existing `poteto-agent` for the conversation rather than spawning a sibling. Reads the `poteto-mode` skill's `SKILL.md` in full before any work, including its inline Principles index. Substituting `generalPurpose` skips that read and drifts.\nis_background: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "agents/poteto-agent.md",
+      "sha256": "33ea6aae1e723927bae835cbc35217b538f6affa7c70c8f9a8760e108c3ec1f6",
+      "source": "upstream/pstack/agents/poteto-agent.md",
+      "source_sha256": "c3850be1b97bc97cec0568ed8b26d04e7693c4e07868137c58fe546d37f288e9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/FOR_AGENTS.md",
+      "sha256": "a125e317dec1b8731fdc71f404c669f1127a73af932f7a7b8b8744a5542328a7",
+      "source": "upstream/pstack/automations/benny/FOR_AGENTS.md",
+      "source_sha256": "a125e317dec1b8731fdc71f404c669f1127a73af932f7a7b8b8744a5542328a7"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/README.md",
+      "sha256": "ca3c42cbb7f0bf7068f7407eb355815e6c234d5c2786942f3cbe751a3690024b",
+      "source": "upstream/pstack/automations/benny/README.md",
+      "source_sha256": "ca3c42cbb7f0bf7068f7407eb355815e6c234d5c2786942f3cbe751a3690024b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/reproduce-and-fix-issues/SKILL.md",
+      "sha256": "1363cc07343fe86aab42853b1bd4563288cbcbdf12f1c265b3b3b1afa25c09cb",
+      "source": "upstream/pstack/automations/benny/skills/reproduce-and-fix-issues/SKILL.md",
+      "source_sha256": "1363cc07343fe86aab42853b1bd4563288cbcbdf12f1c265b3b3b1afa25c09cb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/reproduce-and-fix-issues/references/control-adapter.md",
+      "sha256": "58b0615d2fca895f9a20df83266e280042b0d585b5f2fd324e2094a682fd846b",
+      "source": "upstream/pstack/automations/benny/skills/reproduce-and-fix-issues/references/control-adapter.md",
+      "source_sha256": "58b0615d2fca895f9a20df83266e280042b0d585b5f2fd324e2094a682fd846b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/reproduce-and-fix-issues/references/feature-map.example.md",
+      "sha256": "1e5c7c8522daec3e43fcc2e73ceb97289ded65b552949ce65a11cc8eb3d2b6ee",
+      "source": "upstream/pstack/automations/benny/skills/reproduce-and-fix-issues/references/feature-map.example.md",
+      "source_sha256": "1e5c7c8522daec3e43fcc2e73ceb97289ded65b552949ce65a11cc8eb3d2b6ee"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/reproduce-and-fix-issues/references/verify-existing-fix.md",
+      "sha256": "c90eae00abcdec71a58fa8d60f2c495b082a526ad50b8e8e494837609129bf29",
+      "source": "upstream/pstack/automations/benny/skills/reproduce-and-fix-issues/references/verify-existing-fix.md",
+      "source_sha256": "c90eae00abcdec71a58fa8d60f2c495b082a526ad50b8e8e494837609129bf29"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/setup-benny/SKILL.md",
+      "sha256": "5a3cbe63360c9f6373b6cb6c79a1eaf7e0eba181bfaa1577e2e6431af3407282",
+      "source": "upstream/pstack/automations/benny/skills/setup-benny/SKILL.md",
+      "source_sha256": "5a3cbe63360c9f6373b6cb6c79a1eaf7e0eba181bfaa1577e2e6431af3407282"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/triage-issue-reports/SKILL.md",
+      "sha256": "216a758b8711e64d19a55e6032c496527daac6364d010611040f3c04ef1a448f",
+      "source": "upstream/pstack/automations/benny/skills/triage-issue-reports/SKILL.md",
+      "source_sha256": "216a758b8711e64d19a55e6032c496527daac6364d010611040f3c04ef1a448f"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/skills/triage-issue-reports/references/routing.example.md",
+      "sha256": "e5e53013692568cf69da8e8b302fff929fe2fbc9aec1a4651fd7997e2c7a4025",
+      "source": "upstream/pstack/automations/benny/skills/triage-issue-reports/references/routing.example.md",
+      "source_sha256": "e5e53013692568cf69da8e8b302fff929fe2fbc9aec1a4651fd7997e2c7a4025"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/templates/configuration.example.yaml",
+      "sha256": "13e24b4ce9b9a0913916e85fe3b080b88d45f8e55dccfe8ae38e0751a997b6f5",
+      "source": "upstream/pstack/automations/benny/templates/configuration.example.yaml",
+      "source_sha256": "13e24b4ce9b9a0913916e85fe3b080b88d45f8e55dccfe8ae38e0751a997b6f5"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/templates/reproduce-automation-prompt.md",
+      "sha256": "71ec574f1844e379394ae4ef14c48d7df10afbaa319d395c788d7f856f0e6899",
+      "source": "upstream/pstack/automations/benny/templates/reproduce-automation-prompt.md",
+      "source_sha256": "71ec574f1844e379394ae4ef14c48d7df10afbaa319d395c788d7f856f0e6899"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "automations/benny/templates/triage-automation-prompt.md",
+      "sha256": "e0bba594547834f013ec805915610eb597e7929efe3ffbe85ae00339ee16d474",
+      "source": "upstream/pstack/automations/benny/templates/triage-automation-prompt.md",
+      "source_sha256": "e0bba594547834f013ec805915610eb597e7929efe3ffbe85ae00339ee16d474"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "companion-skills/LICENSE",
+      "sha256": "702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0",
+      "source": "upstream/cursor-team-kit/LICENSE",
+      "source_sha256": "702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "control-cli",
+          "upstream_frontmatter": "name: control-cli\ndescription: Build or adapt a local harness to drive, inspect, and profile an interactive CLI or TUI without external services. Use for CLI UX checks, startup regressions, memory leaks, hangs, prompt flows, or terminal demos."
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "companion-skills/control-cli/SKILL.md",
+      "sha256": "9247c449aec42b9425f1c725736fa0be25497b0ade266cdf2065be8ef16bf3b7",
+      "source": "upstream/cursor-team-kit/skills/control-cli/SKILL.md",
+      "source_sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": true,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "companion-skills/control-cli/agents/openai.yaml",
+      "sha256": "ac115cd6b99e049d745dda11f03f67099a558f453e84a5dded5ea723bdfb481f",
+      "source": "upstream/cursor-team-kit/skills/control-cli/SKILL.md",
+      "source_sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "control-ui",
+          "upstream_frontmatter": "name: control-ui\ndescription: Build or adapt a local browser/CDP harness to drive and inspect a web, IDE, or Electron UI. Use for local UI verification, screenshots, accessibility snapshots, perf profiles, visual diffs, or reproducing UI bugs."
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "companion-skills/control-ui/SKILL.md",
+      "sha256": "45d06ebfaeabde6fcc7de21a41424146ed640ea21a5cdb857dc0c72ebdfa5232",
+      "source": "upstream/cursor-team-kit/skills/control-ui/SKILL.md",
+      "source_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": true,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "companion-skills/control-ui/agents/openai.yaml",
+      "sha256": "31b7d7d60c68e98b9dcad5bc4124a3ea83db2e7fc26e8cc7dde9c7367b70643e",
+      "source": "upstream/cursor-team-kit/skills/control-ui/SKILL.md",
+      "source_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "deslop",
+          "upstream_frontmatter": "name: deslop\ndescription: Remove AI-generated code slop and clean up code style"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "companion-skills/deslop/SKILL.md",
+      "sha256": "a20d1badf0d4e925938036ed3db04d1b070b862e188f4fc945c3691f1f23eae7",
+      "source": "upstream/cursor-team-kit/skills/deslop/SKILL.md",
+      "source_sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": true,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "companion-skills/deslop/agents/openai.yaml",
+      "sha256": "000d61241e5aa45838071ac564d897048cfc2c61680657d9baac69ecc20a6c17",
+      "source": "upstream/cursor-team-kit/skills/deslop/SKILL.md",
+      "source_sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "routing-index"
+        }
+      ],
+      "output": "docs/routing-index.md",
+      "sha256": "f4f3c648e541166ce5ad9bb4c619adf880d2ce037827f6efe97e397b92227cd9",
+      "source": null,
+      "source_sha256": null
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "architect",
+          "upstream_frontmatter": "name: architect\ndescription: \"Sketch types, signatures, and module structure before code, then stay in the loop while implementation fills in. Use for /architect, 'architect this', 'design this', or non-trivial work where jumping to code would lock in the wrong shape.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/architect/SKILL.md",
+      "sha256": "21784a14a112f03bfffbdf726224d57f2c8ff3ab1a8b2211837be4baaf44f08f",
+      "source": "upstream/pstack/skills/architect/SKILL.md",
+      "source_sha256": "897a59beaa3cab107d98c256206e062cc4a5e9421a45b9d462fbded19291fea5"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/architect/agents/openai.yaml",
+      "sha256": "776fa91a36b92ccd744509c7a7b37d41a864b3c9eeff6590fe9bcda12d95b3a3",
+      "source": "upstream/pstack/skills/architect/SKILL.md",
+      "source_sha256": "897a59beaa3cab107d98c256206e062cc4a5e9421a45b9d462fbded19291fea5"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/architect/references/design-red-flags.md",
+      "sha256": "905066f9bbac81c573c2b325be47751d2c0f9325e0a0772bd4384e82dafe9336",
+      "source": "upstream/pstack/skills/architect/references/design-red-flags.md",
+      "source_sha256": "905066f9bbac81c573c2b325be47751d2c0f9325e0a0772bd4384e82dafe9336"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/architect/references/rationale-template.md",
+      "sha256": "0cedfccdc7b47fc881febd5a8293eecbc542c20f8df825639904a8102d2eb5d3",
+      "source": "upstream/pstack/skills/architect/references/rationale-template.md",
+      "source_sha256": "0cedfccdc7b47fc881febd5a8293eecbc542c20f8df825639904a8102d2eb5d3"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/architect/references/runner-prompt.md",
+      "sha256": "983bf2820cc14ed8ecab6e448e1033e5cfe6031967d0a9287b48c7fa9c33d925",
+      "source": "upstream/pstack/skills/architect/references/runner-prompt.md",
+      "source_sha256": "983bf2820cc14ed8ecab6e448e1033e5cfe6031967d0a9287b48c7fa9c33d925"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "arena",
+          "upstream_frontmatter": "name: arena\ndescription: \"Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/arena/SKILL.md",
+      "sha256": "2276ac8f6be5e318dd59ec75c2a17456f9f406b334f15bcfeaed8da635c64fef",
+      "source": "upstream/pstack/skills/arena/SKILL.md",
+      "source_sha256": "8d431f7b1aa19daf6300366fc876c4d1aadac06417ec5502407345ffaf4e90d9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/arena/agents/openai.yaml",
+      "sha256": "e5de51b6c9399e1b9a5d020ae3e33184104edacbbf91a149f12c894227a24543",
+      "source": "upstream/pstack/skills/arena/SKILL.md",
+      "source_sha256": "8d431f7b1aa19daf6300366fc876c4d1aadac06417ec5502407345ffaf4e90d9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "automate-me",
+          "upstream_frontmatter": "name: automate-me\ndescription: \"Use for \\\"automate me\\\", \\\"create/update/refresh my -mode skill\\\", \\\"turn/capture my preferences or working style into a skill\\\", or wanting agents to follow how the user works. Drafts or revises a personal -mode skill via create-skill + unslop, optionally pulling fresh evidence from recent transcripts.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/automate-me/SKILL.md",
+      "sha256": "ce2bf17c5497aeb7fe2ffd2029da8310722153801d40a07ff7dd637d2c479573",
+      "source": "upstream/pstack/skills/automate-me/SKILL.md",
+      "source_sha256": "1510979b0b71b54284427a19c09918f8b1fdfc168f9b7f9e30098793a5ec88ef"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/automate-me/agents/openai.yaml",
+      "sha256": "106818990ac1ef48c6cdeba74974ccde189592661757ba83f4c4085c1f658482",
+      "source": "upstream/pstack/skills/automate-me/SKILL.md",
+      "source_sha256": "1510979b0b71b54284427a19c09918f8b1fdfc168f9b7f9e30098793a5ec88ef"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "blast-radius",
+          "upstream_frontmatter": "name: blast-radius\ndescription: \"Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/blast-radius/SKILL.md",
+      "sha256": "461735dd198e24ed123aec0e493bdcd3abfff7a7b611edb79f2eaf0cef14e094",
+      "source": "upstream/pstack/skills/blast-radius/SKILL.md",
+      "source_sha256": "20cb2945f5fe62055166f745107274af5f19428ca033e53a9b8bc69650d3ded1"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/blast-radius/agents/openai.yaml",
+      "sha256": "a50e46b418e3b005be8d174adddec1efa534f16d08f0fa925150094bf0efeb74",
+      "source": "upstream/pstack/skills/blast-radius/SKILL.md",
+      "source_sha256": "20cb2945f5fe62055166f745107274af5f19428ca033e53a9b8bc69650d3ded1"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "bro",
+          "upstream_frontmatter": "name: bro\ndescription: Restate the last message in plain human language, with no jargon.\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/bro/SKILL.md",
+      "sha256": "df3e2aba16bdaf31ee7a9ce0ba96205820eda2aebee4821393f3865e119f1a91",
+      "source": "upstream/pstack/skills/bro/SKILL.md",
+      "source_sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/bro/agents/openai.yaml",
+      "sha256": "56a47f9873b132854c7219f2b7e428dddd15fa0a0ebac6d45d2e763892329154",
+      "source": "upstream/pstack/skills/bro/SKILL.md",
+      "source_sha256": "aa329d0ceeeecb6822a7174ad76bb07a7826a3c52ceb6a588dec4138815084bb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "create-verification-skill",
+          "upstream_frontmatter": "name: create-verification-skill\ndescription: \"Generate a project-local verification skill that drives your app the way a user does — any language, framework, or platform. Use for /create-verification-skill, \\\"make a control skill for this repo\\\", or when a project has no scripted way to prove UI/CLI/service behavior.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/create-verification-skill/SKILL.md",
+      "sha256": "c84722ac8f73f5f94f49103b7f6670f3dbe55892e66d7497771cc4499b2fc1a8",
+      "source": "upstream/pstack/skills/create-verification-skill/SKILL.md",
+      "source_sha256": "644f2551403c1bca01a2855b34611b6e7be0ce0dc5b204514c376c0f6a6e6ac4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/create-verification-skill/agents/openai.yaml",
+      "sha256": "2ee2f4475f0d85fd65289c0b1cadfdf83f0360a6033c64cea2412d26c85385ba",
+      "source": "upstream/pstack/skills/create-verification-skill/SKILL.md",
+      "source_sha256": "644f2551403c1bca01a2855b34611b6e7be0ce0dc5b204514c376c0f6a6e6ac4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/create-verification-skill/references/feature-map-example/README.md",
+      "sha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba",
+      "source": "upstream/pstack/skills/create-verification-skill/references/feature-map-example/README.md",
+      "source_sha256": "cb7bd782cf89968a4ba3d58a5151db837430db92d19a6f52a906973b77b516ba"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/create-verification-skill/references/feature-map-example/create-note.md",
+      "sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7",
+      "source": "upstream/pstack/skills/create-verification-skill/references/feature-map-example/create-note.md",
+      "source_sha256": "644a44c74f35d38c2feb7cd05a0121fdebbb623e8dc376c185b565a581d1ccf7"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/create-verification-skill/references/feature-map-example/search.md",
+      "sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823",
+      "source": "upstream/pstack/skills/create-verification-skill/references/feature-map-example/search.md",
+      "source_sha256": "6e87b9e7f2791a7776ba1bb83f371cd285c306c67f19d245cc4dd6ca3015c823"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "figure-it-out",
+          "upstream_frontmatter": "name: figure-it-out\ndescription: \"Design an auditable playbook when no narrower one fits: a large migration, an ambitious multi-part change, or work a human reviews after stepping away. Scales rigor to the task, runs a hypothesis loop, and logs decisions via show-me-your-work. Use for /figure-it-out, 'figure it out', a large migration, or when no narrower playbook applies.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/figure-it-out/SKILL.md",
+      "sha256": "e9ee796760a8f18cee8f7996ef296f60db59fcb9b8af6ad179494ece8ab7ab5a",
+      "source": "upstream/pstack/skills/figure-it-out/SKILL.md",
+      "source_sha256": "e041c64a39f1084a20e60ee99762c4dbd3ec8be56ed33fd68ea867b8bd8bd3e4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/figure-it-out/agents/openai.yaml",
+      "sha256": "1c3b01edc9cd4fd7c00a07925601c831b2e986f17350f41d9c6ba835be5c4d10",
+      "source": "upstream/pstack/skills/figure-it-out/SKILL.md",
+      "source_sha256": "e041c64a39f1084a20e60ee99762c4dbd3ec8be56ed33fd68ea867b8bd8bd3e4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "how",
+          "upstream_frontmatter": "name: how\ndescription: \"Use for \\\"how does X work\\\", code walkthroughs before changing something, and placement / ownership / layering questions (\\\"where should this live\\\", \\\"which package owns this\\\", \\\"is this the right layer\\\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use why for motivation.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/how/SKILL.md",
+      "sha256": "8b903c0ede54cbc462d0003317c5db84764a74f2e0f00365b5f8762f618c7614",
+      "source": "upstream/pstack/skills/how/SKILL.md",
+      "source_sha256": "06b714dbd830bc829bfb89e33a1c39daf6d72ea412e488ea9d65f5f33b885a0c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/how/agents/openai.yaml",
+      "sha256": "960709a5c1b7fbc520ca61734ce0f06fb55a4da87893aa9bf82b23d970a914b1",
+      "source": "upstream/pstack/skills/how/SKILL.md",
+      "source_sha256": "06b714dbd830bc829bfb89e33a1c39daf6d72ea412e488ea9d65f5f33b885a0c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/how/references/explainer-prompt.md",
+      "sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff",
+      "source": "upstream/pstack/skills/how/references/explainer-prompt.md",
+      "source_sha256": "ddb89cebefc24e2b54517a331aedfe045b6971e101f45c71b8cef4cccff45bff"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/how/references/explorer-prompt.md",
+      "sha256": "3a6965276d23be7d8da6c305bfd5d7bf29d2aef09e5dae4119463ac72022a02d",
+      "source": "upstream/pstack/skills/how/references/explorer-prompt.md",
+      "source_sha256": "3a6965276d23be7d8da6c305bfd5d7bf29d2aef09e5dae4119463ac72022a02d"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "interrogate",
+          "upstream_frontmatter": "name: interrogate\ndescription: \"Use for \\\"interrogate\\\", \\\"adversarial review\\\", \\\"multi-model review\\\", \\\"challenge this\\\", \\\"stress test this code\\\", \\\"find blind spots\\\", or \\\"tear this apart\\\". Multiple LLM reviewers challenge changes from independent angles.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/interrogate/SKILL.md",
+      "sha256": "d55f2d993c49c7b8c6350c63e6da9e89a1a00bf56831b0f73b465414705956f8",
+      "source": "upstream/pstack/skills/interrogate/SKILL.md",
+      "source_sha256": "2867910309e81411123ae4edca68ffca5795e66521d3f3bc0876f6213b542fb9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/interrogate/agents/openai.yaml",
+      "sha256": "97ecc59d050e74fb79e59668ff8db57cfd4e886f23908e44fe81e3df1be8dc2c",
+      "source": "upstream/pstack/skills/interrogate/SKILL.md",
+      "source_sha256": "2867910309e81411123ae4edca68ffca5795e66521d3f3bc0876f6213b542fb9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/interrogate/references/code-quality-review.md",
+      "sha256": "623d3d8122d075c303b562783b471a732992e84166b318f85ab6d6c118b13304",
+      "source": "upstream/pstack/skills/interrogate/references/code-quality-review.md",
+      "source_sha256": "623d3d8122d075c303b562783b471a732992e84166b318f85ab6d6c118b13304"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/interrogate/references/lead-judgment.md",
+      "sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361",
+      "source": "upstream/pstack/skills/interrogate/references/lead-judgment.md",
+      "source_sha256": "6e5bdf5670eb34017692e9b6c546f36ac7552e6bb9f3f2f3429164fcc46a9361"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/interrogate/references/reviewer-prompt.md",
+      "sha256": "a397cc61102add709803d917fb23d726920525bf23e7c06dc4ed0b5cbeb00e54",
+      "source": "upstream/pstack/skills/interrogate/references/reviewer-prompt.md",
+      "source_sha256": "a397cc61102add709803d917fb23d726920525bf23e7c06dc4ed0b5cbeb00e54"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/interrogate/references/rubric.md",
+      "sha256": "59e9b7cc4556e735e1b859a7dd1f7637b013a2426a84825ac1c51979942c158a",
+      "source": "upstream/pstack/skills/interrogate/references/rubric.md",
+      "source_sha256": "59e9b7cc4556e735e1b859a7dd1f7637b013a2426a84825ac1c51979942c158a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "maintain-verification-skill",
+          "upstream_frontmatter": "name: maintain-verification-skill\ndescription: \"Periodic pass that keeps a project's verification skill and feature map honest: parallel source readers per feature, one live session driving every feature, at most one PR of proven corrections. Use for /maintain-verification-skill or \\\"audit the verify skill\\\".\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/maintain-verification-skill/SKILL.md",
+      "sha256": "6b9634bb5a2ab27182c078428c0bbf6c91b2c442a8236968d5b47888e47e7ee3",
+      "source": "upstream/pstack/skills/maintain-verification-skill/SKILL.md",
+      "source_sha256": "515c0eaa054b3f6be1b1fb06f2c2f173c80fddb58bbcac57576f89c479bc68e8"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/maintain-verification-skill/agents/openai.yaml",
+      "sha256": "7350dd90af9c7fffc8197296af5b356cf9982c2a3f80c7714ca531eba43ccf68",
+      "source": "upstream/pstack/skills/maintain-verification-skill/SKILL.md",
+      "source_sha256": "515c0eaa054b3f6be1b1fb06f2c2f173c80fddb58bbcac57576f89c479bc68e8"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "make-bot-ui",
+          "upstream_frontmatter": "name: Make Bot UI\ndescription: >-\n  Use when building a custom UI (page, dashboard, buttons) that should wake a\n  Grok Bot over a webhook, when the user must provide a webhook sender key, or\n  when exposing that UI on Tailscale.\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/make-bot-ui/SKILL.md",
+      "sha256": "5bbad1bf7a86af21bde09fbb7b6aeeb1d42d963f3e383bfb0a3ae9485f8c05ce",
+      "source": "upstream/pstack/skills/make-bot-ui/SKILL.md",
+      "source_sha256": "3624c8ef16cf2e48deb2a4049e72c6962a9431c8d6c6af90e7bd7ea0375224ec"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/make-bot-ui/agents/openai.yaml",
+      "sha256": "d4f7704ad369a0ad363d707ee8c56c1279c075df7e06a618fc7ea924e9f237e0",
+      "source": "upstream/pstack/skills/make-bot-ui/SKILL.md",
+      "source_sha256": "3624c8ef16cf2e48deb2a4049e72c6962a9431c8d6c6af90e7bd7ea0375224ec"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "no-comments",
+          "upstream_frontmatter": "name: no-comments\ndescription: \"Spawn Comment Sicko, fix accepted findings, and offer encodings for claimed constraints.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/no-comments/SKILL.md",
+      "sha256": "6e7818c565ba84c59a0e107969579c4cf3917ad8f5867c49fd938e9873877448",
+      "source": "upstream/pstack/skills/no-comments/SKILL.md",
+      "source_sha256": "5c5b0882297d704c3a9720c52b7a793c68b013eaf717989f0945624efdfe2b05"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/no-comments/agents/openai.yaml",
+      "sha256": "c49efcd3d79f85fd502472a746a10fb4d3b1ca67db367bb1a6a91d78653a1676",
+      "source": "upstream/pstack/skills/no-comments/SKILL.md",
+      "source_sha256": "5c5b0882297d704c3a9720c52b7a793c68b013eaf717989f0945624efdfe2b05"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "poteto-mode",
+          "upstream_frontmatter": "name: Poteto Mode\ndescription: poteto's agent style for concise, detailed responses, deliberate subagents, unslopped prose, simple code, and verified work. Use for poteto, /poteto-mode, or requests to work in this style.\ndisable-model-invocation: true\nmode: true\nicon: crown\ncolor: yellow\nreminder: New task? Playbook match or rigor needed -> apply /poteto-mode. Casual turn or user opts out -> don't."
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/SKILL.md",
+      "sha256": "9b1f6fb3a8d927695832ca4e227924f2c78be3729cf12c90cc0a75fa5ea14313",
+      "source": "upstream/pstack/skills/poteto-mode/SKILL.md",
+      "source_sha256": "b3c505602b82fb3641a3983e9c46fb974881faa12ece1af804fae27afb7be532"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/poteto-mode/agents/openai.yaml",
+      "sha256": "8101d00782c1a5dda6d9bcfd8363ac64305e2aaf42c03eb6e0886d5fcce71498",
+      "source": "upstream/pstack/skills/poteto-mode/SKILL.md",
+      "source_sha256": "b3c505602b82fb3641a3983e9c46fb974881faa12ece1af804fae27afb7be532"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "sha256": "35dce067159ea13f93848e644b404e9a480bb15b5f50b8b81dffa42cb2c4d92a",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md",
+      "source_sha256": "f6a13a445c360b48d6cd72780ac01955f45b82826476efe0e67c7559329407aa"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/autonomous-run.md",
+      "sha256": "6cce44135f3ca92b7594b05696a1331295e9abfd07449ef23a14045b5ae35ae6",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autonomous-run.md",
+      "source_sha256": "15e54ad3ac92565613980772d8708de6e19cc4690bfd4bb3fb8836522407377b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/autopilot-full.md",
+      "sha256": "cbaa65f5d8b3ad1b32588a68896ab25adc3c4e926359772a326a1b1e1b3da7f5",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autopilot-full.md",
+      "source_sha256": "2042a89a0399b5fe700110bc03746899536c10f0df186e9fb15bbd4a2f6dfce5"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/autopilot-stack.md",
+      "sha256": "3ca236cf94775abf800648d6126862e9822f156dc0a7925d4eeafced2fa52422",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/autopilot-stack.md",
+      "source_sha256": "60e0d997f7b369004a02089c71b9091d3f8e9bc0b4a3c1142598380faa7722fd"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/babysit.md",
+      "sha256": "410ff969dbfe2891069ab69f30cb69b9883e0e721ea1a81684dc954c288d8c28",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/babysit.md",
+      "source_sha256": "51be21872152f97612d37258273269b88212b6696432d25d678cac30f02f4157"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/bug-fix.md",
+      "sha256": "226cf000185089c47117bc8b16939d6e7ec56ca6b8d273cea0914eaf2f54893c",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/bug-fix.md",
+      "source_sha256": "e2ca6e217c8414409d3b51c64bb2743afa2256d98f643e104f8c4b52a1951883"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/eval.md",
+      "sha256": "c15c001669283cc6ff9c56bb630b57fa60a6ebf7fa213202ace537c9e66ad456",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/eval.md",
+      "source_sha256": "b862bfa2fae2399abf047a8e80d3e3dddb64003af96fb1cebb625216131e36bb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/feature.md",
+      "sha256": "e50ac5dfbcd2265f77e033919395e42d883c86254c6ad09c2c4e9e3b372d556c",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/feature.md",
+      "source_sha256": "430dae0fd736554ff7dffc3ef0644c9f0c845e25742f69e598c35b9b89660301"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/hillclimb.md",
+      "sha256": "2baf19fdf040999bcbd823306e80a314d89faa36f4fb0e9ddf93da8393d13767",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/hillclimb.md",
+      "source_sha256": "4637fb1537288f6c26c69425045f01b725bb6fa8a7b444bf98b6eaa9a1e9fb5f"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/investigation.md",
+      "sha256": "db118d54cf2341efa1efbed29e462213c57ea53de4f616aa032f8dfb72d5daeb",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/investigation.md",
+      "source_sha256": "dc66bcf6af3a074fc7f67aa5e12b93ef571a4fb4d8e17f2f1af5ae5359f42e46"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "sha256": "be6068043dfc8cf5a8b28fca22045e2347f53bca585534c633f3fbda9d53355e",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+      "source_sha256": "b823e05b64bbef84ae5169717c5fab1d9ab5079625996271e3aa7abcdce7b8ad"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/opening-a-pr.md",
+      "sha256": "c71952877867455c78057b7bdf6c7faf8aa9850bb162172e14942e46a86c0bab",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/opening-a-pr.md",
+      "source_sha256": "b173ff9638ff62f91f6813c1a0ed3417cdf9f6545a659be0c1fb1f42130e0e66"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/orchestrate.md",
+      "sha256": "f824f9d66624204d3b37eae41f7896d752a759d721182ae013af71cb1a5d032f",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+      "source_sha256": "d42b4375f1bd4ce23da0b575a198571a2117df7eea10c3c9fc6d92ae1053f7be"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/pause-safely.md",
+      "sha256": "839b7c42b473292423db569040891d74bae3906c036799dc9ecf0ca135c7fe7e",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/pause-safely.md",
+      "source_sha256": "7d5fc10e144265f1b35f8157926541e738c1de64b6a85b3e61b51cf268c3dffd"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/perf-issue.md",
+      "sha256": "7037ba5e20e782ef2d9405f441052e5b28dfb986976522e89c60641e7d1fb710",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/perf-issue.md",
+      "source_sha256": "dd81d608d6ab19b3d9c900004fd71e9b2e46b3f1b3c2c88f80ef256268717524"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/prototype.md",
+      "sha256": "9e620ad76adb6b25a4890dd06a30ccc60b4dcf4cf17e3b1574fa538d6cd2237e",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/prototype.md",
+      "source_sha256": "7aa1f52c691c3d46d5afc527b23f90977fce869ce33573c73c81a4c7f0cde962"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/refactoring.md",
+      "sha256": "a46f90884ca0ac57b13b04bc4d5240dbab313565a6956a8ca7b7236bfd49f765",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/refactoring.md",
+      "source_sha256": "53bac1f1fe886600dd1991b5511b7975e6a206168038f9d282d88e45408e93cf"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/runtime-forensics.md",
+      "sha256": "1d0b7c07d30e41426032c14a86176aa33005d95be8a917be8994bce79729c182",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/runtime-forensics.md",
+      "source_sha256": "594f02c40c243a346e1f57b688ecf2ed5e882f21b3d24ed2204d1ac6f1c24a8a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/session-pickup.md",
+      "sha256": "702e2706920b2f224524cd9b4940527fa04d5ebeee932b5c4ad7d119c614dc89",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/session-pickup.md",
+      "source_sha256": "1604fb463f7c7410d43fa024ca76c1c1824c166a01fd69d61f073d06fdca2a47"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/shipping.md",
+      "sha256": "4b6e78392736b43f9c7c08c45c6fda54be0c851640699616d558f0bd2d0314f6",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/shipping.md",
+      "source_sha256": "c301902136e0a9a0a55403c35374f6f5738e501aee66c27458dc197b87557550"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/trace-forensics.md",
+      "sha256": "e0f378027bae69edc71d110c3ce9288f7b5b670742c78debe8da456dc5c75be8",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/trace-forensics.md",
+      "source_sha256": "137ce3984fb96e45971fdff4d3c79fa4ccc647c5b30ae4945783b9fb23f8cec7"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/visual-parity.md",
+      "sha256": "251fb971ae0b5c817b298464748b0d7ec8e8d7535e55d5ea8fbb26564c3477d8",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/visual-parity.md",
+      "source_sha256": "950ca51999a6454c98eee6bcbc3d1bbe501a4e3a5d5439b6f6ddc378991b256c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "sha256": "eb81047abada4cba1394eda9bcf59a17a758471b73277cf8f284fae4b2fe084c",
+      "source": "upstream/pstack/skills/poteto-mode/playbooks/worktree-cleanup.md",
+      "source_sha256": "fc464dc4121926df1704f483c5feca83717c0a40b4651d3e11bd3aedd89441b6"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/references/bugbot-triage.md",
+      "sha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309",
+      "source": "upstream/pstack/skills/poteto-mode/references/bugbot-triage.md",
+      "source_sha256": "b2d146c770d8d3593e1ef3d77b668039b8e1f78093ea1a86f1d45d7f99614309"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/bootstrap.ts",
+      "sha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/bootstrap.ts",
+      "source_sha256": "ccd2ed08fd9da9d0d942e5f2491cfc74bb92d8a08fa51755e0da1ac8de287361"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/bun.lock",
+      "sha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/bun.lock",
+      "source_sha256": "667d9cf7222e9aae3fa42a4be383e657784216e9df115da02227fbc5ac7bbe46"
+    },
+    {
+      "mode": "0o755",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/check-plan.mjs",
+      "sha256": "4f5118edf719b481983dc87dfadd5b4b5473d05aad04a7ba65191ff9c73faf1b",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/check-plan.mjs",
+      "source_sha256": "4f5118edf719b481983dc87dfadd5b4b5473d05aad04a7ba65191ff9c73faf1b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/orch/orch.test.ts",
+      "sha256": "174b86d21ff51ccd28d1a8c938cb2e0c6fa287b209d4ca6c03932fcb1b53372e",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/orch/orch.test.ts",
+      "source_sha256": "174b86d21ff51ccd28d1a8c938cb2e0c6fa287b209d4ca6c03932fcb1b53372e"
+    },
+    {
+      "mode": "0o755",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/orch/orch.ts",
+      "sha256": "f091687df627a0b75fabd54af58945a9cd6c7039ef0622012ac9ed60cd8ec434",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/orch/orch.ts",
+      "source_sha256": "f091687df627a0b75fabd54af58945a9cd6c7039ef0622012ac9ed60cd8ec434"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/orch/store.ts",
+      "sha256": "0eae7cf69282e827b1227166f2e32cee3560f2f3e65b3f1f2faf6fb83d3b4c5b",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/orch/store.ts",
+      "source_sha256": "0eae7cf69282e827b1227166f2e32cee3560f2f3e65b3f1f2faf6fb83d3b4c5b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/package.json",
+      "sha256": "d1f815091209d49763775cc188e8e06ff32d5fec648bffd2272bc25a165e87c3",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/package.json",
+      "source_sha256": "d1f815091209d49763775cc188e8e06ff32d5fec648bffd2272bc25a165e87c3"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/cli.test.ts",
+      "sha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/cli.test.ts",
+      "source_sha256": "a35592b4c6da96caf8d47987e9cd503fab6c7774ab87d11a43f24b4b5df2a9d1"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/cli.ts",
+      "sha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/cli.ts",
+      "source_sha256": "89c08863089181a232be782c4b2ed90a1552f44aeecb0dcb7aac2c623620e680"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/fakes.test-helper.ts",
+      "sha256": "e53e31b7f03068063f53a99a3591b052aaed66e4e2b196b3a364980f60324ab1",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/fakes.test-helper.ts",
+      "source_sha256": "e53e31b7f03068063f53a99a3591b052aaed66e4e2b196b3a364980f60324ab1"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/github.test.ts",
+      "sha256": "0cbce011050522938523e36bb42a260e92b812dcd2076930fa681672ad316b24",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/github.test.ts",
+      "source_sha256": "0cbce011050522938523e36bb42a260e92b812dcd2076930fa681672ad316b24"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/github.ts",
+      "sha256": "d1bbbafbe8e2c703c84da2029de7f2c4011412512f8cf65a42100f46bcb92c8a",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/github.ts",
+      "source_sha256": "d1bbbafbe8e2c703c84da2029de7f2c4011412512f8cf65a42100f46bcb92c8a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/policy.test.ts",
+      "sha256": "a9fedb25feefd1f57ef6a662f80c99018690170a3a8070773a08eaf694d1d3d9",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/policy.test.ts",
+      "source_sha256": "a9fedb25feefd1f57ef6a662f80c99018690170a3a8070773a08eaf694d1d3d9"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/policy.ts",
+      "sha256": "68d240505852cf23c9b2dea463342e9e61243f486b3cc86c735d140f9ee7be49",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/policy.ts",
+      "source_sha256": "68d240505852cf23c9b2dea463342e9e61243f486b3cc86c735d140f9ee7be49"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/render.ts",
+      "sha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/render.ts",
+      "source_sha256": "2b709e86628d5b8fdb61f860e60ababc342b0626c67576305442cf548283a604"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/tsconfig.json",
+      "sha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/tsconfig.json",
+      "source_sha256": "1ecccc72320b086c63ce3f73c959896fd747363e63553b3b1136296ea4069e45"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/types.compile.ts",
+      "sha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/types.compile.ts",
+      "source_sha256": "621af4c9a664fbf699a9737efccdc248abb416df8819c9dc5f824beae2b9b1d6"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/types.ts",
+      "sha256": "64ba6221e3bfe61bbb292337d199cdec6309455477280efb060203dba34e0e91",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/types.ts",
+      "source_sha256": "64ba6221e3bfe61bbb292337d199cdec6309455477280efb060203dba34e0e91"
+    },
+    {
+      "mode": "0o755",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/watch-pr/watch-pr",
+      "sha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/watch-pr/watch-pr",
+      "source_sha256": "d955603be6cc0e8b8ffcec722f635192b2261410b1f2929abea94480e47eb5d4"
+    },
+    {
+      "mode": "0o755",
+      "operations": [],
+      "output": "skills/poteto-mode/scripts/worktree-audit.sh",
+      "sha256": "95b8530f3c0ccada8cabc4b0727c052fbc85c141531375aaace65c427af8aecc",
+      "source": "upstream/pstack/skills/poteto-mode/scripts/worktree-audit.sh",
+      "source_sha256": "95b8530f3c0ccada8cabc4b0727c052fbc85c141531375aaace65c427af8aecc"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-attack-the-premise",
+          "upstream_frontmatter": "name: principle-attack-the-premise\ndescription: \"Apply when two or more fixes that share one premise have failed the same gate. Take a census of which actors hold the imbalance before the next fix, then question the premise instead of writing another fix that assumes it.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-attack-the-premise/SKILL.md",
+      "sha256": "7c952d728d8c6dca833888f2e24a929c4e97525a01dee8bbf67540cc93ac8561",
+      "source": "upstream/pstack/skills/principle-attack-the-premise/SKILL.md",
+      "source_sha256": "c87bd7536f772f8a403ad8155535ee17a1bbec9a353156693eb3bb1520c87ae3"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-attack-the-premise/agents/openai.yaml",
+      "sha256": "0e5cfede683b956eabd91289f38b49c63ca9c81a16b9c7848ae9b058508c18c4",
+      "source": "upstream/pstack/skills/principle-attack-the-premise/SKILL.md",
+      "source_sha256": "c87bd7536f772f8a403ad8155535ee17a1bbec9a353156693eb3bb1520c87ae3"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-boundary-discipline",
+          "upstream_frontmatter": "name: principle-boundary-discipline\ndescription: \"Apply when wiring validation, error handling, or framework adapters. Concentrate guards at system boundaries (CLI, config, network, external APIs); trust internal types and keep business logic in pure functions.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-boundary-discipline/SKILL.md",
+      "sha256": "89ad9f114b95fb20523c39552225e656ec7f5d1f183faadc064b3fe18ac6073e",
+      "source": "upstream/pstack/skills/principle-boundary-discipline/SKILL.md",
+      "source_sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-boundary-discipline/agents/openai.yaml",
+      "sha256": "6b9865256b5e4c07725d64be00a12cf578b4307433341e6bf3ae25cb60cb218f",
+      "source": "upstream/pstack/skills/principle-boundary-discipline/SKILL.md",
+      "source_sha256": "62ac2862c2caa22dd14531f51c9c6bb445ceb198ca98a687e25b4d47c1f10a28"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-build-the-lever",
+          "upstream_frontmatter": "name: principle-build-the-lever\ndescription: \"Apply to any non-trivial work, not just bulk work: edits, migrations, analyses, checks. Build the tool that does it or proves it (codemod, script, generator, or a skill your subagents follow) instead of working by hand. The tool is the artifact a reviewer can rerun.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-build-the-lever/SKILL.md",
+      "sha256": "bb275afd534e632425bfd120884e3dfebdb99691bf10f3da9ec4a4e0d38e1d83",
+      "source": "upstream/pstack/skills/principle-build-the-lever/SKILL.md",
+      "source_sha256": "458b269eab8e95a1573276955312f7d2a13ae8599879a9efc748248f6bc34b56"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-build-the-lever/agents/openai.yaml",
+      "sha256": "d7913dfe208ecf4d4cc7f6f4a94fd9b4e4b6c6365a172daf60cdb8623890e611",
+      "source": "upstream/pstack/skills/principle-build-the-lever/SKILL.md",
+      "source_sha256": "458b269eab8e95a1573276955312f7d2a13ae8599879a9efc748248f6bc34b56"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-encode-lessons-in-structure",
+          "upstream_frontmatter": "name: principle-encode-lessons-in-structure\ndescription: \"Apply when you catch yourself writing the same instruction a second time, or notice a recurring correction. Encode the rule as a lint, metadata flag, runtime check, or script instead of more text.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-encode-lessons-in-structure/SKILL.md",
+      "sha256": "5f1b776c720a40d018347821ce1b27ca4e8182169a9a4a9248431979a840718d",
+      "source": "upstream/pstack/skills/principle-encode-lessons-in-structure/SKILL.md",
+      "source_sha256": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-encode-lessons-in-structure/agents/openai.yaml",
+      "sha256": "98076d6cacfe5e38aafb8feeba343c2b62055f916fea06304c3dcf8e3eb40b71",
+      "source": "upstream/pstack/skills/principle-encode-lessons-in-structure/SKILL.md",
+      "source_sha256": "77044c83a9ac6df78fc643887ea5f1f11f082adaf14b717c060cdaed03cce863"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-exhaust-the-design-space",
+          "upstream_frontmatter": "name: principle-exhaust-the-design-space\ndescription: \"Apply when facing a novel UI interaction or architectural decision with no precedent in the codebase. Build 2-3 competing prototypes and compare side by side before committing.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-exhaust-the-design-space/SKILL.md",
+      "sha256": "4f5ff2379bcb87c7c9e06b9e24dbea128de77372d6e2ef6ee39120f529d9c762",
+      "source": "upstream/pstack/skills/principle-exhaust-the-design-space/SKILL.md",
+      "source_sha256": "8583310d7297b7823d75494faa57b003564d436807febecdecbd8321abe5cf6e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-exhaust-the-design-space/agents/openai.yaml",
+      "sha256": "26bb548307e8d656c62662ebe907e723339bc343af857383d0dcf2356bfe0b87",
+      "source": "upstream/pstack/skills/principle-exhaust-the-design-space/SKILL.md",
+      "source_sha256": "8583310d7297b7823d75494faa57b003564d436807febecdecbd8321abe5cf6e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-experience-first",
+          "upstream_frontmatter": "name: principle-experience-first\ndescription: \"Apply when product, UX, or feature-scope tradeoffs come up. Choose user delight over implementation convenience; ship fewer polished features over more rough ones.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-experience-first/SKILL.md",
+      "sha256": "aedafae283ac320a6950bac961cfc300d186f7c20aaf194d23b6a9748abd23b9",
+      "source": "upstream/pstack/skills/principle-experience-first/SKILL.md",
+      "source_sha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-experience-first/agents/openai.yaml",
+      "sha256": "37ac17ac251612411ce4f94d3e5c1e19abba3fcb5d3c5688a22f53a1b29013b1",
+      "source": "upstream/pstack/skills/principle-experience-first/SKILL.md",
+      "source_sha256": "58903529d733b1c1a7c9ccf127d45ef3c7d0d9f0b81164a4dc6b80efe6f2912b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-fix-root-causes",
+          "upstream_frontmatter": "name: principle-fix-root-causes\ndescription: \"Apply when debugging. Trace each symptom to its root cause and fix it there; reproduce first, ask why until you reach it, resist nil-check guards that silence crashes.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-fix-root-causes/SKILL.md",
+      "sha256": "d029107ae8e6299d419eedef1738d52b48d792490824c809bdd474f90ed8a7ff",
+      "source": "upstream/pstack/skills/principle-fix-root-causes/SKILL.md",
+      "source_sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-fix-root-causes/agents/openai.yaml",
+      "sha256": "f385783ed1adb038b2010c4eccbbce73b504f08a63150ed98ea0625b65d2640e",
+      "source": "upstream/pstack/skills/principle-fix-root-causes/SKILL.md",
+      "source_sha256": "ba4cd38da1dcc8fe5432feb64457cba95594736a9b21b2ebf8f8c52aee068707"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-foundational-thinking",
+          "upstream_frontmatter": "name: principle-foundational-thinking\ndescription: \"Apply before writing logic: choosing core types and data structures, sequencing scaffold-vs-feature work, asking what concurrent actors share. Get the data structures right so downstream code becomes obvious.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-foundational-thinking/SKILL.md",
+      "sha256": "26515e339f69f8e4eb580f09a0bc01a7c128eeca25a8e659c897dcabd4ed505e",
+      "source": "upstream/pstack/skills/principle-foundational-thinking/SKILL.md",
+      "source_sha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-foundational-thinking/agents/openai.yaml",
+      "sha256": "e8495a0171116f0fc5a134350dcc995d6b9105e0233e30268e6b1e0b3596a826",
+      "source": "upstream/pstack/skills/principle-foundational-thinking/SKILL.md",
+      "source_sha256": "864b827e8199d946ce58beca0f89c4ed4099ed6e426fb698a3aaa45de2a9eea2"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-guard-the-context-window",
+          "upstream_frontmatter": "name: principle-guard-the-context-window\ndescription: \"Apply when context is filling up: large outputs, long files, repeated reads, fan-out planning. Route bulk to subagents; keep summaries in the main thread, not raw payloads.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-guard-the-context-window/SKILL.md",
+      "sha256": "97b4f85483cd96bec03666014f9e185696efbcd85e5f6c31947d1ebf2303b6c3",
+      "source": "upstream/pstack/skills/principle-guard-the-context-window/SKILL.md",
+      "source_sha256": "9f60e2c79b35f865cb103462f9128c6760b70f603475d1e535e5930f61840f66"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-guard-the-context-window/agents/openai.yaml",
+      "sha256": "67261d62e50f9351f345a5bb0a168a932dd5a127d48c4ba41af6a89de0ee818f",
+      "source": "upstream/pstack/skills/principle-guard-the-context-window/SKILL.md",
+      "source_sha256": "9f60e2c79b35f865cb103462f9128c6760b70f603475d1e535e5930f61840f66"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-laziness-protocol",
+          "upstream_frontmatter": "name: principle-laziness-protocol\ndescription: \"Apply when refactoring, evaluating diff size, or tempted to add abstractions, layers, or signal threading. Bias toward deletion and the smallest change that solves the problem.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-laziness-protocol/SKILL.md",
+      "sha256": "4e79fdb0b5aa4056038695ef96eba95a89ca691a67194a1ccb825c32034d99be",
+      "source": "upstream/pstack/skills/principle-laziness-protocol/SKILL.md",
+      "source_sha256": "9006579e9e3f33955d17569733db688ae65f22577dc3b21803d219a5a8445aff"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-laziness-protocol/agents/openai.yaml",
+      "sha256": "66b34701b65f8117491032a59d5ecd909fac68da4efe33493964d7beb8478a4a",
+      "source": "upstream/pstack/skills/principle-laziness-protocol/SKILL.md",
+      "source_sha256": "9006579e9e3f33955d17569733db688ae65f22577dc3b21803d219a5a8445aff"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-make-operations-idempotent",
+          "upstream_frontmatter": "name: principle-make-operations-idempotent\ndescription: \"Apply when designing commands, lifecycle steps, or processing loops that run amid crashes, restarts, and retries. Converge to the same end state regardless of partial prior runs.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-make-operations-idempotent/SKILL.md",
+      "sha256": "04f92a49b664e984a86026cfe4e80d3e8b001e7090b8ec9eaf741320c781c45a",
+      "source": "upstream/pstack/skills/principle-make-operations-idempotent/SKILL.md",
+      "source_sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-make-operations-idempotent/agents/openai.yaml",
+      "sha256": "a2c0f6d6974a5eb095bc084fe5b71d040d8ad5a87bf351cd636156eca70f0177",
+      "source": "upstream/pstack/skills/principle-make-operations-idempotent/SKILL.md",
+      "source_sha256": "540738217c3da7bf513b9886924ad6a2bc77e58be867f5bd2e1831c74bf2ce70"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-migrate-callers-then-delete-legacy-apis",
+          "upstream_frontmatter": "name: principle-migrate-callers-then-delete-legacy-apis\ndescription: \"Apply when introducing a new internal API while old callers still exist. Migrate callers and delete the old API in the same wave instead of preserving compatibility layers.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+      "sha256": "e0c91be68b78cae32c1b3a35b6fc8fc739e9550ece7e3f264af67c02eb84701d",
+      "source": "upstream/pstack/skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+      "source_sha256": "09978915a4a11990cf0a9a02d9c08cc59e0b7a04c5c24b83aa560fbe4146f75b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-migrate-callers-then-delete-legacy-apis/agents/openai.yaml",
+      "sha256": "0076f7d820cd1a5d94d4d31f11016e869d7879dfb4b56bd4c5836ad771e1783f",
+      "source": "upstream/pstack/skills/principle-migrate-callers-then-delete-legacy-apis/SKILL.md",
+      "source_sha256": "09978915a4a11990cf0a9a02d9c08cc59e0b7a04c5c24b83aa560fbe4146f75b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-minimize-reader-load",
+          "upstream_frontmatter": "name: principle-minimize-reader-load\ndescription: \"Apply when reviewing or shaping code that's hard to trace. Count layers between question and answer, and hidden state in the reader's head; collapse one-caller wrappers and shrink mutable scope.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-minimize-reader-load/SKILL.md",
+      "sha256": "3c4f97cd9edd39dfa9de43957d39abba21f1c51430d2b3af288715d21b5192e2",
+      "source": "upstream/pstack/skills/principle-minimize-reader-load/SKILL.md",
+      "source_sha256": "42551c5dc74cd578163c148da552db3ff67d29b78600ef216bfd311fb828fe69"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-minimize-reader-load/agents/openai.yaml",
+      "sha256": "7573fbb0af6944db0455e12334a6849ce97f92688aa5c51607c9f63f56f62f44",
+      "source": "upstream/pstack/skills/principle-minimize-reader-load/SKILL.md",
+      "source_sha256": "42551c5dc74cd578163c148da552db3ff67d29b78600ef216bfd311fb828fe69"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-model-the-domain",
+          "upstream_frontmatter": "name: principle-model-the-domain\ndescription: \"Apply when writing stateful logic, or when code branches a lot or repeats a shape assumption across files. Encode the domain in a structure instead of scattered conditionals.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-model-the-domain/SKILL.md",
+      "sha256": "a93a2d11aace167699a60d8bc442ad0215f7d60a3a508966cc22843fe7ed0afe",
+      "source": "upstream/pstack/skills/principle-model-the-domain/SKILL.md",
+      "source_sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-model-the-domain/agents/openai.yaml",
+      "sha256": "a256c2fdcc9e269d56adfdf920d3f25f6a7cba1ab4cca188b6b37b678eab8d80",
+      "source": "upstream/pstack/skills/principle-model-the-domain/SKILL.md",
+      "source_sha256": "bbadbb9a723fac3f76e782ae45665eb94058ec10993e4bae36d4dc6b0e4eac07"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-never-block-on-the-human",
+          "upstream_frontmatter": "name: principle-never-block-on-the-human\ndescription: \"Apply when tempted to ask 'should I do X?' on reversible work. Proceed, present the result, let the human course-correct after the fact; reserve confirmation for irreversible actions.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-never-block-on-the-human/SKILL.md",
+      "sha256": "749476d5459d039571b958b86acea222f128f5eac3d8063b46bfd539d3cebc2b",
+      "source": "upstream/pstack/skills/principle-never-block-on-the-human/SKILL.md",
+      "source_sha256": "d82bce9ab9193249d1ec0d514202d89602f0fd3d312174d622c2dd222bae5a2e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-never-block-on-the-human/agents/openai.yaml",
+      "sha256": "6cb0bd6882a8cecf34ece9d01db30a7cda20fea77f62ccc094f1066da9ad9725",
+      "source": "upstream/pstack/skills/principle-never-block-on-the-human/SKILL.md",
+      "source_sha256": "d82bce9ab9193249d1ec0d514202d89602f0fd3d312174d622c2dd222bae5a2e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-outcome-oriented-execution",
+          "upstream_frontmatter": "name: principle-outcome-oriented-execution\ndescription: \"Apply during planned rewrites and migrations with explicit phase boundaries. Converge on the target architecture; don't preserve smooth intermediate states with throwaway compatibility code.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-outcome-oriented-execution/SKILL.md",
+      "sha256": "29c1c8041f9e6c2da842ab953a4cf5f7a310f2302dd85a3788eaf196cc83f593",
+      "source": "upstream/pstack/skills/principle-outcome-oriented-execution/SKILL.md",
+      "source_sha256": "beedcaed75572a6a1662d47f16da203c2bd2c9dbffbbd678d4ba187d67b7e670"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-outcome-oriented-execution/agents/openai.yaml",
+      "sha256": "1b48f8b80c058a4efb713138312bc2335a29d23836f4c9c21db849a1d88c3372",
+      "source": "upstream/pstack/skills/principle-outcome-oriented-execution/SKILL.md",
+      "source_sha256": "beedcaed75572a6a1662d47f16da203c2bd2c9dbffbbd678d4ba187d67b7e670"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-prove-it-works",
+          "upstream_frontmatter": "name: principle-prove-it-works\ndescription: \"Apply after completing a task, before declaring done. Verify against the real artifact (run the feature, read the actual value, inspect the diff), not a proxy, self-report, or 'it compiles.'\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-prove-it-works/SKILL.md",
+      "sha256": "18f5e32f77499669083e1853d42ed1e87a46a10db3188ebaf747dc387c74d8bb",
+      "source": "upstream/pstack/skills/principle-prove-it-works/SKILL.md",
+      "source_sha256": "ae13d287984a5864312b6286899d4ee2b60f8272b5e5e8fcc586a7c3ea51020b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-prove-it-works/agents/openai.yaml",
+      "sha256": "ee13389f972443d2381bd2805446d7cb7a17bd6e062e7c1ccb3e78f2e35ed045",
+      "source": "upstream/pstack/skills/principle-prove-it-works/SKILL.md",
+      "source_sha256": "ae13d287984a5864312b6286899d4ee2b60f8272b5e5e8fcc586a7c3ea51020b"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-redesign-from-first-principles",
+          "upstream_frontmatter": "name: principle-redesign-from-first-principles\ndescription: \"Apply when integrating a new requirement into an existing design. Redesign as if the requirement had been a foundational assumption from day one, instead of bolting it on.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-redesign-from-first-principles/SKILL.md",
+      "sha256": "ce11effd7d44ee5d12ff565fe26def02b240c9181bba0b06ca10c3833b4d137b",
+      "source": "upstream/pstack/skills/principle-redesign-from-first-principles/SKILL.md",
+      "source_sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-redesign-from-first-principles/agents/openai.yaml",
+      "sha256": "f7a70448c01effd8becb8d9aabb1a39a1fdf8be2476091efd3f8f83dd9c73506",
+      "source": "upstream/pstack/skills/principle-redesign-from-first-principles/SKILL.md",
+      "source_sha256": "a1c7fd0a96b40e12a74bceb0e6bb20a9666dd844dcabfb624acb27da23b929fe"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-separate-before-serializing-shared-state",
+          "upstream_frontmatter": "name: principle-separate-before-serializing-shared-state\ndescription: \"Apply when concurrent actors might write to the same file, branch, key, or state object. Eliminate the sharing first; serialize structurally only when one shared writer is a real invariant.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-separate-before-serializing-shared-state/SKILL.md",
+      "sha256": "2a7b38782258a274c03621467d6d13409473773f9f01905c2e96622e086b1dc7",
+      "source": "upstream/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
+      "source_sha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-separate-before-serializing-shared-state/agents/openai.yaml",
+      "sha256": "760d2730191f2adcfba2a928c6595655e6951601dbfa011b961be54986489108",
+      "source": "upstream/pstack/skills/principle-separate-before-serializing-shared-state/SKILL.md",
+      "source_sha256": "05294b40448e927c5da1c7b6f5c6b9fed3744637e3833d2d948b9154a9dd00bb"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-sequence-verifiable-units",
+          "upstream_frontmatter": "name: principle-sequence-verifiable-units\ndescription: \"Apply to multi-step work (sweeps, migrations, runs of similar edits) and to how you stack commits and PRs. Break work into small units that each end in a verifiable state, check each before the next, and order delivery so the sequence proves itself to a reviewer.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-sequence-verifiable-units/SKILL.md",
+      "sha256": "42f43373d0848f48ae285cbdb33c2b8b359fd448376d44bce4a64dd7ee3696d6",
+      "source": "upstream/pstack/skills/principle-sequence-verifiable-units/SKILL.md",
+      "source_sha256": "761390804ee36c32f5338d8db47ec54463d40ff96dbb296dfafabcd5f2593eec"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-sequence-verifiable-units/agents/openai.yaml",
+      "sha256": "7e83f2056e425d913f41a2260389b508a0d8b8d7fad09ec5a160fea63bd75e6e",
+      "source": "upstream/pstack/skills/principle-sequence-verifiable-units/SKILL.md",
+      "source_sha256": "761390804ee36c32f5338d8db47ec54463d40ff96dbb296dfafabcd5f2593eec"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-subtract-before-you-add",
+          "upstream_frontmatter": "name: principle-subtract-before-you-add\ndescription: \"Apply when sequencing an addition, refactor, or rewrite. Remove dead code, redundant validators, and stub references first, then build on the simpler base.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-subtract-before-you-add/SKILL.md",
+      "sha256": "4517e2f559b07fdead655ca174ff4f88f21135a41dd1d1795af2ba6868555306",
+      "source": "upstream/pstack/skills/principle-subtract-before-you-add/SKILL.md",
+      "source_sha256": "a983a50e732c1ed315eba7aaf47a61329e31c4794eb1ab9d25d9945265b31e03"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-subtract-before-you-add/agents/openai.yaml",
+      "sha256": "7ca637302527f681908a9ae745acb222e977aee186c494a3e7f1df6966f80338",
+      "source": "upstream/pstack/skills/principle-subtract-before-you-add/SKILL.md",
+      "source_sha256": "a983a50e732c1ed315eba7aaf47a61329e31c4794eb1ab9d25d9945265b31e03"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-test-behavior-not-implementation",
+          "upstream_frontmatter": "name: principle-test-behavior-not-implementation\ndescription: \"Apply when you write, change, or keep a test. Call the code the way its users do and assert the result they observe against a literal expected value. If the test would still pass when every imported function returns undefined, rewrite the assertion or delete the test.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-test-behavior-not-implementation/SKILL.md",
+      "sha256": "e2d760d77baa4384511c379dcf5f64646998059f172b31b3ae369568b7b9083f",
+      "source": "upstream/pstack/skills/principle-test-behavior-not-implementation/SKILL.md",
+      "source_sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-test-behavior-not-implementation/agents/openai.yaml",
+      "sha256": "5e21dff093d8a85d032921ab45e435f825d6c9eeac5947eb5ef44ba7d96cec7b",
+      "source": "upstream/pstack/skills/principle-test-behavior-not-implementation/SKILL.md",
+      "source_sha256": "87e40efe4e486f7ea639d2ed1fc0abe6c93b8fd0e89a81218086909d2470a52e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "principle-type-system-discipline",
+          "upstream_frontmatter": "name: principle-type-system-discipline\ndescription: \"Apply when designing types, reviewing a function signature, or writing code in any statically-typed language. Make illegal states unrepresentable, brand semantic primitives, parse external data at boundaries, refuse to lie to the compiler, exhaust variants, derive from authoritative schemas.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/principle-type-system-discipline/SKILL.md",
+      "sha256": "ecd1fe1da8613d50c84c748f2c41f103ca93521973b0e8a9e1ab73e7e605ab6d",
+      "source": "upstream/pstack/skills/principle-type-system-discipline/SKILL.md",
+      "source_sha256": "c83da8031ffb4c86410030d3e261f659598fca2b7d8158fd9dc269d70a3a025e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/principle-type-system-discipline/agents/openai.yaml",
+      "sha256": "8e72b88673bca65ae11fbda9fef21a7099ae9725ec6759b44abb6eaca27e3148",
+      "source": "upstream/pstack/skills/principle-type-system-discipline/SKILL.md",
+      "source_sha256": "c83da8031ffb4c86410030d3e261f659598fca2b7d8158fd9dc269d70a3a025e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "recall",
+          "upstream_frontmatter": "name: recall\ndescription: \"Reconstruct your recent working context from your own chat history, live state, and the shared record (user reports, prior fixes, incidents), then hand back a tight current-state brief. Use for 'recall my work on X', 'catch me up', 'what have I been working on', 'where did I leave off', before starting or resuming work.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/recall/SKILL.md",
+      "sha256": "aa75603726cee9078cdfa790d52922f37041fd16cb0fba103e1785031f246b7b",
+      "source": "upstream/pstack/skills/recall/SKILL.md",
+      "source_sha256": "d265b0e5b6dc5b89c0407f3387d24462c988e1990a37d5359735137908128c5a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/recall/agents/openai.yaml",
+      "sha256": "5d39819e8716b5821cd69cb2e2f960ef15f32cfda6361fbc4f06cf645441be0c",
+      "source": "upstream/pstack/skills/recall/SKILL.md",
+      "source_sha256": "d265b0e5b6dc5b89c0407f3387d24462c988e1990a37d5359735137908128c5a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "reflect",
+          "upstream_frontmatter": "name: reflect\ndescription: Spawn three parallel review subagents over the active transcript, surface learnings, and route each to a concrete edit on an existing skill. Use when the user says reflect.\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/reflect/SKILL.md",
+      "sha256": "af41b105203af79d689c8abed9b518100a5d5854e63f1de1b7e83695f8c6fe5b",
+      "source": "upstream/pstack/skills/reflect/SKILL.md",
+      "source_sha256": "6a4d4ccaace9ce88c3e268fcbedf3cfd40e527162a5e5aad6de8edbaf5e2b83f"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/reflect/agents/openai.yaml",
+      "sha256": "e7b24f3969218d7c6a9eb7d3d779a47f277ed28618d4be1f38d7d25e1135a8af",
+      "source": "upstream/pstack/skills/reflect/SKILL.md",
+      "source_sha256": "6a4d4ccaace9ce88c3e268fcbedf3cfd40e527162a5e5aad6de8edbaf5e2b83f"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/reflect/references/divergent-reviewer.md",
+      "sha256": "7da0334ce282e6d8d7349c0cff14ffbd10a91a756c0b5c3ccc97291f57b8bed6",
+      "source": "upstream/pstack/skills/reflect/references/divergent-reviewer.md",
+      "source_sha256": "7da0334ce282e6d8d7349c0cff14ffbd10a91a756c0b5c3ccc97291f57b8bed6"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/reflect/references/judgment-reviewer.md",
+      "sha256": "917bb2ad21240a42b440aeb2a17766092e09f70d0982417b2f4caa6d74f27164",
+      "source": "upstream/pstack/skills/reflect/references/judgment-reviewer.md",
+      "source_sha256": "917bb2ad21240a42b440aeb2a17766092e09f70d0982417b2f4caa6d74f27164"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/reflect/references/synthesizer.md",
+      "sha256": "2f76c847eb45b182dc6fbcbf7d96c8ee7e2986ecfd9e0d640fec44e3cc5a617c",
+      "source": "upstream/pstack/skills/reflect/references/synthesizer.md",
+      "source_sha256": "2f76c847eb45b182dc6fbcbf7d96c8ee7e2986ecfd9e0d640fec44e3cc5a617c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/reflect/references/tooling-reviewer.md",
+      "sha256": "8c74ebf7811801d634db7ab609b097d77ea00ab77bb4b258d69bd96e671cfa39",
+      "source": "upstream/pstack/skills/reflect/references/tooling-reviewer.md",
+      "source_sha256": "8c74ebf7811801d634db7ab609b097d77ea00ab77bb4b258d69bd96e671cfa39"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "setup-pstack",
+          "upstream_frontmatter": "name: setup-pstack\ndescription: Configure which models pstack uses per role and at what reasoning budget. Detects your available models and writes an always-applied rule that overrides the skill defaults. Use for /setup-pstack, \"configure pstack models\", \"pstack budget\", or changing pstack's model choices."
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/setup-pstack/SKILL.md",
+      "sha256": "f71becae960f0a4122935f7426b57db5214da8b3c2fde13bd74ff68736d92c3d",
+      "source": "upstream/pstack/skills/setup-pstack/SKILL.md",
+      "source_sha256": "2399a5670c6408e92a996299c9de9f22736997cb7e835c694309e7c6fc8c39bf"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": true,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/setup-pstack/agents/openai.yaml",
+      "sha256": "aa38c1de5afbc8d0b3e2b5c758333bdaab692efacc14c100b8dadfc75b950372",
+      "source": "upstream/pstack/skills/setup-pstack/SKILL.md",
+      "source_sha256": "2399a5670c6408e92a996299c9de9f22736997cb7e835c694309e7c6fc8c39bf"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "show-me-your-work",
+          "upstream_frontmatter": "name: show-me-your-work\ndescription: \"Keep a reviewable decision trail for long-running or unattended work: a TSV log with one row per decision (what, why, evidence, result). Local by default; commit it when a reviewer needs the trail to trust the result. Use for /show-me-your-work, autonomous or multi-phase runs, or work a human reviews after stepping away.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/show-me-your-work/SKILL.md",
+      "sha256": "84a5fc76236b14506b40491ea9fa74961339237ee40a0744617ed4dd95e438f2",
+      "source": "upstream/pstack/skills/show-me-your-work/SKILL.md",
+      "source_sha256": "831e85ba3f84f38bf338cd03e6af050fea357752e25a825e334c99f59d7f2077"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/show-me-your-work/agents/openai.yaml",
+      "sha256": "1f3e13412ea4fb3e42c4b1c229c3bee6876378df52d2064cb4aebe02f61b4c11",
+      "source": "upstream/pstack/skills/show-me-your-work/SKILL.md",
+      "source_sha256": "831e85ba3f84f38bf338cd03e6af050fea357752e25a825e334c99f59d7f2077"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/show-me-your-work/references/decision-log-template.tsv",
+      "sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76",
+      "source": "upstream/pstack/skills/show-me-your-work/references/decision-log-template.tsv",
+      "source_sha256": "6779378006a2f5225e8c06deb84f1d913fb532041ebbb6e50d94600bfe3f4b76"
+    },
+    {
+      "mode": "0o755",
+      "operations": [],
+      "output": "skills/show-me-your-work/scripts/log.sh",
+      "sha256": "1601bc18f9aba0af3f5d6375e4f2d5dc6102334d1bca935026c0e3547cdadbbf",
+      "source": "upstream/pstack/skills/show-me-your-work/scripts/log.sh",
+      "source_sha256": "1601bc18f9aba0af3f5d6375e4f2d5dc6102334d1bca935026c0e3547cdadbbf"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "swarm",
+          "upstream_frontmatter": "name: swarm\ndescription: \"Fan out N parallel workers, drain them, and return one report. Use for /swarm, 'swarm this', or parallel coverage, races, gauntlets, and exploration.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/swarm/SKILL.md",
+      "sha256": "08ca57263d46dbc12160a8221df8f7ca3cbfca8cca47f8491fa7c69f7b8c7871",
+      "source": "upstream/pstack/skills/swarm/SKILL.md",
+      "source_sha256": "d578d877c3b8b9de7163f52579c4683337a940acc0fbe4496a498f5d3b27df30"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/swarm/agents/openai.yaml",
+      "sha256": "0d984ae523181cfe77eba2369b63ee1af88850cbf7260bc9ed1335141ee2fd13",
+      "source": "upstream/pstack/skills/swarm/SKILL.md",
+      "source_sha256": "d578d877c3b8b9de7163f52579c4683337a940acc0fbe4496a498f5d3b27df30"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "tdd",
+          "upstream_frontmatter": "name: tdd\ndescription: \"Use only when the user explicitly asks for TDD, a failing test, or a regression test, OR when the bug has an obvious cheap local test target. Skip when the test path is unclear, expensive, integration-heavy, or not requested.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/tdd/SKILL.md",
+      "sha256": "8102d4fd596ff524ad9cbc3dc1dab1ace4230f8296a1ae5d8084e26be8c34e3b",
+      "source": "upstream/pstack/skills/tdd/SKILL.md",
+      "source_sha256": "011cab0ecc04a3632121efb493ae4d60aa282a9b72c66de74dd8ad7e4313e05a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/tdd/agents/openai.yaml",
+      "sha256": "5e300efa455f9bf738af50017b848c8c8a6610ec39d1052c664bb76218b44a1a",
+      "source": "upstream/pstack/skills/tdd/SKILL.md",
+      "source_sha256": "011cab0ecc04a3632121efb493ae4d60aa282a9b72c66de74dd8ad7e4313e05a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "teach",
+          "upstream_frontmatter": "name: teach\ndescription: \"Explain a body of work plainly so a person actually understands it. Runs the `how` and `why` skills and weaves what they find into one clear explanation. Use for 'teach me this', 'help me really understand X', 'explain this change or subsystem to me'.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/teach/SKILL.md",
+      "sha256": "201a96a777fd6d96193d108b40bce9a4ed6e200812e41ce90062812d52fd37a3",
+      "source": "upstream/pstack/skills/teach/SKILL.md",
+      "source_sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/teach/agents/openai.yaml",
+      "sha256": "39cb035dbe726f15dd8733cda485061e94f5b0dfa8fe54378c9623243465115a",
+      "source": "upstream/pstack/skills/teach/SKILL.md",
+      "source_sha256": "bd286e5a6290673be2cd28aef7af2ec7f1fb138e6bce156ea657368c7e7fc8a4"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "technical-writing",
+          "upstream_frontmatter": "name: technical-writing\ndescription: \"Layered technical-writing standard: Diátaxis structure, Google developer style sentences, STE instruction rules, Global English syntax. Use for /technical-writing or when writing or reviewing docs, RFCs, readmes, PR descriptions, or commit messages.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/technical-writing/SKILL.md",
+      "sha256": "ad1905a4796fe081a7a86825833e19545fef68fcc61648e693f49dfa42e56c7b",
+      "source": "upstream/pstack/skills/technical-writing/SKILL.md",
+      "source_sha256": "6d6d9e625ae412ee8f36df8deb6fd9203d7c6acca776d5ee3cabbb9126f8b84c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/technical-writing/agents/openai.yaml",
+      "sha256": "408d01c899c6809e256682600a619d2b43089855ff7b324a25e8fd7e82608d1e",
+      "source": "upstream/pstack/skills/technical-writing/SKILL.md",
+      "source_sha256": "6d6d9e625ae412ee8f36df8deb6fd9203d7c6acca776d5ee3cabbb9126f8b84c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "typescript-best-practices",
+          "upstream_frontmatter": "name: typescript-best-practices\ndescription: TypeScript best practices. Use when reading or editing any .ts or .tsx file.\npaths: [\"**/*.ts\", \"**/*.tsx\"]\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/typescript-best-practices/SKILL.md",
+      "sha256": "dbe2713e2a149805e0259b5b4782c300584fc8eb1a10ac2bfc85f1b6a4b7092e",
+      "source": "upstream/pstack/skills/typescript-best-practices/SKILL.md",
+      "source_sha256": "28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/typescript-best-practices/agents/openai.yaml",
+      "sha256": "40d1b04133362c9947aba13bf95cc869894386a57ecc23f17e3f971ab01021fc",
+      "source": "upstream/pstack/skills/typescript-best-practices/SKILL.md",
+      "source_sha256": "28f9e61710e205f6f3c5476f333483cff0e988f6a5b639e2faad536344b40c5e"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/typescript-best-practices/references/patterns.md",
+      "sha256": "62e9cd32d2fa066a35d0d1349aac22dce31a48ad7d5eaf142570770cfe707384",
+      "source": "upstream/pstack/skills/typescript-best-practices/references/patterns.md",
+      "source_sha256": "62e9cd32d2fa066a35d0d1349aac22dce31a48ad7d5eaf142570770cfe707384"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "unslop",
+          "upstream_frontmatter": "name: unslop\ndescription: Cut AI tells from any writing. Must always apply.\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/unslop/SKILL.md",
+      "sha256": "c7d153e37b98503e15c7a6fa95cb44b8d80fc6da984153a036891b81b1951a5b",
+      "source": "upstream/pstack/skills/unslop/SKILL.md",
+      "source_sha256": "c6d2572294d933a428211921069e9a248490e9b466ca59437cb4d9de248600ca"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/unslop/agents/openai.yaml",
+      "sha256": "6fa7d3f204dea7060d569c5f67d050f60572056e77f24e15361549c2c432057f",
+      "source": "upstream/pstack/skills/unslop/SKILL.md",
+      "source_sha256": "c6d2572294d933a428211921069e9a248490e9b466ca59437cb4d9de248600ca"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "id": "codex-frontmatter",
+          "name": "why",
+          "upstream_frontmatter": "name: why\ndescription: \"Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in parallel, then returns a cited read on decisions and tradeoffs. Use how for runtime behavior.\"\ndisable-model-invocation: true"
+        },
+        {
+          "id": "host-contract-notice"
+        }
+      ],
+      "output": "skills/why/SKILL.md",
+      "sha256": "3be3bbfb2925f7b54a9f1f9dd2d29440957fab254fe2240d6a7313980a9ac1bc",
+      "source": "upstream/pstack/skills/why/SKILL.md",
+      "source_sha256": "222b93789754ba6ee901835137184acdca667f7e47c523bcc85aca86675fb249"
+    },
+    {
+      "mode": "0o644",
+      "operations": [
+        {
+          "allow_implicit_invocation": false,
+          "id": "invocation-policy"
+        }
+      ],
+      "output": "skills/why/agents/openai.yaml",
+      "sha256": "393deecd119ba80512251250c528f557c82a31e578b5139847944eb693c2c993",
+      "source": "upstream/pstack/skills/why/SKILL.md",
+      "source_sha256": "222b93789754ba6ee901835137184acdca667f7e47c523bcc85aca86675fb249"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/epistemics.md",
+      "sha256": "fcc0f559c072832c869a5ada72434b4849320a637ae63c09e8ee14f7ad787059",
+      "source": "upstream/pstack/skills/why/references/epistemics.md",
+      "source_sha256": "fcc0f559c072832c869a5ada72434b4849320a637ae63c09e8ee14f7ad787059"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/investigator-prompt.md",
+      "sha256": "6892956a7ab0b5ee6c4babaf4f793703abe89b350ea7cb9463b4a56eea1c8266",
+      "source": "upstream/pstack/skills/why/references/investigator-prompt.md",
+      "source_sha256": "6892956a7ab0b5ee6c4babaf4f793703abe89b350ea7cb9463b4a56eea1c8266"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/source-playbook.md",
+      "sha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a",
+      "source": "upstream/pstack/skills/why/references/source-playbook.md",
+      "source_sha256": "9ae9dcb9d09111c9facc68510331c5aba4aed9b1b057314ff1fc0e166ad3993a"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/code-archaeology.md",
+      "sha256": "8c14aa382f0de40829b2668d43e3f54814480bb93a486c9282ada4003f6b9dbd",
+      "source": "upstream/pstack/skills/why/references/sources/code-archaeology.md",
+      "source_sha256": "8c14aa382f0de40829b2668d43e3f54814480bb93a486c9282ada4003f6b9dbd"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/databricks.md",
+      "sha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6",
+      "source": "upstream/pstack/skills/why/references/sources/databricks.md",
+      "source_sha256": "236ede7aab6454662a992db088a5393537a5233a4c26719c93188f9e174488f6"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/datadog.md",
+      "sha256": "ebe9c07bac28e47757ee7f16fb93b0c01d427a08c501957d047f395a2f37b7e7",
+      "source": "upstream/pstack/skills/why/references/sources/datadog.md",
+      "source_sha256": "ebe9c07bac28e47757ee7f16fb93b0c01d427a08c501957d047f395a2f37b7e7"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/incident-postmortem.md",
+      "sha256": "a899470f05f86029630a13a2696491cc708ca7b56a6e822a69ff6e954d6ff8cf",
+      "source": "upstream/pstack/skills/why/references/sources/incident-postmortem.md",
+      "source_sha256": "a899470f05f86029630a13a2696491cc708ca7b56a6e822a69ff6e954d6ff8cf"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/linear.md",
+      "sha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c",
+      "source": "upstream/pstack/skills/why/references/sources/linear.md",
+      "source_sha256": "01304e7f1badfcfb78babbb0edcadeb3cc8dd3f713793420cdff24ba190f907c"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/notion.md",
+      "sha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997",
+      "source": "upstream/pstack/skills/why/references/sources/notion.md",
+      "source_sha256": "3bcfa695c49dfad4ac036d5d7181c12585f55ac04f1936198d16ab75a2788997"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/sentry.md",
+      "sha256": "6f292bc4fb1548e956f95e1900b9481abf5134254419f1cd9edec95428c82d73",
+      "source": "upstream/pstack/skills/why/references/sources/sentry.md",
+      "source_sha256": "6f292bc4fb1548e956f95e1900b9481abf5134254419f1cd9edec95428c82d73"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/sources/slack.md",
+      "sha256": "58fee61d024b3700b407e7acbed367944720ff05adfddb6954d36c88368f3ba7",
+      "source": "upstream/pstack/skills/why/references/sources/slack.md",
+      "source_sha256": "58fee61d024b3700b407e7acbed367944720ff05adfddb6954d36c88368f3ba7"
+    },
+    {
+      "mode": "0o644",
+      "operations": [],
+      "output": "skills/why/references/synthesizer-prompt.md",
+      "sha256": "733a3e9cf897b1aca56aaddeae01a3832e4bfed024c2f602db2d1bf807d7a73b",
+      "source": "upstream/pstack/skills/why/references/synthesizer-prompt.md",
+      "source_sha256": "733a3e9cf897b1aca56aaddeae01a3832e4bfed024c2f602db2d1bf807d7a73b"
+    }
+  ],
+  "generator_version": 1,
+  "host_contract": "adapters/host.md",
+  "schema_version": 1,
+  "source_manifest_sha256": "0475af33f2ac3c0c75ba338bf11d0e2571a953cf58a06f1fed61928c93a799be",
+  "unmodified_source_files": [
+    ".cursor-plugin/plugin.json",
+    ".gitignore",
+    "LICENSE",
+    "README.md",
+    "assets/logo.png",
+    "docs/guide/01-setup.md",
+    "docs/guide/02-poteto-mode.md",
+    "docs/guide/03-understand.md",
+    "docs/guide/04-design.md",
+    "docs/guide/05-build-and-clean.md",
+    "docs/guide/06-verify-and-ship.md",
+    "docs/guide/07-overnight.md",
+    "docs/guide/08-principles.md",
+    "docs/guide/09-make-it-yours.md",
+    "docs/guide/10-recipes-and-pitfalls.md",
+    "docs/guide/README.md",
+    "docs/guide/images/design.jpg",
+    "docs/guide/images/overnight.jpg",
+    "docs/guide/images/recipes.jpg",
+    "docs/guide/images/router.jpg",
+    "docs/guide/images/understanding.jpg",
+    "docs/guide/images/verification.jpg"
+  ],
+  "upstream_revision": "5bf2b1544db739998121a306340631963c2ff3de",
+  "upstream_version": "0.15.2",
+  "verified_source_files": 162
+}

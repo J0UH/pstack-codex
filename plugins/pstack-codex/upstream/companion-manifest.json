@@ -1,0 +1,29 @@
+{
+  "revision": "5bf2b1544db739998121a306340631963c2ff3de",
+  "files": [
+    {
+      "path": "skills/control-cli/SKILL.md",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/5bf2b1544db739998121a306340631963c2ff3de/cursor-team-kit/skills/control-cli/SKILL.md",
+      "bytes": 4333,
+      "sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2"
+    },
+    {
+      "path": "skills/control-ui/SKILL.md",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/5bf2b1544db739998121a306340631963c2ff3de/cursor-team-kit/skills/control-ui/SKILL.md",
+      "bytes": 4802,
+      "sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871"
+    },
+    {
+      "path": "skills/deslop/SKILL.md",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/5bf2b1544db739998121a306340631963c2ff3de/cursor-team-kit/skills/deslop/SKILL.md",
+      "bytes": 719,
+      "sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810"
+    },
+    {
+      "path": "LICENSE",
+      "url": "https://raw.githubusercontent.com/cursor/plugins/5bf2b1544db739998121a306340631963c2ff3de/cursor-team-kit/LICENSE",
+      "bytes": 1063,
+      "sha256": "702f5f331b56aff0e33d8c7826df5202559f894145eb70355c6477b55b5bb8a0"
+    }
+  ]
+}

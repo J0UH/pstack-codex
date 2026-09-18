@@ -1,0 +1,244 @@
+{
+  "date": "2026-09-18",
+  "scope": "Local source-contract conformance and selected live flows; not complete Cursor runtime parity.",
+  "upstream": {
+    "version": "0.15.2",
+    "revision": "5bf2b1544db739998121a306340631963c2ff3de",
+    "registered_skills": 47,
+    "playbooks": 23,
+    "principles": 23,
+    "dormant_skills": 3,
+    "companions": 3
+  },
+  "tests": {
+    "port_unittest": {
+      "passed": 57,
+      "failed": 0
+    },
+    "upstream_bun": {
+      "passed": 52,
+      "failed": 0
+    }
+  },
+  "claude_analysis": {
+    "status": "success",
+    "requested_model": "claude-fable-5-1",
+    "observed_models": [
+      "claude-fable-5-1"
+    ],
+    "requested_model_verified": true,
+    "requested_effort": "xhigh",
+    "profile": "analysis",
+    "complete": true,
+    "tool_calls_by_name": {},
+    "permission_denial_count": 0,
+    "confirmed_terminated": true,
+    "errors": [],
+    "elapsed_seconds": 3.26
+  },
+  "claude_writer": {
+    "status": "success",
+    "requested_model": "claude-fable-5-1",
+    "observed_models": [
+      "claude-fable-5-1"
+    ],
+    "requested_model_verified": true,
+    "requested_effort": "xhigh",
+    "profile": "writer",
+    "complete": true,
+    "tool_calls_by_name": {
+      "Bash": 4,
+      "Edit": 1,
+      "Read": 2
+    },
+    "permission_denial_count": 0,
+    "confirmed_terminated": true,
+    "errors": [],
+    "elapsed_seconds": 24.782
+  },
+  "nested_how_explainer": {
+    "status": "success",
+    "requested_model": "claude-fable-5-1",
+    "observed_models": [
+      "claude-fable-5-1"
+    ],
+    "requested_model_verified": true,
+    "requested_effort": "xhigh",
+    "profile": "analysis",
+    "complete": true,
+    "tool_calls_by_name": {},
+    "permission_denial_count": 0,
+    "confirmed_terminated": true,
+    "errors": [],
+    "elapsed_seconds": 43.159
+  },
+  "writer_artifact": {
+    "changed_source_files": [
+      "text_tools.py"
+    ],
+    "test_file_unchanged": true,
+    "tests_before": {
+      "run": 3,
+      "failed": 2
+    },
+    "independent_tests_after": {
+      "run": 3,
+      "failed": 0
+    }
+  },
+  "typescript_boundary_checks": {
+    "runtime": "v25.9.0",
+    "source": "capacity.ts",
+    "results": [
+      {
+        "booked": "4",
+        "limit": "5",
+        "expected": "open",
+        "actual": "open"
+      },
+      {
+        "booked": "5",
+        "limit": "5",
+        "expected": "full",
+        "actual": "full"
+      },
+      {
+        "booked": "6",
+        "limit": "5",
+        "expected": "full",
+        "actual": "full"
+      },
+      {
+        "booked": "0",
+        "limit": "0",
+        "expected": "full",
+        "actual": "full"
+      },
+      {
+        "booked": "-1",
+        "limit": "0",
+        "expected": "open",
+        "actual": "open"
+      },
+      {
+        "booked": "NaN",
+        "limit": "5",
+        "expected": "open",
+        "actual": "open"
+      },
+      {
+        "booked": "1",
+        "limit": "NaN",
+        "expected": "open",
+        "actual": "open"
+      },
+      {
+        "booked": "Infinity",
+        "limit": "Infinity",
+        "expected": "full",
+        "actual": "full"
+      }
+    ],
+    "passed": true
+  },
+  "mode_hook": {
+    "host": "Codex CLI 0.154.0",
+    "trust": "Both plugin hooks reviewed and trusted through the normal UI with explicit user approval.",
+    "actual_activation": true,
+    "actual_resumed_turn": true,
+    "actual_exit": true,
+    "actual_compaction_restore": true,
+    "new_task_reset": true,
+    "state_scope_tests": "distinct session and project keys; separate hook/CLI environment regression"
+  },
+  "grok": {
+    "cli": "1.0.34",
+    "listed_models": [
+      "grok-4.6",
+      "grok-4.5"
+    ],
+    "live_status": "blocked_before_inference",
+    "reason": "Read-only sandbox refused startup because /var/run/docker.sock is a symlink.",
+    "protections_weakened": false,
+    "response_model_verified": false
+  },
+  "limitations": [
+    "No side-by-side Cursor execution baseline.",
+    "Not every playbook exercised end-to-end.",
+    "Cloud placement, webhook automation and some history/plan integrations remain explicitly unsupported.",
+    "Process groups are lifecycle control, not containment of escaped sessions or external effects."
+  ],
+  "captured_live_streams_reparsed_after_strict_profile_fix": true,
+  "pstack_bug_fix": {
+    "route": "poteto-mode -> Bug fix -> how + why investigation/synthesis -> Fable implementation -> verification and comment review",
+    "receipts": [
+      {
+        "role": "how",
+        "model": [
+          "claude-fable-5-1"
+        ],
+        "status": "success",
+        "profile": "analysis",
+        "tool_calls": {}
+      },
+      {
+        "role": "why-investigator",
+        "model": [
+          "claude-fable-5-1"
+        ],
+        "status": "success",
+        "profile": "analysis",
+        "tool_calls": {}
+      },
+      {
+        "role": "why-synthesis",
+        "model": [
+          "claude-fable-5-1"
+        ],
+        "status": "success",
+        "profile": "analysis",
+        "tool_calls": {}
+      },
+      {
+        "role": "fix",
+        "model": [
+          "claude-fable-5-1"
+        ],
+        "status": "success",
+        "profile": "writer",
+        "tool_calls": {
+          "Edit": 1,
+          "Read": 1
+        }
+      },
+      {
+        "role": "comments",
+        "model": [
+          "claude-fable-5-1"
+        ],
+        "status": "success",
+        "profile": "analysis",
+        "tool_calls": {}
+      }
+    ],
+    "source_changed": [
+      "text_tools.py"
+    ],
+    "tests_unchanged": true,
+    "tests_before_failed": 2,
+    "independent_tests_after_passed": 3,
+    "commits_or_prs_created": false
+  },
+  "final_review_attempts": [
+    {
+      "profile": "analysis",
+      "delivery": "success",
+      "acceptance": "rejected; nonexecuted tool-request text instead of review"
+    },
+    {
+      "profile": "reader",
+      "delivery": "timeout",
+      "acceptance": "incomplete; actual file reads but no verdict"
+    }
+  ]
+}
