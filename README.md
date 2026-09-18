@@ -1,7 +1,7 @@
 # pstack for Codex
 
 <p align="center">
-  <img src="docs/assets/pstack-orchestration.png" alt="You talk to poteto-mode; Codex/Astra coordinates Fable and optional Grok workers inside a local sandbox; evidence comes back" width="100%" />
+  <img src="docs/assets/pstack-orchestration-v2.png" alt="You talk to poteto-mode; Codex/Astra coordinates Fable and optional Grok workers inside a local sandbox; evidence comes back" width="100%" />
 </p>
 
 **Open-source workflow library for Codex.** You talk to poteto-mode. Astra coordinates. Workers (Codex, Fable, optional Grok) run in the sandbox and return evidence you can check.
@@ -15,13 +15,13 @@ That’s the verified activation form. Mentions elsewhere don’t reliably stick
 Independent port of [Lauren Tan’s pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2**. Skills, principles, playbooks, and agent roles preserved. Codex host adaptations are explicit and inspectable. **Not** an official Cursor, OpenAI, or xAI release.
 
 <p align="center">
-  <img src="docs/assets/pstack-codex-card.png" alt="pstack for Codex — workflow library, open source" width="360" />
+  <img src="docs/assets/pstack-codex-card-v2.png" alt="pstack for Codex — workflow library, open source" width="360" />
 </p>
 
 ## How it works
 
 <p align="center">
-  <img src="docs/assets/pstack-loop.png" alt="Activate poteto-mode, Astra coordinates Codex Fable Grok, verify evidence and return to parent" width="100%" />
+  <img src="docs/assets/pstack-loop-v2.png" alt="Activate poteto-mode, Astra coordinates Codex Fable Grok, verify evidence and return to parent" width="100%" />
 </p>
 
 ```mermaid
