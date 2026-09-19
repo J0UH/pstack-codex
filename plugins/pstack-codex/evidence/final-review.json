@@ -1,0 +1,176 @@
+{
+  "date": "2026-09-19",
+  "reviewed_code_commit": "1e95049f3ffdd19710938d267e196d9c0e1aae0a",
+  "method": "Independent source-only Fable 5.1 review through standalone Claude CLI. Original pstack contracts, earlier scoped findings, exact source delta, current Grok implementation, sanitized actual streams and parent-observed acceptance evidence supplied. Fable did not run tests.",
+  "report": {
+    "target_commit": "1e95049f3ffdd19710938d267e196d9c0e1aae0a",
+    "scope": "Source-only follow-up delta review from the approved baseline a3b0735e8372c27c1d4a85990745472be5062b8a to exactly 1e95049f3ffdd19710938d267e196d9c0e1aae0a. Covered: the seven DELTA repairs (DELTA-1 source/evidence hash gate and refreshed Linux acceptance, DELTA-2 environment-failure status, DELTA-3 signal name and strerror fallback with real SIGTERM cleanup test, DELTA-4 inherited-context recording and disclosure, DELTA-5 fullmatch Bash rule, DELTA-6 nine restored docstrings, DELTA-7 companion snapshot disclosure), the full scripts/grok_worker.py and tests/test_grok_worker.py, the hunk-level diff for hooks/mode.py, scripts/claude_worker.py, scripts/grok_bot.py, scripts/worker_common.py and tests/test_claude_worker.py, the supplied worker_common dependencies, the refreshed evidence files, and the docs now supplied for the first time (docs/native-workflows.md, adapters/ADAPTATIONS.md, README.md, the capability map). No test, build, package, CLI, hash or network execution; every parent-reported result is cited as parent-reported. The original port review is not repeated; unfinished integrations (event bridge, cloud placement, Bot webhook delivery, Cursor parity) are not re-opened.",
+    "verdict": "approve",
+    "approval_scope": "Approved at exactly 1e95049f3ffdd19710938d267e196d9c0e1aae0a as a delta on the a3b0735 approval, whose scope and every exclusion carry forward by reference unchanged except as extended here. Extended: (1) the seven DELTA repairs as verified in the supplied source with their regression tests as written; (2) tests/test_grok_worker.py GrokAcceptanceEvidenceTests as a fail-closed gate whose behavior is verified in source: any byte change to scripts/grok_worker.py or scripts/worker_common.py fails the suite until evidence/grok-adapter-acceptance.json is refreshed. That the gate is currently satisfied at this commit rests on the parent-reported 229-test pass, not on my hash computation; (3) the refreshed Linux analysis, reader and old-version acceptance record accepted as parent-reported, now test-bound to the current worker bytes and internally consistent with the new receipt fields and argv controls; (4) worker_common terminate_process_group (kill_wait_seconds parameter, boolean return), make_error_receipt (non-dict coercion), validate_spec and validate_env as supplied, lifting the prior limitation on those functions; (5) the BOT-6 wording in docs/native-workflows.md and the CORE-3 capability-map entries (event_bridge, grok_bot_mcp, grok_bot_app, grok_bot_sender) as honest disclosure at the supplied text, with the stale Grok Build bullet recorded as F-3; (6) docs/grok.md, docs/companions.md and evidence/fable-followup-verification.json as disclosure at the supplied text, with the labeling nit F-2; (7) the review-pending sentences in docs/grok.md, README.md and the capability map as accurate at this commit; their post-approval replacement is a docs-only change that does not disturb the hash gate. NOT approved, in addition to every a3b0735 exclusion: the Grok writer profile, Grok Bash, any Grok version other than 'grok 1.0.34 (3736acbc8658) [alpha]', any non-Linux dispatch, reader as read containment, session isolation from inherited user-level skills, commands or configuration (now disclosed, not removed), independent attestation of the authentication route (apiKeySource is recorded as an observation only), the 229 Python test count, the build, package and plugin validator runs, any CI workflow configuration (not supplied), evidence/grok-capability-probes.json (deliberately historical and unbound), companion re-verification at this commit (evidence remains bound to 517e1a1 and now says so), README visual changes and the ten image assets, doctor.py, Grok Bot live delivery, cloud execution, event bridges and Cursor parity.",
+    "summary": "All seven DELTA repairs are present in the supplied source and covered by tests, and none introduces a functional regression. DELTA-1 is now a real gate: a unit test hashes both worker scripts and compares them to the analysis and reader acceptance entries, and the acceptance record was refreshed on the new bytes (its receipt_init_context carries the fields only the new parser emits). DELTA-2 maps missing binary and rejected XAI_API_KEY or proxy overrides to unsupported_profile via UnsupportedProfile, which remains a ValueError subclass so existing callers and tests are unaffected; the suggested make_error_receipt guard was unnecessary because that function already coerces a non-dict spec to an empty dict, and the new direct test proves a JSON receipt with empty stderr. DELTA-3 records the signal name and falls back to the exception class name; the wrapper test sends SIGTERM to the adapter process only, so the fake CLI child is reaped by the adapter's own terminate_process_group, which is the ownership property that matters. DELTA-4 records apiKeySource and skill and slash-command counts without enforcing them or copying the lists, and docs/grok.md now discloses inherited context. DELTA-5's fullmatch change is correct, but validate_spec already rejected newline and carriage return inside allowed_tools entries before is_scoped_bash_rule was reached, so the prior finding overstated the spec-path impact and the new test case is satisfied by that earlier guard rather than by the changed function (F-1). DELTA-6 adds exactly nine docstrings with no code change. DELTA-7 discloses the 517e1a1 snapshot and the generator carry-forward; pending-review sentences correctly remain until this verdict is published. Three P3 items remain: a test that does not isolate the changed function, imprecise labels in the follow-up verification record, and a stale Grok Build bullet in docs/native-workflows.md. No security downgrade was found; writer, Bash and non-Linux dispatch remain refused before any binary invocation.",
+    "checks": [
+      {
+        "requirement": "DELTA-1: live acceptance is bound to current worker bytes by an automated check, and the reviewed baseline hashes were reconciled",
+        "upstream_basis": "Prior finding DELTA-1 (P2): add a test comparing sha256 of scripts/grok_worker.py and scripts/worker_common.py to the acceptance record; have the parent confirm the a3b0735 blob hashes",
+        "port_evidence": "tests/test_grok_worker.py GrokAcceptanceEvidenceTests.test_current_live_acceptance_is_bound_to_current_worker_sources reads evidence/grok-adapter-acceptance.json, asserts probes.analysis.passed and probes.reader.passed, and for each of grok_worker.py and worker_common.py asserts hashlib.sha256(read_bytes()).hexdigest() equals proof['source_sha256'][name]. evidence/fable-followup-verification.json records the a3b0735 content hashes 5a7705e1... and 46ad8b39... as matching the original record. The refreshed acceptance record carries new hashes 5cc9f219... and a85902a5..., refresh_reason names the follow-up edits, and receipt_init_context contains apiKeySource, skills_count and slash_commands_count, fields only the new parser emits. docs/grok.md states that an edit to either worker invalidates the claim until refreshed.",
+        "result": "pass",
+        "reason": "The gate's behavior is verified in source: any byte change to either script fails the test. Its current satisfaction is parent-reported through the 229-test pass; I did not compute hashes. The design couples every worker_common.py change, including Claude-only work, to a Linux Grok re-acceptance, which is the intended fail-closed consequence. A JSON-only edit to the evidence file would also satisfy the test, so diffs to that file still need reviewer attention. The old-version probe and grok-capability-probes.json are deliberately unbound, as agreed."
+      },
+      {
+        "requirement": "DELTA-2: environment failures are not reported as invalid_spec; non-object specs produce a receipt, not a traceback",
+        "upstream_basis": "Prior finding DELTA-2 (P3)",
+        "port_evidence": "scripts/grok_worker.py build_env raises UnsupportedProfile for XAI_API_KEY or GROK_CLI_CHAT_PROXY_BASE_URL (names only); build_command raises UnsupportedProfile('Grok Build is not installed or not on PATH'); main() maps UnsupportedProfile to unsupported_profile and other ValueError/OSError to invalid_spec, with CompatibilityError caught first. worker_common.make_error_receipt begins with spec = spec if isinstance(spec, dict) else {}. Tests: test_environment_failures_are_not_misreported_as_invalid_specs (missing binary with Path.home patched away from ~/.grok/bin/grok, and each override via patch.dict clear=True) asserts exit 2, unsupported_profile, no secret in receipt or stderr, no invocation, no run_dir; test_nonobject_spec_produces_an_error_receipt_without_traceback asserts exit 2, invalid_spec, empty stderr. test_auth_override_values_are_not_exposed_or_removed_silently still uses assertRaises(ValueError).",
+        "result": "pass",
+        "reason": "UnsupportedProfile subclasses ValueError, so the status change is additive and no existing except clause or test is broken. The prior suggestion to add a non-dict guard was unnecessary: make_error_receipt already coerces, and the direct test proves the behavior, so declining a redundant guard was correct. build_command validates the spec before any environment lookup, so a list spec reaches SpecError first and the empty stderr assertion holds."
+      },
+      {
+        "requirement": "DELTA-3: compatibility evidence names the signal, an OSError without strerror has a reason, and the preflight child is reaped on SIGTERM",
+        "upstream_basis": "Prior finding DELTA-3 (P3)",
+        "port_evidence": "check_compatibility: 'interrupt_signal': wc._signal_name(guard.requested_signal) if not None else None; except OSError: problem = f'Grok --version failed: {error.strerror or type(error).__name__}'. terminate_process_group(proc, pgid, grace, record, kill_wait_seconds=...) is now supplied and returns bool. Tests: test_preflight_os_error_without_strerror_has_a_reason patches Popen with OSError() and asserts exit 2 and 'Grok --version failed: OSError'; test_preflight_signal_receipt_names_signal_and_reaps_child runs main in a real wrapper process, waits for the fake CLI's pid marker, sends SIGTERM to the wrapper pid only, then asserts exit 130, status interrupted, interrupt_signal 'SIGTERM', confirmed_terminated true, killpg(version_pid, 0) raises ProcessLookupError, and no received-prompt file.",
+        "result": "pass",
+        "reason": "Because the test signals only the wrapper, the child's death is attributable to the adapter's finally-block terminate_process_group rather than to the test, which proves cleanup ownership. The select loop re-checks requested_signal every 50 ms, so the deferred signal is observed promptly. The proc-is-None path builds the evidence dict without dereferencing proc. The receipt path relies on exit_code_for('interrupted') == 130, which is parent-reported via the test."
+      },
+      {
+        "requirement": "DELTA-4: auth source and inherited skill/command counts recorded, not enforced; inheritance disclosed",
+        "upstream_basis": "Prior finding DELTA-4 (P3): record apiKeySource and skills count, add a doc sentence",
+        "port_evidence": "parse_events evidence.init now projects model, cwd, permissionMode, tools, mcp_servers, apiKeySource plus skills_count and slash_commands_count computed only when the CLI value is a list, else None. No new error is raised from these fields. test_actual_reader_reports_inherited_context_without_credential_values asserts apiKeySource 'oauth', 82 skills, 88 commands, and that the raw skills and slash_commands lists are absent. docs/grok.md: 'Grok also loads inherited user-level skills and slash commands. The adapter does not isolate that context. Receipts record the CLI-reported apiKeySource and the skill/command counts as observations, without treating them as independent authentication or isolation proof.' The refreshed acceptance record's receipt_init_context shows the same values from the live run.",
+        "result": "pass",
+        "reason": "Recording is observational and cannot fail a run, matching the requested scope. apiKeySource is a route label, not a credential, and the counts avoid copying operator skill names into public receipts. Missing keys degrade to None without exceptions. No test asserts full equality of evidence.init, so no existing expectation broke."
+      },
+      {
+        "requirement": "DELTA-5: a trailing newline cannot pass the scoped Bash rule check",
+        "upstream_basis": "Prior finding DELTA-5 (P3): '$' matched before a trailing newline",
+        "port_evidence": "scripts/claude_worker.py is_scoped_bash_rule now uses BASH_RULE_RE.fullmatch(rule); BASH_RULE_RE is unchanged ('^Bash\\\\((?P<body>.*)\\\\)$'). Since '.' excludes newline and fullmatch requires the match to end at len(rule), 'Bash(git log:*)\\n' cannot match. tests/test_claude_worker.py adds that string to the rejected set for reader and writer via self.plan(). However, the supplied worker_common.validate_spec already raises SpecError('allowed_tools entries contain control characters') for '\\n' or '\\r' in any entry, and validate_claude_spec calls wc.validate_spec before resolve_tools. The supplied worker_common diff for this delta is docstring-only, so that guard predates the candidate.",
+        "result": "pass",
+        "reason": "The fullmatch change is correct and harmless hardening for direct callers of the public function. The prior finding was overstated: through the spec boundary the newline entry was already refused before is_scoped_bash_rule ran, so it was never forwarded to --allowedTools. The added test case is therefore satisfied by validate_spec and does not exercise the changed line (F-1)."
+      },
+      {
+        "requirement": "DELTA-6: security and public-contract why docstrings restored without functional change",
+        "upstream_basis": "Prior finding DELTA-6 (P3); Poteto comment rule keeps non-obvious why",
+        "port_evidence": "Diff hunks add exactly nine docstrings: hooks/mode.py prose_lines; scripts/grok_bot.py _trusted_config, _open_private, payload_contains, _NoRedirect, post_once; scripts/worker_common.py _require_disjoint_run_dir, _ended_by_own_cause, _record_late_signals. Hunk line deltas (+1, +2, +2, +1, +1, +1, +1) equal the docstring lines added; every other line in those hunks is context.",
+        "result": "pass",
+        "reason": "Each docstring states the invariant the code cannot show on its own (descriptor checks, host re-derivation, status-only reads, redirect refusal, evidence separation, termination-cause precedence, late-signal consistency, cross-line quote state). No control flow changed."
+      },
+      {
+        "requirement": "DELTA-7: companion snapshot dated and carry-forward disclosed; pending-review text handled correctly",
+        "upstream_basis": "Prior finding DELTA-7 (P3)",
+        "port_evidence": "docs/companions.md: 'The recorded installed-cache comparison was captured at commit 517e1a1. It is historical evidence. The generator's source-hash and body-preservation checks carry those unchanged companions forward in later releases; the old record does not claim a fresh cache inspection for every subsequent commit.' docs/grok.md still ends 'Final Fable source review remains pending'; README.md says the changes 'still need the final Fable review'; the capability map's grok_worker notes say 'Final source review pending'; evidence/fable-followup-verification.json final_review is 'pending on repaired candidate'.",
+        "result": "pass",
+        "reason": "The disclosure option from the prior finding was chosen and is accurate. The pending sentences are true at this commit because the review was in fact pending when it was made; replacing them is a docs-only post-approval change and will not disturb the worker hash gate."
+      },
+      {
+        "requirement": "Regression sweep: the fixes do not alter dispatch gating, exception handling order or existing test expectations",
+        "upstream_basis": "a3b0735 approval item (3): fail-closed command/stream contract; user contract that nothing enables writer, Bash or non-Linux dispatch",
+        "port_evidence": "PROFILES writer still carries unsupported; build_command still rejects allowed_tools, resume, session_id, root cwd, unsafe path chars, then writer, before binary lookup; check_compatibility still refuses non-Linux before Popen and requires TESTED_VERSION exactly; run() ordering build_command, build_env, check_compatibility, prompt read, wc.run_process unchanged. main() catches CompatibilityError before the broader ValueError/OSError clause. Existing tests (unknown build, writer/Bash rejection, non-Linux, invalid spec, bounded preflight, stdin transport, shared receipt) are unchanged in the supplied file. Fake CLI imports time for the new sleep-based cases.",
+        "result": "pass",
+        "reason": "The only behavioral deltas are status relabeling for environment failures, additive evidence fields, a stricter regex anchor and the new tests. Nothing widens capability."
+      },
+      {
+        "requirement": "Refreshed acceptance record is consistent with the candidate's code and bounded to its stated scope",
+        "upstream_basis": "User contract: real Linux proofs bind source hashes; claims do not exceed observations",
+        "port_evidence": "evidence/grok-adapter-acceptance.json command_controls match build_command for analysis (--tools read_file, --disallowed-tools read_file,search_tool,use_tool, --max-turns 1) and reader (--tools read_file,list_dir,grep, --disallowed-tools search_tool,use_tool, --max-turns 16); receipt_init_context carries the new fields; old-version probe observed 'grok 1.0.5 (5115b46bc9) [stable]', which matches the version regex but not TESTED_VERSION, giving unsupported_profile with task_attempt_not_claimed. scope says writer remains unsupported and no full-platform claim.",
+        "result": "partial",
+        "reason": "Internally consistent and correctly scoped, and now test-bound to the current bytes, but the run itself is parent-observed. The record remains a boolean summary without receipts or raw streams, and receipt_init_context omits cwd."
+      },
+      {
+        "requirement": "CORE-3 and BOT-6 documents, unverified at a3b0735, are now supplied",
+        "upstream_basis": "Prior checks CORE-3 (ledger/map drift) and BOT-6 (native-workflows Grok Bot bullet) recorded as unverified because the documents were not in the packet",
+        "port_evidence": "docs/native-workflows.md 'Grok Bot and Make Bot UI' bullet: optional adapter supplies app-handoff guidance and the outbound sender; routine management, secret entry and wake handling remain Bot-app facilities; sender key, live probe, webhook delivery and queue drain remain unverified. Capability map: event_bridge evidence 'unloaded task did not start', grok_bot_mcp unavailable/not-applicable, grok_bot_app live-tested with notes limited to handoff, paused routine and screenshot and 'no live webhook delivery proof', grok_bot_sender pending, grok_worker live-tested on Linux 1.0.34 with 'Final source review pending'. The same document's 'Unresolved integrations' still says 'Grok Build inference. Blocked before inference on this host' and 'The parent is testing a native queue mechanism... nothing is claimed until that test is recorded', while its own proof ledger item 6 records the queue outcome.",
+        "result": "partial",
+        "reason": "BOT-6 wording is as requested, and the grok_bot_app notes confine 'live-tested' appropriately, so both prior unverified items are resolved in substance. The Grok Build bullet is stale against the map and docs/grok.md (F-3). The queue-test wording inconsistency concerns the event bridge, an excluded unfinished integration, and is noted here only, not as a finding."
+      },
+      {
+        "requirement": "Attention check: parent claims in the delta do not exceed observations",
+        "upstream_basis": "User instruction to flag claimed tests or readiness beyond actual observation",
+        "port_evidence": "docs/grok.md: 'CI compares the current worker source hashes with the recorded production acceptance' is realized as a unit test in the discovered suite; no CI workflow file was supplied. evidence/fable-followup-verification.json: python_tests 229 passed, 0 failed; 'git_blob_sha256' label on values that must be sha256 of blob content to equal the acceptance script's file hashes; 'matches_acceptance_record: true' refers to the pre-refresh record whose values now survive only in prepublication-fable-review.json. README: Grok analysis and reader 'passed real production-adapter checks on the tested Linux build' with writer, shell and non-Linux disabled.",
+        "result": "partial",
+        "reason": "No claim of writer support, webhook delivery, Mac support or Cursor parity appears. The 229 count and the 'CI' framing are parent-reported. Two evidence labels are imprecise rather than false (F-2)."
+      }
+    ],
+    "findings": [
+      {
+        "id": "F-1",
+        "severity": "P3",
+        "file": "tests/test_claude_worker.py",
+        "location": "test_one_bash_entry_cannot_smuggle_additional_permission_rules, added case 'Bash(git log:*)\\n' exercised through self.plan()",
+        "problem": "The new case passes through plan_claude, where wc.validate_spec already rejects any allowed_tools entry containing '\\n' or '\\r' before is_scoped_bash_rule runs. The test therefore does not exercise the fullmatch change in is_scoped_bash_rule; reverting fullmatch to match would leave the suite green. Relatedly, the prior DELTA-5 finding overstated the spec-path impact: the newline entry was already refused at the spec boundary and never reached --allowedTools, so the change is hardening for direct callers rather than a required fix.",
+        "evidence": "worker_common.validate_spec: 'if any(ch in item for ch in (\"\\x00\", \"\\n\", \"\\r\")): raise SpecError(\"allowed_tools entries contain control characters\")'; validate_claude_spec calls wc.validate_spec before resolve_tools; the supplied worker_common diff for this delta is docstring-only.",
+        "fix": "Add one direct assertion, for example assertFalse(claude.is_scoped_bash_rule('Bash(git log:*)\\n')) alongside assertTrue for 'Bash(git log:*)', so the function-level behavior is pinned independently of validate_spec. Keep the fullmatch change.",
+        "validation": "Temporarily change fullmatch back to match and confirm the new direct assertion fails while the plan-level case still passes; restore fullmatch."
+      },
+      {
+        "id": "F-2",
+        "severity": "P3",
+        "file": "evidence/fable-followup-verification.json",
+        "location": "reviewed_base_binding.git_blob_sha256 and reviewed_base_binding.matches_acceptance_record",
+        "problem": "The label 'git_blob_sha256' reads as a git object identifier, but the values can only equal the acceptance script's hashes if they are sha256 digests of the blob contents (the tests hash raw file bytes). 'matches_acceptance_record: true' now points at a record whose source_sha256 values were replaced by the refresh, so a reader comparing against evidence/grok-adapter-acceptance.json sees a mismatch; the original 5a7705e1... and 46ad8b39... values survive only in prepublication-fable-review.json.",
+        "evidence": "fable-followup-verification.json git_blob_sha256 grok_worker.py 5a7705e1..., worker_common.py 46ad8b39...; grok-adapter-acceptance.json probes.analysis.source_sha256 grok_worker.py 5cc9f219..., worker_common.py a85902a5...; tests/test_grok_worker.py hashes read_bytes() of each script.",
+        "fix": "Rename the field to something like 'content_sha256_at_reviewed_commit' (or note 'sha256 of git show a3b0735:<path> output') and change matches_acceptance_record to name the superseded record, for example 'matched_acceptance_record_before_refresh': true with a pointer to prepublication-fable-review.json DELTA-1.",
+        "validation": "Doc-only; a reader can reproduce the base values with 'git show a3b0735:scripts/grok_worker.py | shasum -a 256' and the current values with the unit test."
+      },
+      {
+        "id": "F-3",
+        "severity": "P3",
+        "file": "docs/native-workflows.md",
+        "location": "'Unresolved integrations awaiting capability evidence', bullet 'Grok Build inference'",
+        "problem": "The bullet says Grok Build is 'Blocked before inference on this host' under a heading that lists integrations awaiting capability evidence, while docs/workflow-capabilities.json marks grok_worker live-tested on Linux 1.0.34, docs/grok.md records the production acceptance, and README says the profiles passed real checks. The sentence is accurate only for the Mac host and no longer describes the adapter's evidence state.",
+        "evidence": "native-workflows.md: 'Grok Build inference. Blocked before inference on this host; see Grok status. Roles configured for Grok report blocked rather than substituting another model.' Capability map grok_worker: status live-tested, evidence grok-adapter-acceptance.json.",
+        "fix": "Reword to: analysis and reader profiles are verified only on the exact Linux 1.0.34 build; on non-Linux hosts, including this Mac, dispatch is refused before the CLI starts, and roles configured for Grok report blocked rather than substituting another model. Writer, Bash and other versions remain unsupported.",
+        "validation": "Doc review against docs/grok.md and the capability map; no code change."
+      }
+    ],
+    "limitations": [
+      "No tools beyond StructuredOutput were available. I executed no tests, hashes, builds, package checks, plugin validation or CLI probes. The 229-test pass, the build/package/validator results, the refreshed Linux analysis, reader and old-version acceptance, and the exact Grok 4.6 attribution and hash matches are parent-observed and accepted only at their stated scope.",
+      "I cannot compute sha256, so I did not compare the refreshed source_sha256 values to the supplied scripts. The hash gate's behavior is verified in source; its current satisfaction rests on the parent-reported test run.",
+      "docs/grok.md says CI compares the hashes; the mechanism supplied is a unit test in tests/test_grok_worker.py. No CI workflow configuration was supplied, so whether CI runs that suite is unverified.",
+      "The diff for hooks/mode.py, scripts/claude_worker.py, scripts/grok_bot.py, scripts/worker_common.py and tests/test_claude_worker.py was supplied as hunks. I assume it is complete for those files; in particular I treat validate_spec's control-character rejection as predating this delta because the worker_common hunks are docstring-only.",
+      "SpecError's base class and exit_code_for were not supplied. That SpecError is a ValueError and that unsupported_profile, invalid_spec and interrupted map to exit codes 2, 2 and 130 is inferred from the parent-reported passing tests.",
+      "The acceptance record remains a boolean summary without receipts, argv or raw streams; receipt_init_context omits cwd. The experimental probe record is deliberately unbound and was not re-examined.",
+      "Companion verification remains bound to 517e1a1; the candidate now discloses this rather than refreshing it. Build --check and package --check at 1e95049 are parent-reported.",
+      "README visual changes and the ten image assets were not judged; only the technical statements in README.md were read.",
+      "Post-approval replacement of the pending-review sentences is outside this commit and was not reviewed.",
+      "Grok CLI flag semantics and the meaning of apiKeySource values are taken from docs/grok.md, the fixtures and the acceptance record; I did not view the pinned CLI source."
+    ],
+    "files_examined": [
+      "evidence/prepublication-fable-review.json (prior verdict, full)",
+      "evidence/fable-followup-verification.json",
+      "evidence/grok-adapter-acceptance.json (refreshed)",
+      "scripts/grok_worker.py (full)",
+      "tests/test_grok_worker.py (full)",
+      "scripts/worker_common.py (delta hunks plus supplied bound_value, validate_spec, validate_env, _SignalGuard, _signal_name, terminate_process_group, evaluate, make_error_receipt)",
+      "scripts/claude_worker.py (delta hunk plus validation prefix through build_env)",
+      "scripts/grok_bot.py (delta hunks)",
+      "hooks/mode.py (delta hunk)",
+      "tests/test_claude_worker.py (delta)",
+      "docs/grok.md",
+      "docs/grok-bot.md",
+      "docs/companions.md",
+      "docs/native-workflows.md",
+      "docs/workflow-capabilities.json (host-mechanism map as supplied)",
+      "adapters/ADAPTATIONS.md",
+      "README.md",
+      "upstream/cursor-team-kit/skills/deslop/SKILL.md",
+      "upstream/pstack/agents/comment-sicko.md"
+    ]
+  },
+  "execution": {
+    "backend": "claude",
+    "requested_model": "claude-fable-5-1",
+    "requested_effort": "xhigh",
+    "observed_models": [
+      "claude-fable-5-1"
+    ],
+    "requested_model_verified": true,
+    "complete": true,
+    "confirmed_terminated": true,
+    "status": "success",
+    "elapsed_seconds": 366.996,
+    "exit_code": 0
+  },
+  "effective_tools": [
+    "StructuredOutput"
+  ],
+  "prompt_sha256": "1f210f305bb9a70493d34ee081bd84af7f7d40f4d4fc5bcf583d9e9cad8bffeb",
+  "raw_response_sha256": "282af8ddded508c63f86fb04d67cdb27f72c54509e40472e59e272e91ff4bc24",
+  "reasoning_compute_measured": false
+}

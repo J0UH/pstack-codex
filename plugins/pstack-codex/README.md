@@ -73,7 +73,7 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 
 The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Across-turn event bridges and isolated cloud workers remain separate prerequisites; timed polling and worktrees do not pretend to replace them. See the [23-playbook capability map](docs/workflow-capabilities.json).
 
-The integration candidate received two scoped Fable 5.1 approvals at its exact recorded commit. Astra completed the later Grok implementation and cleanup with the user's authorization. Those changes still need the final Fable review after its session limit resets. See the [integration review and remaining work](docs/integration-review.md) and the [earlier alpha record](docs/fable-review.md). This development candidate is not a newly approved release.
+Fable 5.1 approved the current implementation at its exact recorded code commit and documented scope. Astra authored the latest Grok changes, which passed real Linux acceptance before review. See the [current review](docs/integration-review.md) and [earlier alpha record](docs/fable-review.md). This remains a tested alpha with the explicit capability limits above.
 
 Use the [read-only doctor](docs/doctor.md) to distinguish installation, authentication and verified worker evidence. [Grok Bot](docs/grok-bot.md) is optional for cloud-computer and Bot-native work; ordinary coding and review do not require it.
 

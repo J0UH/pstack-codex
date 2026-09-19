@@ -127,7 +127,7 @@
       "status": "live-tested",
       "live_proof": "live-tested",
       "evidence": "evidence/grok-adapter-acceptance.json: production public CLI analysis and file-reader acceptance on exact Linux Grok1.0.34; model, tools, unchanged files and cleanup verified.",
-      "notes": "Optional Linux analysis/reader only. Exact tested version is required. Writer, Bash, resumption and non-Linux dispatch remain unsupported. Read-only does not mean cwd-confined reading. Final source review pending."
+      "notes": "Optional Linux analysis/reader only. Exact tested version is required. Writer, Bash, resumption and non-Linux dispatch remain unsupported. Read-only does not mean cwd-confined reading. Final scoped source approval is recorded in docs/integration-review.md."
     },
     "grok_bot_mcp": {
       "status": "unavailable",

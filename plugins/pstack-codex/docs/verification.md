@@ -103,3 +103,7 @@ Two source-only Fable reviews approved the integration candidate at `ad93276dcf5
 ## Reproduce
 
 Run the README's deterministic checks and upstream helper suite. For live provider checks, use a disposable directory and the documented spec/profile interfaces. Live runs use the operator's own CLI authentication and may consume that provider's allowance. Preserve exact input revisions, inspect the real artifact, and publish sanitized evidence only.
+
+## Final integration review
+
+Fable 5.1 approved the follow-up source changes and supported Grok profiles at [`1e95049f3ffd`](https://github.com/J0UH/pstack-codex/commit/1e95049f3ffdd19710938d267e196d9c0e1aae0a). This was an independent source review at requested xhigh, with supplied original contracts and parent-observed runtime evidence. It did not run the tests. The [review record](integration-review.md) preserves the exact scope, findings and remaining limits. Earlier pending-review statements above describe prior checkpoints.

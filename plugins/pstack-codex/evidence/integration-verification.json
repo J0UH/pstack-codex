@@ -168,9 +168,14 @@
       "core": "approve",
       "bot": "approve",
       "record": "integration-review.json",
-      "post_review_followups": "delta review pending",
+      "post_review_followups": "approved within scope; see final-review.json",
       "grok_implementation_attempt": "session limit before tools or edits",
-      "grok_implementation": "Astra implementation and real Linux acceptance complete; exact-commit Fable review pending"
+      "grok_implementation": "Astra implementation, real Linux acceptance and final scoped Fable review complete",
+      "final_review": {
+        "reviewed_code_commit": "1e95049f3ffdd19710938d267e196d9c0e1aae0a",
+        "verdict": "approve",
+        "record": "final-review.json"
+      }
     }
   },
   "tests": {
@@ -382,7 +387,7 @@
       "writer": "unsupported",
       "non_linux": "unsupported",
       "author": "Astra with explicit user authorization",
-      "final_fable_review": "pending"
+      "final_fable_review": "approved within scope; see final-review.json"
     }
   },
   "webhook_sender": {

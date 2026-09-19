@@ -78,6 +78,8 @@ class ClaudeWorkerTests(unittest.TestCase):
         return claude.plan_claude(self.spec(**changes), environ={"PATH": str(self.binary_dir)})
 
     def test_one_bash_entry_cannot_smuggle_additional_permission_rules(self):
+        self.assertTrue(claude.is_scoped_bash_rule("Bash(git log:*)"))
+        self.assertFalse(claude.is_scoped_bash_rule("Bash(git log:*)\n"))
         for profile in ("reader", "writer"):
             for rule in ("Bash(true) Bash(*)", "Bash(x) Edit(//**)", "Bash(a)(b)", "Bash(?*)", "Bash([a-z]*)", "Bash(git log:*)\n"):
                 with self.subTest(profile=profile, rule=rule):

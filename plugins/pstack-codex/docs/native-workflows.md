@@ -115,7 +115,7 @@ The checker flags a Codex plan that still says `/loop`, `cloud-sleeper`, or `git
 - **Across-turn event bridge.** Unavailable. The parent is testing a native queue mechanism as a possible bridge; nothing is claimed until that test is recorded.
 - **Grok Bot and Make Bot UI.** The [optional Bot adapter](grok-bot.md) supplies app-handoff guidance and the outbound sender. Routine management, secure secret entry and wake handling remain Bot-app facilities. A real sender key, accepted live probe, webhook delivery and routine-side queue drain remain unverified.
 - **Slack and Benny.** No Slack tool or new-message event trigger is exposed to this coordinator. A time-based heartbeat is not a new-message trigger, so the dormant Benny pack stays dormant with its committed-file and fresh-project requirements intact.
-- **Grok Build inference.** Blocked before inference on this host; see [Grok status](grok.md). Roles configured for Grok report blocked rather than substituting another model.
+- **Grok Build inference.** Analysis and reader profiles are verified on the exact tested Linux 1.0.34 build. Non-Linux dispatch is refused before the CLI starts. Writer, Bash and other versions remain unsupported. Unsupported roles report blocked rather than substituting another model. See [Grok status](grok.md).
 - **Native skill creator.** The native Codex skill creator is available on the host, so Authoring a skill and automate-me have their authoring facility. Its draft, test, and iterate flow has not been exercised end to end here; live proof pending, and no proof is claimed.
 - **Cloud placement.** Unavailable, as above; per-lane isolation stays a prerequisite.
 
