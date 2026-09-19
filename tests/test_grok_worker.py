@@ -1,10 +1,14 @@
 import contextlib
 import copy
+import hashlib
 import io
 import json
 import os
+import signal
+import subprocess
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 from unittest.mock import patch
@@ -47,6 +51,15 @@ class GrokParserTests(unittest.TestCase):
         self.assertEqual(result["errors"], [])
         self.assertEqual(result["evidence"]["permission_denial_count"], 0)
         self.assertEqual([turn["stop_reason"] for turn in result["evidence"]["turns"]], ["tool_use", "end_turn"])
+
+    def test_actual_reader_reports_inherited_context_without_credential_values(self):
+        result = parse_events(fixture("reader"), fixture_spec("reader"))
+        init = result["evidence"]["init"][0]
+        self.assertEqual(init["apiKeySource"], "oauth")
+        self.assertEqual(init["skills_count"], 82)
+        self.assertEqual(init["slash_commands_count"], 88)
+        self.assertNotIn("skills", init)
+        self.assertNotIn("slash_commands", init)
 
     def test_actual_writer_stream_can_be_inspected_without_enabling_dispatch(self):
         result = parse_events(fixture("writer-positive"), fixture_spec("writer-positive"))
@@ -224,17 +237,85 @@ class GrokExecutionTests(unittest.TestCase):
         binary.chmod(0o700)
         return str(binary)
 
-    def invoke(self, spec=None, binary=None):
+    def invoke(self, spec=None, binary=None, environ=None, missing_binary=False):
         spec = self.spec if spec is None else spec
         path = self.root / "spec.json"
         path.write_text(json.dumps(spec))
         output, errors = io.StringIO(), io.StringIO()
-        with patch("grok_worker.shutil.which", return_value=binary or str(self.root / "fake-grok")), \
+        env_context = (patch("grok_worker.build_env", return_value=({"PATH": "/usr/bin:/bin"}, {"auth_route": "installed-cli-auth"}))
+                       if environ is None else patch.dict(os.environ, environ, clear=True))
+        with patch("grok_worker.shutil.which", return_value=None if missing_binary else binary or str(self.root / "fake-grok")), \
+                patch("grok_worker.Path.home", return_value=self.root), \
                 patch("grok_worker.sys.platform", "linux"), \
-                patch("grok_worker.build_env", return_value=({"PATH": "/usr/bin:/bin"}, {"auth_route": "installed-cli-auth"})), \
+                env_context, \
                 contextlib.redirect_stdout(output), contextlib.redirect_stderr(errors):
             code = main(["--spec", str(path)])
         return code, json.loads(output.getvalue()), errors.getvalue()
+
+    def test_environment_failures_are_not_misreported_as_invalid_specs(self):
+        for environ, missing in ((None, True), ({"XAI_API_KEY": "synthetic-secret-never-print"}, False),
+                                 ({"GROK_CLI_CHAT_PROXY_BASE_URL": "synthetic-secret-never-print"}, False)):
+            with self.subTest(environ=environ, missing=missing):
+                code, receipt, stderr = self.invoke(environ=environ, missing_binary=missing)
+                self.assertEqual((code, receipt["status"]), (2, "unsupported_profile"))
+                self.assertNotIn("synthetic-secret-never-print", json.dumps(receipt) + stderr)
+                self.assertFalse((self.root / "invocations").exists())
+                self.assertFalse(Path(self.spec["run_dir"]).exists())
+
+    def test_nonobject_spec_produces_an_error_receipt_without_traceback(self):
+        code, receipt, stderr = self.invoke(spec=[])
+        self.assertEqual((code, receipt["status"]), (2, "invalid_spec"))
+        self.assertEqual(stderr, "")
+        self.assertFalse((self.root / "invocations").exists())
+
+    def test_preflight_os_error_without_strerror_has_a_reason(self):
+        with patch("grok_worker.subprocess.Popen", side_effect=OSError()):
+            code, receipt, _ = self.invoke()
+        self.assertEqual(code, 2)
+        self.assertIn("Grok --version failed: OSError", receipt["errors"])
+
+    def test_preflight_signal_receipt_names_signal_and_reaps_child(self):
+        binary = self.fake_cli("(root / 'version-pid').write_text(str(os.getpid()))\ntime.sleep(30)")
+        spec_file = self.root / "signal-spec.json"
+        spec_file.write_text(json.dumps(self.spec))
+        wrapper = """import sys
+from unittest.mock import patch
+sys.path.insert(0, sys.argv[1])
+import grok_worker
+with patch('grok_worker.sys.platform', 'linux'), patch('grok_worker.shutil.which', return_value=sys.argv[2]), patch('grok_worker.build_env', return_value=({'PATH':'/usr/bin:/bin'}, {})):
+    raise SystemExit(grok_worker.main(['--spec', sys.argv[3]]))
+"""
+        proc = subprocess.Popen([sys.executable, "-c", wrapper, str(Path(__file__).resolve().parents[1] / "scripts"),
+                                 binary, str(spec_file)], stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                text=True, start_new_session=True)
+        marker = self.root / "version-pid"
+        version_pid = None
+        try:
+            deadline = time.monotonic() + 5
+            while proc.poll() is None and time.monotonic() < deadline:
+                if marker.exists() and marker.read_text().isdigit():
+                    version_pid = int(marker.read_text())
+                    break
+                time.sleep(0.01)
+            self.assertIsNotNone(version_pid, "version child never started")
+            os.kill(proc.pid, signal.SIGTERM)
+            stdout, stderr = proc.communicate(timeout=5)
+            receipt = json.loads(stdout)
+            self.assertEqual((proc.returncode, receipt["status"]), (130, "interrupted"), stderr)
+            self.assertEqual(receipt["adapter"]["compatibility"]["interrupt_signal"], "SIGTERM")
+            self.assertTrue(receipt["confirmed_terminated"])
+            with self.assertRaises(ProcessLookupError):
+                os.killpg(version_pid, 0)
+            self.assertFalse((self.root / "received-prompt").exists())
+        finally:
+            if proc.poll() is None:
+                os.killpg(proc.pid, signal.SIGKILL)
+                proc.communicate()
+            if version_pid is not None:
+                try:
+                    os.killpg(version_pid, signal.SIGKILL)
+                except ProcessLookupError:
+                    pass
 
     def test_exact_build_runs_through_common_supervisor_with_stdin(self):
         binary = self.fake_cli()
@@ -375,6 +456,20 @@ class GrokExecutionTests(unittest.TestCase):
         env, policy = build_env({"HOME": "/fixture-home", "GROK_HOME": "/fixture-home/.grok"})
         self.assertEqual(env, {"HOME": "/fixture-home", "GROK_HOME": "/fixture-home/.grok"})
         self.assertFalse(policy["adapter_configures_credentials"])
+
+
+class GrokAcceptanceEvidenceTests(unittest.TestCase):
+    def test_current_live_acceptance_is_bound_to_current_worker_sources(self):
+        root = Path(__file__).resolve().parents[1]
+        record = json.loads((root / "evidence/grok-adapter-acceptance.json").read_text())
+        for profile in ("analysis", "reader"):
+            proof = record["probes"][profile]
+            self.assertTrue(proof["passed"])
+            for name in ("grok_worker.py", "worker_common.py"):
+                with self.subTest(profile=profile, source=name):
+                    actual = hashlib.sha256((root / "scripts" / name).read_bytes()).hexdigest()
+                    self.assertEqual(actual, proof["source_sha256"][name],
+                                     "Current source differs from its live acceptance evidence; refresh the proof before claiming it.")
 
 
 if __name__ == "__main__":

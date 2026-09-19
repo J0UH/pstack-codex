@@ -62,7 +62,7 @@ def build_env(environ: dict | None = None) -> tuple[dict, dict]:
     env = wc.validate_env(dict(os.environ if environ is None else environ))
     rejected = [name for name in ("XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL") if name in env]
     if rejected:
-        raise ValueError("inherited Grok auth/routing overrides present (values not shown): " + ", ".join(rejected))
+        raise UnsupportedProfile("inherited Grok auth/routing overrides present (values not shown): " + ", ".join(rejected))
     return env, {"auth_route": "installed-cli-auth", "adapter_configures_credentials": False,
                  "checked_override_names": ["XAI_API_KEY", "GROK_CLI_CHAT_PROXY_BASE_URL"],
                  "configuration_route_not_independently_verified": True}
@@ -93,7 +93,7 @@ def build_command(spec: dict, executable: str | None = None) -> list[str]:
         if candidate.is_file():
             binary = str(candidate)
     if binary is None:
-        raise FileNotFoundError("Grok Build is not installed or not on PATH")
+        raise UnsupportedProfile("Grok Build is not installed or not on PATH")
     command = [
         os.path.abspath(binary), "--cwd", cwd, "--prompt-file", "/dev/stdin",
         "--model", normalized["model"], "--reasoning-effort", normalized["effort"],
@@ -149,7 +149,7 @@ def check_compatibility(executable: str, env: dict, cwd: str) -> dict:
                     if output_closed and proc.poll() is not None:
                         break
     except OSError as error:
-        problem = f"Grok --version failed: {error.strerror}"
+        problem = f"Grok --version failed: {error.strerror or type(error).__name__}"
     finally:
         if proc is not None:
             confirmed = wc.terminate_process_group(proc, proc.pid, 0.5, termination, kill_wait_seconds=2.0)
@@ -163,7 +163,7 @@ def check_compatibility(executable: str, env: dict, cwd: str) -> dict:
                 "returncode": proc.returncode if proc is not None else None,
                 "pid": proc.pid if proc is not None else None, "pgid": proc.pid if proc is not None else None,
                 "confirmed_terminated": confirmed, "termination": termination,
-                "interrupt_signal": guard.requested_signal}
+                "interrupt_signal": wc._signal_name(guard.requested_signal) if guard.requested_signal is not None else None}
     if not confirmed:
         raise CompatibilityError("Grok compatibility process termination is unconfirmed; retain resource ownership",
                                  evidence, "unverified")
@@ -403,7 +403,10 @@ def parse_events(events: list[dict], spec: dict) -> dict:
         "evidence": {
             "tool_inventory_verified": inventory_verified,
             "tool_inventory_verified_empty": inventory_verified and not expected,
-            "init": [{key: init.get(key) for key in ("model", "cwd", "permissionMode", "tools", "mcp_servers")} for init in init_events],
+            "init": [{**{key: init.get(key) for key in ("model", "cwd", "permissionMode", "tools", "mcp_servers", "apiKeySource")},
+                      "skills_count": len(init["skills"]) if isinstance(init.get("skills"), list) else None,
+                      "slash_commands_count": len(init["slash_commands"]) if isinstance(init.get("slash_commands"), list) else None}
+                     for init in init_events],
             "turns": turns, "usage_models": sorted(usage_models),
             "terminal_subtype": terminal.get("subtype") if terminal else None,
             "terminal_errors": terminal.get("errors", []) if terminal else [],

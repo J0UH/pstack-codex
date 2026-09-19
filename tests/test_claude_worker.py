@@ -79,7 +79,7 @@ class ClaudeWorkerTests(unittest.TestCase):
 
     def test_one_bash_entry_cannot_smuggle_additional_permission_rules(self):
         for profile in ("reader", "writer"):
-            for rule in ("Bash(true) Bash(*)", "Bash(x) Edit(//**)", "Bash(a)(b)", "Bash(?*)", "Bash([a-z]*)"):
+            for rule in ("Bash(true) Bash(*)", "Bash(x) Edit(//**)", "Bash(a)(b)", "Bash(?*)", "Bash([a-z]*)", "Bash(git log:*)\n"):
                 with self.subTest(profile=profile, rule=rule):
                     with self.assertRaises(claude.SpecError):
                         self.plan(profile=profile, allowed_tools=[rule])

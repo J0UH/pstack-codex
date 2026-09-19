@@ -10,7 +10,7 @@ The Codex plugin validator passes. During packaging it caught missing skill inte
 
 ## Automated tests
 
-- **223 Python tests passed in the latest integration pass:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
+- **229 Python tests passed in the latest integration pass:** source preservation and reproducibility, model-policy validation, mode lifecycle/identity/isolation, Claude/Grok protocol handling, real fake-subprocess execution, attempt reuse, malformed streams, response-model evidence, permission/profile mismatches and cancellation.
 - **52 unchanged upstream Bun tests passed:** orchestrator store/CLI and PR watcher policies/readers/CLI, with 206 expectations.
 - Provider-fake tests are explicitly synthetic. CI does not call paid model providers or perform deployments.
 

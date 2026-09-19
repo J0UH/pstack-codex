@@ -201,6 +201,7 @@ def _is_within(path: str, ancestor: str) -> bool:
 
 
 def _require_disjoint_run_dir(cwd: str, run_dir: str) -> None:
+    """Keep a writer's permitted tree separate from the evidence used to accept its work."""
     real_cwd = os.path.realpath(cwd)
     real_run_dir = os.path.realpath(run_dir)
     if _is_within(real_run_dir, real_cwd) or _is_within(real_cwd, real_run_dir):
@@ -780,6 +781,7 @@ def _termination_view(termination: dict, guard: _SignalGuard) -> dict:
 
 
 def _ended_by_own_cause(lifecycle: str) -> bool:
+    """A later stop request must not replace an already established termination cause."""
     return lifecycle in ("timeout", "spawn_failed")
 
 
@@ -791,6 +793,7 @@ def _stop_after_cause_error(signal_name: str, lifecycle: str) -> str:
 
 
 def _record_late_signals(receipt: dict, guard: _SignalGuard) -> None:
+    """Keep returned and durable receipts consistent when a signal arrives during finalization."""
     termination = receipt["termination"]
     listed = list(termination.get("late_parent_signals") or [])
     unreported = guard.unreported_signals(len(listed))

@@ -28,6 +28,7 @@ def _blank(match: re.Match) -> str:
 
 
 def prose_lines(lines: list[str]) -> Iterator[tuple[int, str]]:
+    """A quoted example can span lines and must remain inactive until its quote closes."""
     fence = None
     quoted = False
     for index, line in enumerate(lines):

@@ -93,7 +93,7 @@ SpecError = wc.SpecError
 
 def is_scoped_bash_rule(rule: str) -> bool:
     """True for ``Bash(<command prefix>:*)`` or ``Bash(<exact command>)`` with a real command token."""
-    match = BASH_RULE_RE.match(rule)
+    match = BASH_RULE_RE.fullmatch(rule)
     if not match:
         return False
     body = match.group("body").strip()

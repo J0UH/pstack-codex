@@ -61,6 +61,8 @@ Reader uses `--tools read_file,list_dir,grep`, `--disallowed-tools search_tool,u
 
 The child receives the inherited environment. Known `XAI_API_KEY` and `GROK_CLI_CHAT_PROXY_BASE_URL` overrides are rejected by name without displaying values. Existing CLI authentication remains in place, and the adapter does not independently attest its configured authentication route. There is no login, installation, configuration change, automatic retry, or permission fallback. [CLI reference](https://docs.x.ai/build/cli/reference), [headless scripting](https://docs.x.ai/build/cli/headless-scripting).
 
+Grok also loads inherited user-level skills and slash commands. The adapter does not isolate that context. Receipts record the CLI-reported `apiKeySource` and the skill/command counts as observations, without treating them as independent authentication or isolation proof. A missing binary or rejected routing override reports `unsupported_profile`; malformed specifications report `invalid_spec`.
+
 ## Receipts and completion
 
 `worker_common.run_process` owns task execution, timeout, signal handling, process-group cleanup, restricted artifacts, and the receipt. Its cancellation and recovery contract is described in [the Claude worker lifecycle](claude.md#cancellation-and-recovery). An unconfirmed stop retains resource ownership and prevents a verified success.
@@ -78,5 +80,7 @@ The original Mac probe failed before inference because `/var/run/docker.sock` wa
 The supervised Linux capability probes used the official 1.0.34 sidecar with existing authentication. The global 1.0.5 installation remained unchanged. Analysis proved empty inventory and zero calls. Reader proved real read, list, and grep calls with an exact file nonce and unchanged fixture. Writer demonstrated an inside change and two unchanged outside targets, but remains gated for inherited-grant safety. [Capability evidence](../evidence/grok-capability-probes.json), [selected denial events](../evidence/grok-capability-events.json).
 
 The final production checks invoked `scripts/grok_worker.py --spec` on Linux. Analysis returned the exact public sentinel with no tools. Reader performed one read, one directory listing and one search, recovered a nonce supplied only in a file, and left the fixture unchanged. Both verified exact Grok 4.6 attribution, matching prompt and stdin hashes, and process cleanup. The actual older global CLI was also rejected before the task attempt was claimed. The sidecar and source hashes stayed unchanged. [Production acceptance evidence](../evidence/grok-adapter-acceptance.json).
+
+CI compares the current worker source hashes with the recorded production acceptance. An edit to either worker invalidates that claim until its evidence is refreshed. The separate experimental capability captures remain historical records.
 
 `python3 -m unittest discover -s tests -p test_grok_worker.py` checks the captured complete streams, labeled synthetic negative mutations, stdin transport through the real common supervisor, version refusal, bounded compatibility cleanup, and error receipts. [Fixture provenance](../tests/fixtures/grok/provenance.json) records source hashes and sanitization. Fake CLI executions verify adapter behavior only. Final Fable source review remains pending. This adapter does not claim all-platform support or full Grok coding-workflow parity.

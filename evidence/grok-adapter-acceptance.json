@@ -28,10 +28,28 @@
       "prompt_absent_from_argv": true,
       "binary_hash_unchanged": true,
       "source_sha256": {
-        "grok_worker.py": "5a7705e10f753c49460acad9d696d9e4bf13bfaa4f6a4be69bca34f2d9ce9663",
-        "worker_common.py": "46ad8b397c357add5e47bfbd685b25936f4984db62bfc47196f77b842698f243"
+        "grok_worker.py": "5cc9f219e737b47beec3b5f866dc275de916b998c6fcbdc723d24ba445c14d97",
+        "worker_common.py": "a85902a560daa25b7fc3b1bd1d84744bc4953b4e29b09f09e302a523629e5b13"
       },
       "source_unchanged": true,
+      "receipt_init_context": [
+        {
+          "model": "grok-4.6",
+          "permissionMode": "dontAsk",
+          "tools": [],
+          "mcp_servers": [],
+          "apiKeySource": "oauth",
+          "skills_count": 82,
+          "slash_commands_count": 88
+        }
+      ],
+      "command_controls": {
+        "--tools": "read_file",
+        "--disallowed-tools": "read_file,search_tool,use_tool",
+        "--permission-mode": "dontAsk",
+        "--sandbox": "read-only",
+        "--max-turns": "1"
+      },
       "errors": [],
       "global_cli_version": "grok 1.0.5 (5115b46bc9) [stable]",
       "passed": true
@@ -61,10 +79,32 @@
       "prompt_absent_from_argv": true,
       "binary_hash_unchanged": true,
       "source_sha256": {
-        "grok_worker.py": "5a7705e10f753c49460acad9d696d9e4bf13bfaa4f6a4be69bca34f2d9ce9663",
-        "worker_common.py": "46ad8b397c357add5e47bfbd685b25936f4984db62bfc47196f77b842698f243"
+        "grok_worker.py": "5cc9f219e737b47beec3b5f866dc275de916b998c6fcbdc723d24ba445c14d97",
+        "worker_common.py": "a85902a560daa25b7fc3b1bd1d84744bc4953b4e29b09f09e302a523629e5b13"
       },
       "source_unchanged": true,
+      "receipt_init_context": [
+        {
+          "model": "grok-4.6",
+          "permissionMode": "dontAsk",
+          "tools": [
+            "read_file",
+            "list_dir",
+            "grep"
+          ],
+          "mcp_servers": [],
+          "apiKeySource": "oauth",
+          "skills_count": 82,
+          "slash_commands_count": 88
+        }
+      ],
+      "command_controls": {
+        "--tools": "read_file,list_dir,grep",
+        "--disallowed-tools": "search_tool,use_tool",
+        "--permission-mode": "dontAsk",
+        "--sandbox": "read-only",
+        "--max-turns": "16"
+      },
       "errors": [],
       "global_cli_version": "grok 1.0.5 (5115b46bc9) [stable]",
       "passed": true
@@ -78,5 +118,6 @@
       "task_attempt_not_claimed": true,
       "passed": true
     }
-  }
+  },
+  "refresh_reason": "Fable follow-ups changed diagnostics and receipt metadata; real public-CLI acceptance repeated on the resulting exact source."
 }

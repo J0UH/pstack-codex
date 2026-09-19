@@ -290,6 +290,7 @@ def load_config(path: str) -> dict[str, Any]:
 
 
 def _trusted_config(config: Any) -> dict[str, Any]:
+    """Derive the permitted host from the URL again because caller dictionaries are untrusted."""
     if not isinstance(config, dict):
         raise ConfigError("config must be the object returned by load_config or validate_config")
     if any(not isinstance(key, str) for key in config):
@@ -300,6 +301,7 @@ def _trusted_config(config: Any) -> dict[str, Any]:
 
 
 def _open_private(path: str, flags: int, *, dir_fd: int | None = None) -> tuple[int, os.stat_result]:
+    """Check the opened descriptor to prevent path replacement from defeating file restrictions."""
     try:
         fd = os.open(path, flags | os.O_NOFOLLOW | os.O_CLOEXEC | os.O_NONBLOCK, 0o600, dir_fd=dir_fd)
     except OSError as exc:
@@ -448,6 +450,7 @@ def encode_payload(payload: dict[str, Any]) -> bytes:
 
 
 def payload_contains(payload: Any, body: bytes, secret: str) -> bool:
+    """Check decoded strings too so JSON escaping cannot hide a sender key."""
 
     def walk(value: Any) -> bool:
         if isinstance(value, str):
@@ -462,6 +465,7 @@ def payload_contains(payload: Any, body: bytes, secret: str) -> bool:
 
 
 class _NoRedirect(urllib.request.HTTPRedirectHandler):
+    """Refuse redirects so credential headers cannot be forwarded to another destination."""
 
     def redirect_request(self, req, fp, code, msg, headers, newurl):  # noqa: D401 - urllib hook
         return None
@@ -494,6 +498,7 @@ def _close_quietly(response: Any) -> None:
 
 
 def post_once(request: urllib.request.Request, timeout: float, opener: Callable | None = None) -> dict[str, Any]:
+    """Read status only; an untrusted response body must not delay or leak into the result."""
     opener = default_opener if opener is None else opener
     outcome: dict[str, Any] = {"kind": "network", "http_status": None, "error_class": None}
     try:

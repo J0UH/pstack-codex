@@ -175,7 +175,7 @@
   },
   "tests": {
     "python": {
-      "passed": 223,
+      "passed": 229,
       "failed": 0,
       "pending_final_rerun": false,
       "jsonschema": "4.23.0",

@@ -1,0 +1,27 @@
+{
+  "date": "2026-09-19",
+  "prior_review_record": "prepublication-fable-review.json",
+  "adjudication": {
+    "DELTA-1": "Verified the reviewed git blob hashes against the original acceptance; added a CI source/evidence hash check and refreshed actual Linux acceptance after source edits.",
+    "DELTA-2": "Missing executable and inherited routing overrides now report unsupported_profile. Non-object specs already used a defensive common error formatter; a direct regression now proves the existing behavior without adding a redundant guard.",
+    "DELTA-3": "Preflight signals report their names; missing strerror falls back to the exception class. A real subprocess SIGTERM test verifies child cleanup and the receipt.",
+    "DELTA-4": "Receipts include CLI-reported auth source and counts of inherited skills/commands. Documentation explicitly discloses inherited context without claiming independent auth attestation or isolation.",
+    "DELTA-5": "Scoped Bash validation uses fullmatch and rejects a terminal newline for reader and writer.",
+    "DELTA-6": "Restored nine concise non-obvious security or public-contract docstrings, leaving narration removed.",
+    "DELTA-7": "Companion documentation explicitly labels the older snapshot and current generator enforcement. Review-pending wording will change only after the final exact-commit verdict."
+  },
+  "reviewed_base_binding": {
+    "reviewed_commit": "a3b0735e8372c27c1d4a85990745472be5062b8a",
+    "git_blob_sha256": {
+      "grok_worker.py": "5a7705e10f753c49460acad9d696d9e4bf13bfaa4f6a4be69bca34f2d9ce9663",
+      "worker_common.py": "46ad8b397c357add5e47bfbd685b25936f4984db62bfc47196f77b842698f243"
+    },
+    "matches_acceptance_record": true
+  },
+  "python_tests": {
+    "passed": 229,
+    "failed": 0
+  },
+  "refreshed_live_acceptance": "grok-adapter-acceptance.json",
+  "final_review": "pending on repaired candidate"
+}

@@ -12,6 +12,8 @@ Pstack calls skills from other packages and capabilities built into Cursor. This
 
 The three companions live under `companion-skills/`. They are path-loaded dependencies, not separate Codex slash commands. The [host contract](../adapters/host.md#resolve-the-intended-skill) resolves their names to those exact files. It never substitutes a similarly named installed skill. Their instructions are present in the generated distribution and the local installed cache.
 
+The [recorded installed-cache comparison](../evidence/companion-verification.json) was captured at commit `517e1a1`. It is historical evidence. The generator's source-hash and body-preservation checks carry those unchanged companions forward in later releases; the old record does not claim a fresh cache inspection for every subsequent commit.
+
 Their source comes from the same pinned Cursor plugins revision as pstack, with its license retained. The generator verifies source hashes and preserves the original instruction bodies, adding the explicit Codex host notice. Run `python3 scripts/build.py --check` to verify source preservation and `python3 scripts/package.py --check` to verify the distributable copy. Those checks establish inclusion and fidelity. They do not establish every possible UI, terminal or external automation workflow.
 
 `unslop`, `no-comments`, and `technical-writing` are already registered pstack skills. They are separate from `deslop`. Poteto retains their original triggers for prose, comment review, and technical documents.
