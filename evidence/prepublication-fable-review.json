@@ -1,0 +1,351 @@
+{
+  "reviewed_code_commit": "a3b0735e8372c27c1d4a85990745472be5062b8a",
+  "checkpoint": "First scheduled review; follow-up changes are reviewed separately before release.",
+  "report": {
+    "target_commit": "a3b0735e8372c27c1d4a85990745472be5062b8a",
+    "scope": "Source-only delta review of a3b0735e8372c27c1d4a85990745472be5062b8a against the two scoped Fable approvals recorded at ad93276dcf570e68832af469abce7066b2d6edc3. Covered: the twelve recorded follow-up repairs (CORE-1..6, BOT-1..6), exact Bash rule parsing in claude_worker, grok_bot queue/key/redaction changes, hooks/mode.py quotation handling and pstack.py identity/home resolution, the worker_common lifecycle refactor, and the new scripts/grok_worker.py command and stream boundary with its four sanitized real streams, synthetic mutations, tests, docs (grok.md, grok-bot.md, host.md, companions.md, integration-review.md) and the parent's Linux evidence files. No test, build, package, CLI or network execution; every parent-reported result is cited as parent-reported.",
+    "verdict": "approve",
+    "approval_scope": "Approved at exactly a3b0735e8372c27c1d4a85990745472be5062b8a, as a delta on the two ad93276 approvals whose scopes and exclusions carry forward unchanged except where extended here: (1) the ten executable follow-up repairs verified in the supplied source with their regression tests as written (CORE-1 scoped-Bash body rejection, CORE-2 fenced RRULE detection, CORE-4 stale-context explicit --project failure, CORE-5 shared codex_home resolution, CORE-6 per-quote masking with digit-inch exception; BOT-1 non-finite payloads, BOT-2 pre-serialization redaction, BOT-3 symlink key/queue alias via stat fallback, BOT-4 queue directory ownership and dir_fd-relative open, BOT-5 non-echoing argparse errors); (2) the worker_common lifecycle refactor (default lifecycle 'interrupted' for a skipped launch, 'spawn_failed' only on a Popen exception, two-valued _ended_by_own_cause) as behavior-preserving; (3) scripts/grok_worker.py analysis and reader profiles as a fail-closed command/stream contract: exact 1.0.34 --version gate before any attempt claim or prompt dispatch, Linux-only, no allowed_tools/resume/session_id, separate exact model and effort passthrough with no substitution, root and unsafe-path cwd rejection, init inventory/dontAsk/cwd/empty-MCP/model checks, response-message model attribution kept separate from usage accounting, terminal-error and tool-result denial/cancellation preservation with hashed payloads, stdin prompt transport, bounded and reaped preflight, error receipts; (4) the four sanitized real streams and labeled synthetic mutations as parser fixtures; (5) docs/grok.md, docs/grok-bot.md, adapters/host.md, docs/companions.md and docs/integration-review.md as honest disclosure at the supplied text. The parent's Linux acceptance record (analysis, reader, old-version refusal) is accepted only as parent-reported and only insofar as its recorded source hashes equal the a3b0735 files, which I could not verify and no test enforces (DELTA-1). NOT approved: the Grok writer profile or any Grok write authority; Grok Bash; any Grok version other than 'grok 1.0.34 (3736acbc8658) [alpha]' or any non-Linux host; the reader as read containment (it is read-only file tools with inherited grants, as documented); Grok effort as stream-verified (passthrough only); isolation of the Grok session from user-level skills, slash commands or CLI configuration; Grok Bot live webhook delivery, key acquisition, live probe or queue drain; the doc-only follow-ups CORE-3 and BOT-6 and docs/workflow-capabilities.json (not supplied); README visual changes and the ten image assets (not supplied); companion re-verification at this commit (evidence is bound to 517e1a1); doctor.py; the 216/223 Python and 52 Bun test counts; Cursor runtime parity; and every unattended playbook, cloud placement, event-bridge and goal-lifecycle item already excluded at ad93276.",
+    "summary": "The executable delta from ad93276 to a3b0735 is sound in source. Ten of the twelve recorded follow-ups (CORE-1, 2, 4, 5, 6 and BOT-1 through BOT-5) are fixed in the supplied code with matching regression tests; the two doc-only follow-ups (CORE-3, BOT-6) were not supplied and stay unverified. The worker_common lifecycle refactor is behavior-preserving. The new Grok adapter fails closed before any attempt claim or prompt dispatch on unknown CLI version, non-Linux host, writer profile, extra allowed_tools, resume, invalid spec, root or unsafe cwd and overlapping run_dir; it passes model and effort separately, checks init inventory, dontAsk, cwd, empty MCP and model, attributes only response-message models (usage accounting such as grok-4.6-build stays separate), preserves terminal errors, tool-result denials, cancellations and warnings, and bounds and reaps the --version preflight. I traced all four sanitized real streams and every synthetic mutation through parse_events by hand; results match the tests. Writer remains explicitly unsupported and is not presented as working. The Linux acceptance is parent-reported; its source-hash binding to this commit is recorded but not verifiable here and not self-checked by any test (DELTA-1, P2). Remaining findings are P3 hygiene and disclosure items. No security downgrade was found or requested.",
+    "checks": [
+      {
+        "requirement": "CORE-1: one allowed_tools entry cannot smuggle a second permission rule",
+        "upstream_basis": "ad93276 core finding CORE-1; Claude Code --allowedTools is space or comma separated and parenthesis-aware",
+        "port_evidence": "scripts/claude_worker.py is_scoped_bash_rule now rejects '(' and ')' anywhere in the body and requires the first whitespace token (minus a ':*' suffix) to fullmatch [A-Za-z0-9_./-]+. tests/test_claude_worker.py test_one_bash_entry_cannot_smuggle_additional_permission_rules rejects 'Bash(true) Bash(*)', 'Bash(x) Edit(//**)', 'Bash(a)(b)', 'Bash(?*)', 'Bash([a-z]*)' on reader and writer and keeps 'Bash(git log:*)' and 'Bash(python3 -m unittest:*)'.",
+        "result": "pass",
+        "reason": "With the greedy body regex every crafted entry carries a parenthesis inside the body and is refused before argv; a space-separated second Tool(...) rule cannot be expressed without one, and a bare second token cannot be a tool rule. The tightening also refuses env-assignment prefixes such as NODE_ENV=x, which is fail-closed. A trailing-newline nit in BASH_RULE_RE is recorded as DELTA-5."
+      },
+      {
+        "requirement": "CORE-2: a raw RRULE string inside a fenced block fails the plan",
+        "upstream_basis": "docs/native-workflows.md claim that a raw RRULE anywhere fails; ad93276 finding CORE-2",
+        "port_evidence": "scripts/check_plan.mjs prose loop: RAW_ENCODING test moved before 'if (fence) continue;'. tests/test_check_plan.py test_raw_schedule_encoding_is_rejected_inside_fenced_plan_text appends a fenced RRULE and asserts RRULE_RULE.",
+        "result": "pass",
+        "reason": "The test now runs on every line after the fence toggle, including fenced lines; other prose checks still skip fenced text. Upstream check-plan.mjs stays byte-identical per the retained test."
+      },
+      {
+        "requirement": "CORE-3: ledger/capability-map/ADAPTATIONS drift corrected",
+        "upstream_basis": "ad93276 finding CORE-3",
+        "port_evidence": "Only tests/test_check_plan.py shows the change: event_bridge.evidence must now contain 'did not start' (was assertIsNone), grok_bot_mcp status 'unavailable' with live_proof 'not-applicable', new grok_bot_app 'live-tested' and grok_bot_sender 'pending'. docs/workflow-capabilities.json, docs/native-workflows.md and adapters/ADAPTATIONS.md were not supplied.",
+        "result": "unverified",
+        "reason": "The test delta is consistent with the requested correction but the documents themselves are outside the supplied packet. Whether grok_bot_app's notes confine 'live-tested' to the paused-routine and screenshot observation could not be checked."
+      },
+      {
+        "requirement": "CORE-4: a stale recorded context does not produce a misleading error",
+        "upstream_basis": "ad93276 finding CORE-4 (skip the candidate or report as ambiguity naming --project)",
+        "port_evidence": "scripts/pstack.py resolve_identity wraps identity() in try/except ValueError and raises 'A recorded context points at an invalid or missing directory; pass the authoritative --project'. tests/test_mode.py test_stale_recorded_project_requires_authoritative_project_hint asserts the --project hint.",
+        "result": "pass",
+        "reason": "The conservative alternative from the finding was chosen: implicit resolution still fails when any recorded context is stale, but the message now names the remedy. adapters/host.md already states that missing or ambiguous contexts require the explicit project, so the contract is consistent."
+      },
+      {
+        "requirement": "CORE-5: checker and pstack.py resolve the same policy path for empty and tilde CODEX_HOME",
+        "upstream_basis": "ad93276 finding CORE-5; check_plan.mjs defaultPolicyPath",
+        "port_evidence": "scripts/pstack.py codex_home() returns Path(os.environ.get('CODEX_HOME') or Path.home()/'.codex').expanduser(); config_path() and state_root() both use it. tests/test_check_plan.py test_empty_and_tilde_codex_home_match_the_python_policy_resolver compares the checker's source= line with 'pstack.py models path'; tests/test_mode.py test_empty_and_tilde_codex_home_are_normalized_for_config_and_state covers both paths.",
+        "result": "pass",
+        "reason": "Python was aligned to the unchanged JS behavior (empty treated as unset, '~' expanded). Hooks and CLI share state_root through the same helper so the mode store cannot diverge. The JS expandHome body was not supplied; the cross-runtime test is parent-reported."
+      },
+      {
+        "requirement": "CORE-6: an unbalanced inch mark on an earlier line does not hide a later $poteto-mode mention",
+        "upstream_basis": "ad93276 finding CORE-6; conversation-local mode activation contract",
+        "port_evidence": "hooks/mode.py prose_lines now walks DOUBLE_QUOTE matches per line, skips an ASCII '\"' immediately after a digit when not inside a quote, blanks quoted spans and the quote characters in place, and carries quoted state across lines. tests/test_mode.py adds 'Fix the 5\" display.\\nUse $poteto-mode.' and 'The note says \"panel 5\".\\nUse $poteto-mode.' to the activating set; all quoted negative cases retained.",
+        "result": "pass",
+        "reason": "Traced: digit-quote outside a quote is skipped, digit-quote inside a quote still closes it, positions are preserved for match mapping, and the multi-line quoted negatives ('The doc says \"run\\n$poteto-mode first.\"', curly-quote case) still blank the mention. Behavior otherwise equals the former parity toggle."
+      },
+      {
+        "requirement": "BOT-1: non-finite floats are invalid_payload before transport",
+        "upstream_basis": "ad93276 bot finding BOT-1",
+        "port_evidence": "scripts/grok_bot.py validate_payload uses math.isfinite; 'import math' added. tests/test_grok_bot.py test_nonfinite_payload_is_invalid_before_transport covers +inf and -inf with no opener call and no queue file; the existing 'nan' case remains.",
+        "result": "pass",
+        "reason": "validate_payload runs before encode_payload in send_event, so json.loads-accepted Infinity literals from a payload file are also caught with status invalid_payload, exit 2."
+      },
+      {
+        "requirement": "BOT-2: the final scrub catches a key containing quotes or backslashes",
+        "upstream_basis": "ad93276 bot finding BOT-2",
+        "port_evidence": "scripts/grok_bot.py _finish redacts by walking strings, lists and dicts before serialization and appends the internal note only when the walk changed something. test_finish_scrubs_if_a_field_ever_carried_the_key loops over KEY, TRICKY_KEY and LONG_KEY.",
+        "result": "pass",
+        "reason": "Comparison happens on raw strings so JSON escaping cannot hide the key. Dict keys are not redacted, which is acceptable because result keys are fixed field names."
+      },
+      {
+        "requirement": "BOT-3: a refused key-file symlink cannot alias the failure queue",
+        "upstream_basis": "ad93276 bot finding BOT-3",
+        "port_evidence": "send_event and check_config use key_ident = exc.ident or _ident_of(trusted['key_file']); _ident_of follows the symlink via os.stat and returns None for key_env. test_refused_key_symlink_cannot_alias_the_failure_queue points key_file at a symlink to the real key and queue_path at the real key; asserts invalid_queue, no opener call, key bytes unchanged, check_config queue_usable false.",
+        "result": "pass",
+        "reason": "When the O_NOFOLLOW open refuses the symlink, the stat fallback still yields the target inode, which equals the queue inode, so nothing is appended. The queue fd is opened O_APPEND but no write occurs on that path."
+      },
+      {
+        "requirement": "BOT-4: the queue directory must be owned by the sender and not group/other writable",
+        "upstream_basis": "ad93276 bot finding BOT-4",
+        "port_evidence": "open_queue opens the directory O_RDONLY|O_DIRECTORY|O_CLOEXEC, fstat-checks st_uid == getuid() and st_mode & 0o022 == 0, then opens the basename relative to that dir_fd via _open_private(..., dir_fd=); the fd is closed in finally. test_queue_requires_an_owned_directory_without_shared_write_access chmods the config dir 0777 and expects invalid_queue with nothing sent or created. docs/grok-bot.md documents the requirement.",
+        "result": "pass",
+        "reason": "Sticky world-writable directories such as /tmp are now refused, and the final open is relative to the checked directory descriptor, which removes the path-swap window. inspect_queue and therefore 'check' apply the same rule because they share open_queue."
+      },
+      {
+        "requirement": "BOT-5: argparse never echoes an invalid positional or unrecognized value",
+        "upstream_basis": "ad93276 bot finding BOT-5; module contract that the key is never printed",
+        "port_evidence": "_Parser.error masks messages starting with 'unrecognized arguments:' and containing 'invalid choice:' with fixed phrases; _FLAG_RE removed. test_unknown_positional_argument_does_not_echo_a_key runs main([KEY]) and asserts KEY is absent from stderr.",
+        "result": "pass",
+        "reason": "Both argparse paths that could echo a pasted value are covered; usage text contains only option names."
+      },
+      {
+        "requirement": "BOT-6: native-workflows.md Grok Bot bullet reworded",
+        "upstream_basis": "ad93276 bot finding BOT-6",
+        "port_evidence": "docs/native-workflows.md not supplied; adapters/host.md (supplied) states the sender is optional, links docs/grok-bot.md and says webhook delivery and a cloud-accessible failure queue still require setup and proof.",
+        "result": "unverified",
+        "reason": "The supplied host.md and grok-bot.md agree with the requested wording, but the specific document named by the finding was not in the packet."
+      },
+      {
+        "requirement": "worker_common lifecycle refactor keeps interrupted/timeout/spawn_failed semantics",
+        "upstream_basis": "ad93276 core scope item (5): process-group timeout/interrupt/late-signal lifecycle; tests/test_worker_signals.py",
+        "port_evidence": "_run_claimed_process initializes lifecycle='interrupted', sets 'spawn_failed' only in the Popen except clause, and _ended_by_own_cause(lifecycle) returns lifecycle in ('timeout','spawn_failed'). Signal-window tests (claim, hash, output_file, popen, process_record, receipt, timeout_grace, restore, ignored_hup, missing_executable) are unchanged apart from comment removal.",
+        "result": "pass",
+        "reason": "A skipped launch is only reachable when a stop request is already pending, so the first signal block still relabels it 'interrupted' exactly as before; a real Popen failure keeps 'spawn_failed' as its own cause in both the post-supervision and post-receipt paths. evaluate() receives the same lifecycle values as at ad93276. Docstrings explaining this were removed (DELTA-6)."
+      },
+      {
+        "requirement": "Grok profiles fail closed before task dispatch for unknown CLI versions, unsupported tools/profiles, invalid specs and unsupported write authority",
+        "upstream_basis": "User contract: no dispatch on unverified support; ad93276 grok analysis-only gating",
+        "port_evidence": "scripts/grok_worker.py build_command: backend must be grok; any allowed_tools -> UnsupportedProfile; resume/session_id -> UnsupportedProfile; MODEL_RE/EFFORT_RE; cwd resolved, '/' rejected, PATH_RULE_UNSAFE and control chars rejected when allow rules exist; writer -> UnsupportedProfile before binary lookup. run(): build_command, build_env, check_compatibility (exact TESTED_VERSION string, returncode 0, non-Linux refused, 5 s and 4096 byte bounds) all precede wc.run_process, which owns the run_dir claim and the disjoint run_dir check. Tests: test_unknown_build_stops_before_prompt_dispatch_and_attempt_claim (invocations == ['--version'], no received-prompt, run_dir absent), test_writer_and_bash_are_rejected_without_any_binary_invocation, test_nonlinux_fails_before_binary_execution, test_invalid_spec_and_unsafe_scope_rejected_before_preflight (timeout 0/nan, cwd '.', '/', model '--model', unknown profile, run_dir inside cwd, unsafe chars, symlink alias). Parent record old-version: status unsupported_profile, task_attempt_not_claimed true.",
+        "result": "pass",
+        "reason": "Every refusal path is reached before the prompt is read for stdin and before run_process claims the attempt. Version equality is exact on the full stripped output, so extra CLI output also fails closed."
+      },
+      {
+        "requirement": "Exact model attribution with usage accounting kept separate; no hidden model fallback",
+        "upstream_basis": "adapters/host.md model policy: record requested and transport-reported models, auxiliary usage is not identity",
+        "port_evidence": "parse_events: add_turn records the model only from substantive assistant/streamed messages; missing model -> 'response message lacks model attribution'; models != [spec model] -> 'observed model does not match requested model'; init.model must equal spec model; result.modelUsage keys go to evidence.usage_models only. analysis.jsonl yields observed_models ['grok-4.6'] and usage_models ['grok-4.6-build']; synthetic None/grok-4.5 mutations fail; fake-CLI model_mismatch and process_failed produce non-success receipts with requested_model_verified false.",
+        "result": "pass",
+        "reason": "No code path substitutes or normalizes a model; the Cursor slug is documented as not a CLI model ID. Effort is passed as --reasoning-effort but is not attested by the stream, and the docs do not claim it is."
+      },
+      {
+        "requirement": "Effective inventory, permission mode, cwd and MCP are checked from the real init event",
+        "upstream_basis": "ad93276 core scope: fail-closed model/tool/receipt evidence",
+        "port_evidence": "parse_events requires exactly one init; tools list must be strings, same length and same set as the profile; permissionMode == 'dontAsk'; cwd absolute and realpath-equal to spec cwd; mcp_servers == []; analysis additionally requires inventory_verified and zero calls. analysis-default-tools.jsonl (real default exposure) and analysis-success.jsonl (cwd stripped by sanitization) fail as the tests assert; every synthetic init mutation and removal fails.",
+        "result": "pass",
+        "reason": "Missing metadata is treated as failure rather than absence of evidence. sandbox_effective_not_reported is recorded true because the stream does not attest sandbox roots, and no containment claim is derived from argv."
+      },
+      {
+        "requirement": "Actual terminal errors, tool-result denials and cancellations are preserved without relabeling delivery",
+        "upstream_basis": "User contract: stop/evidence ownership meaningful; permission_denials warning contract from ad93276",
+        "port_evidence": "parse_events: result.is_error true or subtype != success -> provider_error; terminal_subtype and terminal_errors recorded; tool_result with is_error true is classified permission_denied / cancelled / tool_error by content text with sha256 and length only; unresolved calls -> error unless provider_error. writer-sibling.jsonl -> is_error true, complete true, terminal_errors ['cancelled'], tool_cancellation_count 1, permission_denial_count 0; writer-symlink.jsonl -> success, permission_denial_count 1, permission_denied_tools ['write'], warnings nonempty; run_process adds the permission_denials warning (test_shared_receipt_preserves_error_and_denial_outcomes).",
+        "result": "pass",
+        "reason": "Delivery status and task acceptance stay distinct as documented. Note the disclosed limitation that a rule-level denial under dontAsk appears as a cancellation plus provider error, not as permission_denial_count."
+      },
+      {
+        "requirement": "Prompt reaches the CLI through stdin only, with matching hashes and no argv leak",
+        "upstream_basis": "docs/grok.md prompt transport; ad93276 stdin transport in worker_common",
+        "port_evidence": "run() decodes prompt_file as UTF-8 and passes stdin_text to wc.run_process; argv contains '--prompt-file /dev/stdin'. test_exact_build_runs_through_common_supervisor_with_stdin asserts received bytes equal the file including CRLF, prompt_sha256 == stdin_sha256, prompt absent from argv, project directory untouched. Parent acceptance: stdin_matches_original_prompt and prompt_absent_from_argv true for analysis and reader.",
+        "result": "pass",
+        "reason": "Source path verified; the real-CLI acceptance of /dev/stdin under the read-only sandbox is parent-reported."
+      },
+      {
+        "requirement": "Process cleanup for the --version preflight and the task attempt",
+        "upstream_basis": "ad93276 core scope item (5) lifecycle; docs/grok.md compatibility gate",
+        "port_evidence": "check_compatibility runs --version with stdin DEVNULL, start_new_session, a selector loop bounded by VERSION_TIMEOUT_SECONDS and VERSION_OUTPUT_LIMIT, then wc.terminate_process_group(proc, proc.pid, 0.5, termination, kill_wait_seconds=2.0) in finally; unconfirmed termination -> status unverified; a deferred stop signal -> status interrupted; term_sent without another problem -> failure. test_version_preflight_bounds_time_and_output_and_reaps_process asserts confirmed_terminated and killpg ProcessLookupError for oversized and hanging outputs. The task itself runs under wc.run_process.",
+        "result": "pass",
+        "reason": "Bounded, group-owned and reported. The terminate_process_group signature with kill_wait_seconds and its return value are not in the supplied delta; the parent-reported test run is the evidence that they exist."
+      },
+      {
+        "requirement": "No hidden permission fallback, retry, login or configuration change",
+        "upstream_basis": "adapters/host.md: no substitution or fallback; docs/grok.md",
+        "port_evidence": "build_command emits a fixed '--permission-mode dontAsk', '--no-subagents', '--disable-web-search', fixed --tools/--disallowed-tools/--deny/--allow sets per profile; build_env rejects XAI_API_KEY and GROK_CLI_CHAT_PROXY_BASE_URL by name without values; no retry loop; no install path beyond a which() lookup and the documented ~/.grok/bin/grok location.",
+        "result": "pass",
+        "reason": "The only implicit behavior is the home-directory binary fallback, which is a lookup rather than a permission change and is stated in the error text."
+      },
+      {
+        "requirement": "Grok writer is unsupported and never presented as a working feature",
+        "upstream_basis": "User contract; docs/grok.md profile table",
+        "port_evidence": "PROFILES['writer'].unsupported carries the reason; build_command raises before binary resolution; docs/grok.md table says 'Unsupported' and explains inherited grants and managed sandbox; evidence/grok-capability-probes.json labels writer_positive 'experimental CLI capability only' with production_adapter_ready false; test name test_actual_writer_stream_can_be_inspected_without_enabling_dispatch.",
+        "result": "pass",
+        "reason": "The captured writer streams are parser fixtures only. No document in the packet calls the writer route finished, and no downgrade is proposed."
+      },
+      {
+        "requirement": "Reader means read-only file tools, not private-file containment, and the docs say so",
+        "upstream_basis": "User contract; docs/grok.md reader paragraph",
+        "port_evidence": "Reader inventory read_file/list_dir/grep with Read/Grep allow rules anchored at resolved cwd and cwd/**, retaining Bash/Edit/MCPTool/WebFetch/WebSearch denies and sandbox read-only. docs/grok.md: 'The reader is not confined to reading cwd' and 'These rules ... are not exclusive read authority'. filesystem_containment_claimed false in adapter evidence.",
+        "result": "pass",
+        "reason": "Claims match the mechanism. The inherited-skill and configuration exposure visible in the real init events is not disclosed (DELTA-4)."
+      },
+      {
+        "requirement": "Mac startup remains host-blocked",
+        "upstream_basis": "docs/grok.md Mac docker.sock symlink failure; no sandbox downgrade",
+        "port_evidence": "check_compatibility raises UnsupportedProfile unless sys.platform starts with 'linux', before any Popen; test_nonlinux_fails_before_binary_execution patches darwin and asserts no invocation.",
+        "result": "pass",
+        "reason": "The block precedes execution, and the docs state Linux evidence does not establish Mac support."
+      },
+      {
+        "requirement": "Actual Linux proofs bind source hashes; synthetic mutations are not provider proof",
+        "upstream_basis": "User contract",
+        "port_evidence": "evidence/grok-adapter-acceptance.json records grok_worker.py 5a7705e1... and worker_common.py 46ad8b39... with source_unchanged true for analysis and reader; evidence/grok-capability-probes.json records different hashes (c50d430b..., 96b7bd9d...) and is labeled experimental. No test compares either record to the scripts. tests/test_grok_worker.py labels synthetic cases with a 'synthetic' prefix and real streams with 'actual'.",
+        "result": "partial",
+        "reason": "The binding is recorded but I cannot compute hashes and nothing in the repository enforces it, so the acceptance is accepted only as parent-reported pending DELTA-1. The evidence file is a boolean summary rather than receipts or raw streams."
+      },
+      {
+        "requirement": "Poteto routing, all original skills, the three companions and cross-project Codex orchestration are preserved",
+        "upstream_basis": "upstream/pstack/skills/poteto-mode/SKILL.md; upstream cursor-team-kit deslop; adapters/host.md",
+        "port_evidence": "The executable delta touches no skills/, companion-skills/, agents/ or hook registration files. adapters/host.md still resolves poteto-mode, make-bot-ui, the 46 explicit-only skills, poteto-agent and Comment Sicko, the three companions by exact packaged path, check_plan.mjs, orch/watch-pr helpers, and the claude/grok worker specs. evidence/companion-verification.json shows source, package and installed body hashes equal at baseline 517e1a1 with build --check and package --check exit 0; docs/companions.md matches that record.",
+        "result": "partial",
+        "reason": "Consistent with preservation, but the companion and package evidence predates this commit and the generator's hash enforcement is asserted rather than shown; the skills tree and build/package tests were not supplied."
+      },
+      {
+        "requirement": "Grok Bot and Grok Build are optional and separate; Claude coding remains the default",
+        "upstream_basis": "User contract; adapters/host.md; docs/grok-bot.md",
+        "port_evidence": "docs/grok-bot.md: 'Nothing in the core Codex/Fable workflow imports it'; adapters/host.md: 'Grok Bot is optional and separate from Grok Build'; the host.md spec example uses backend claude; docs/grok.md opens with 'Ordinary Claude-backed workflows do not require it'.",
+        "result": "pass",
+        "reason": "Documented separation is consistent across supplied files. The import graph of unsupplied scripts could not be checked."
+      },
+      {
+        "requirement": "Exact role/backend/model/effort policy remains meaningful",
+        "upstream_basis": "ad93276 core scope item (3); model_config.py and check_plan lane policy",
+        "port_evidence": "No delta to model_config.py or the schema; check_plan.mjs lane policy code unchanged apart from the RRULE line; grok_worker passes --model and --reasoning-effort as separate exact values and refuses non-identifier tokens.",
+        "result": "pass",
+        "reason": "The policy surface is untouched and the new backend honors separate values without aliasing."
+      },
+      {
+        "requirement": "Attention check: parent claims do not exceed observations",
+        "upstream_basis": "User instruction to flag claimed tests or readiness beyond actual observation",
+        "port_evidence": "docs/integration-review.md: 216 then 223 Python tests and 52 Bun tests passing; docs/grok.md: 'Both passed real checks through the production adapter's public CLI'; capability map test: grok_bot_app live-tested; docs/companions.md inclusion claims; docs/grok.md 'Final Fable source review remains pending'.",
+        "result": "partial",
+        "reason": "Test counts are unexecuted here. The Grok acceptance claim is bounded correctly to analysis and reader on one Linux build, but its hash binding is unverified (DELTA-1). grok_bot_app 'live-tested' is defensible only for the paused-routine and screenshot observation and its notes were not supplied. Companion inclusion evidence is from 517e1a1. No supplied document claims writer support, webhook delivery, Mac support or Cursor parity."
+      },
+      {
+        "requirement": "The scoped Poteto cleanup changed no behavior",
+        "upstream_basis": "upstream deslop guardrail: keep behavior unchanged; Poteto comment rule: keep non-obvious why",
+        "port_evidence": "Removed items in the delta are docstrings, section banners, noqa tags, the unreachable 'if secret is None' guard in send_event, and _FLAG_RE. Tests unchanged except added coverage and comment removal.",
+        "result": "pass",
+        "reason": "No control-flow change beyond the lifecycle refactor already verified. Several removed docstrings stated security invariants that the code cannot show on its own (DELTA-6)."
+      }
+    ],
+    "findings": [
+      {
+        "id": "DELTA-1",
+        "severity": "P2",
+        "file": "evidence/grok-adapter-acceptance.json",
+        "location": "probes.analysis.source_sha256 and probes.reader.source_sha256; no test in tests/test_grok_worker.py references them",
+        "problem": "The Linux acceptance record binds itself to grok_worker.py 5a7705e10f75... and worker_common.py 46ad8b397c35..., but nothing in the repository checks that those equal the files at a3b0735, and this review cannot compute hashes. The commit title and docs/grok.md present the profiles as verified on this basis. The earlier probe record carries different hashes (c50d430be1d0..., 96b7bd9de7af...), showing that the scripts changed between evidence captures, so drift after acceptance is a real risk.",
+        "evidence": "grok-adapter-acceptance.json: 'source_sha256': {'grok_worker.py': '5a7705e1...', 'worker_common.py': '46ad8b39...'}, 'source_unchanged': true. grok-capability-probes.json strict_stdin_transport: 'grok_worker.py': 'c50d430b...'. tests/test_grok_worker.py contains no hashlib comparison against either file.",
+        "fix": "Add a test that computes sha256 of scripts/grok_worker.py and scripts/worker_common.py and asserts equality with the acceptance record, so any later edit invalidates the evidence until it is refreshed. Have the parent state the a3b0735 blob hashes of both scripts in docs/integration-review.md or the evidence file. Keep grok-capability-probes.json labeled experimental and exempt from the binding.",
+        "validation": "The new test fails whenever either script changes; the parent confirms that 'git show a3b0735:scripts/grok_worker.py | shasum -a 256' equals 5a7705e1... and likewise for worker_common.py. Until then, cite the acceptance as parent-reported only."
+      },
+      {
+        "id": "DELTA-2",
+        "severity": "P3",
+        "file": "scripts/grok_worker.py",
+        "location": "main() 'except (ValueError, OSError)' branch; build_command FileNotFoundError('Grok Build is not installed or not on PATH'); build_env ValueError for inherited overrides",
+        "problem": "A missing Grok binary and a rejected inherited XAI_API_KEY or proxy override are reported with status invalid_spec. The spec is valid in those cases; the environment is unsupported. Callers keying on status will misdiagnose them.",
+        "evidence": "main(): receipt = wc.make_error_receipt(spec, 'unsupported_profile' if isinstance(error, UnsupportedProfile) else 'invalid_spec', [str(error)]); build_command raises FileNotFoundError; build_env raises plain ValueError.",
+        "fix": "Raise UnsupportedProfile (status unsupported_profile) for the missing binary and for rejected environment overrides, or introduce a distinct status if worker_common.exit_code_for supports one. Also guard make_error_receipt against a non-dict spec from json.loads.",
+        "validation": "Tests: shutil.which patched to None with no ~/.grok/bin/grok -> status unsupported_profile, exit 2, no invocation; build_env with XAI_API_KEY -> same; spec file containing a JSON list -> a JSON receipt rather than a traceback."
+      },
+      {
+        "id": "DELTA-3",
+        "severity": "P3",
+        "file": "scripts/grok_worker.py",
+        "location": "check_compatibility evidence dict ('interrupt_signal': guard.requested_signal) and 'except OSError as error: problem = ... error.strerror'",
+        "problem": "The compatibility evidence records the raw signal number instead of the name used everywhere else in receipts, and an OSError without strerror yields the text 'failed: None'.",
+        "evidence": "worker_common records _signal_name(...) for interrupt_signal and late_parent_signals; grok_worker stores the int. _os_reason in grok_bot already handles the None strerror case.",
+        "fix": "Use wc._signal_name(guard.requested_signal) when not None, and 'error.strerror or type(error).__name__'.",
+        "validation": "Unit test sending SIGTERM to a wrapper during a slow --version and asserting status interrupted and adapter.compatibility.interrupt_signal == 'SIGTERM'; a PermissionError binary asserting a non-empty reason."
+      },
+      {
+        "id": "DELTA-4",
+        "severity": "P3",
+        "file": "scripts/grok_worker.py",
+        "location": "parse_events evidence.init projection; docs/grok.md 'Invocation and compatibility'",
+        "problem": "The real init event carries apiKeySource ('oauth' in every fixture) and the operator's user-level slash_commands and skills (analysis.jsonl lists user:loop, apify, brightdata and many others). evidence.init keeps only model, cwd, permissionMode, tools and mcp_servers, so the receipt discards a cheap authentication-route signal that docs/grok.md calls not independently attested, and the docs do not say that user-level skills and commands load into the worker session.",
+        "evidence": "evidence 'init': [{key: init.get(key) for key in ('model','cwd','permissionMode','tools','mcp_servers')}]; fixtures analysis.jsonl and reader.jsonl 'apiKeySource': 'oauth', 'skills': [...]; docs/grok.md: 'the adapter does not independently attest its configured authentication route'.",
+        "fix": "Record apiKeySource and the skills count in evidence.init (record, do not enforce), and add one sentence to docs/grok.md stating that the CLI loads inherited user-level skills and slash commands into the session and the adapter does not isolate them.",
+        "validation": "Parser test asserting evidence.init[0]['apiKeySource'] == 'oauth' and a skills count for reader.jsonl; doc review."
+      },
+      {
+        "id": "DELTA-5",
+        "severity": "P3",
+        "file": "scripts/claude_worker.py",
+        "location": "BASH_RULE_RE '^Bash\\((?P<body>.*)\\)$' used by is_scoped_bash_rule",
+        "problem": "The '$' anchor matches before a single trailing newline, so 'Bash(git log:*)\\n' passes validation and is forwarded to --allowedTools with the newline attached. Nothing can follow the newline (a second rule fails the regex), so this is harmless, but the acceptance is unintended.",
+        "evidence": "Python re: '$' matches at end of string or just before a newline at end of string; the body check excludes newlines inside the body only.",
+        "fix": "Anchor with '\\Z' or use re.fullmatch, and strip nothing.",
+        "validation": "Test asserting SpecError for ['Bash(git log:*)\\n'] on reader and writer."
+      },
+      {
+        "id": "DELTA-6",
+        "severity": "P3",
+        "file": "scripts/grok_bot.py, scripts/worker_common.py, hooks/mode.py",
+        "location": "Removed docstrings on _open_private, _trusted_config, post_once, payload_contains, _NoRedirect, _require_disjoint_run_dir, _ended_by_own_cause, _record_late_signals, prose_lines",
+        "problem": "The cleanup removed docstrings that stated security invariants the code cannot show (descriptor checks and never chmod; host re-derived from url; status read only and body never read; refuse every redirect; why run_dir must be disjoint; why a skipped launch is interrupted but a Popen failure is not; why double-quote state carries across lines). Tests encode the behavior, but a future edit loses the reason.",
+        "evidence": "Diff hunks delete these docstrings verbatim while the code they described is unchanged.",
+        "fix": "Restore one-line why comments on those functions. The upstream deslop guardrail targets unnecessary comments and the Poteto comment rule keeps a non-obvious why.",
+        "validation": "Doc-only; no behavior change."
+      },
+      {
+        "id": "DELTA-7",
+        "severity": "P3",
+        "file": "docs/grok.md, docs/integration-review.md, docs/companions.md",
+        "location": "docs/grok.md 'Final Fable source review remains pending'; docs/integration-review.md 'These repairs still need a Fable delta review'; docs/companions.md inclusion claims backed by evidence/companion-verification.json baseline_commit 517e1a1",
+        "problem": "Once this verdict is recorded the pending-review sentences become stale, and the companion inclusion evidence is bound to 517e1a1 rather than to the candidate, which docs/companions.md does not say.",
+        "evidence": "evidence/companion-verification.json: 'baseline_commit': '517e1a1048b7...', content_sha256 51a433e0... for 408 files; scripts and docs changed in 13fc828 and a3b0735 after that capture.",
+        "fix": "Replace the pending sentences with a reference to this verdict and its scope. Either re-run build --check, package --check and the companion body comparison at a3b0735 and record it, or state in docs/companions.md that the recorded evidence predates the candidate and that the generator's hash check is what carries inclusion forward.",
+        "validation": "Doc review; an updated evidence file whose baseline_commit equals the release candidate."
+      }
+    ],
+    "limitations": [
+      "No tools beyond StructuredOutput were available: I executed no tests, builds, package checks, CLI probes or hash computations. The 216/223 Python and 52 Bun counts, the Linux acceptance and capability probes, the companion verification and every live observation are parent-reported and accepted only at their stated scope.",
+      "I cannot compute sha256 values, so the source_sha256 entries in evidence/grok-adapter-acceptance.json were not compared to the supplied scripts; DELTA-1 asks the parent to bind them.",
+      "Not supplied and therefore not audited: the full scripts/worker_common.py (validate_spec, evaluate, terminate_process_group signature and return, make_error_receipt, exit_code_for, validate_env, bound_value), the full scripts/claude_worker.py (BASH_RULE_RE definition and imports), the rest of scripts/pstack.py, hooks/mode.py regex definitions (DOUBLE_QUOTE, SINGLE_QUOTED, INLINE_CODE, FENCE), check_plan.mjs expandHome and the run() helper in tests/test_check_plan.py, docs/workflow-capabilities.json, docs/native-workflows.md, adapters/ADAPTATIONS.md, README and the ten image assets, scripts/doctor.py, model_config.py, tests/test_build and test_package, and the generated skills tree.",
+      "Grok CLI flag semantics (--tools seed and --disallowed-tools interaction, --allow rule grammar, --sandbox behavior, /dev/stdin under read-only sandbox) are taken from docs/grok.md, the pinned xai-org links and the parent's evidence; I did not view the pinned CLI source.",
+      "The four real streams are sanitized captures whose provenance hashes are recorded in tests/fixtures/grok/provenance.json; I could not verify the sanitization against the originals, only that the fixtures are internally consistent with the parser and tests.",
+      "The acceptance record is a summary of booleans rather than receipts, argv or raw streams, so it evidences outcomes as the parent classified them, not the underlying artifacts.",
+      "Cross-runtime CODEX_HOME agreement (test_empty_and_tilde_codex_home_match_the_python_policy_resolver) depends on Node os.homedir and the unsupplied expandHome; verified by reasoning only.",
+      "Whether any core script imports grok_bot or grok_worker could not be checked beyond the supplied files and the docs' assertion.",
+      "Companion and package evidence is bound to 517e1a1, not to a3b0735; preservation at the candidate rests on the generator's hash enforcement, which the user states and I did not see.",
+      "README visual changes and 'unchanged ten image assets' were not supplied; only the technical claims in the supplied docs were judged."
+    ],
+    "files_examined": [
+      "hooks/mode.py (delta)",
+      "scripts/check_plan.mjs (delta)",
+      "scripts/claude_worker.py (delta)",
+      "scripts/grok_bot.py (delta)",
+      "scripts/pstack.py (delta)",
+      "scripts/worker_common.py (delta)",
+      "scripts/grok_worker.py (full)",
+      "tests/test_check_plan.py (delta)",
+      "tests/test_claude_worker.py (delta)",
+      "tests/test_grok_bot.py (delta)",
+      "tests/test_mode.py (delta)",
+      "tests/test_worker_common.py (delta)",
+      "tests/test_worker_signals.py (delta)",
+      "tests/test_grok_worker.py (full)",
+      "tests/fixtures/grok/analysis.jsonl",
+      "tests/fixtures/grok/analysis-success.jsonl",
+      "tests/fixtures/grok/analysis-default-tools.jsonl",
+      "tests/fixtures/grok/reader.jsonl",
+      "tests/fixtures/grok/writer-positive.jsonl",
+      "tests/fixtures/grok/writer-sibling.jsonl",
+      "tests/fixtures/grok/writer-symlink.jsonl",
+      "tests/fixtures/grok/provenance.json",
+      "adapters/host.md",
+      "docs/grok.md",
+      "docs/grok-bot.md",
+      "docs/integration-review.md",
+      "docs/companions.md",
+      "evidence/grok-adapter-acceptance.json",
+      "evidence/grok-capability-probes.json",
+      "evidence/companion-verification.json",
+      "upstream/pstack/skills/poteto-mode/SKILL.md",
+      "upstream/pstack/skills/why/SKILL.md",
+      "upstream/pstack/skills/make-bot-ui/SKILL.md",
+      "upstream/cursor-team-kit/skills/deslop/SKILL.md",
+      "prior approvals for ad93276 (core and bot) as supplied"
+    ]
+  },
+  "execution": {
+    "requested_model": "claude-fable-5-1",
+    "requested_effort": "xhigh",
+    "observed_models": [
+      "claude-fable-5-1"
+    ],
+    "requested_model_verified": true,
+    "complete": true,
+    "confirmed_terminated": true,
+    "status": "success",
+    "elapsed_seconds": 960.357
+  },
+  "prompt_sha256": "7803a3f2cdb8fdbd724b29f117f783f6543473cfd748ecf068e4bebbdb166c84",
+  "raw_response_sha256": "c157f6e4b8110c3bd1d713e29e6037884663e5431d635a26d198de8f87fb0597"
+}

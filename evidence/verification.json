@@ -12,7 +12,7 @@
   },
   "tests": {
     "port_unittest": {
-      "passed": 87,
+      "passed": 229,
       "failed": 0
     },
     "upstream_bun": {
@@ -545,5 +545,8 @@
     "runtime": "approve",
     "scope": "documented limited alpha",
     "record": "fable-review.json"
-  }
+  },
+  "latest_integration_record": "integration-verification.json",
+  "latest_grok_adapter_record": "grok-adapter-acceptance.json",
+  "latest_fable_review_record": "final-review.json"
 }

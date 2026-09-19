@@ -108,7 +108,7 @@ All principles are registered leaf skills with `disable-model-invocation: true`.
 - Why says both “one investigator per category” and “do not ask one agent to cover multiple MCPs.” With multiple MCPs in one category, retain source isolation and document the roster decision. With many sources, concurrency limits alter scheduling, not coverage obligations.
 - The decision log says append-only, but its audit instructs cutting invented/padded entries. Preserve raw history and flag this conflict for an explicit port resolution instead of quietly selecting one instruction.
 - The TypeScript duration example says start-plus-duration prevents negative ranges although `durationMs: number` permits negatives. This is a source example defect, not a reason to remove type-system-discipline or invent host behavior.
-- Actual Cursor built-in/companion implementations are outside this pinned pstack corpus. Their exact contracts remain unverified here. The parent separately audits all 23 playbooks, mode references and runtime helpers; this document does not claim those files were read in this bounded subtask.
+- The original bounded audit did not cover the external Cursor built-ins or companion implementations. Subsequent acquisition and verification added all three pinned `cursor-team-kit` companions to this port. Cursor built-ins remain separate host capabilities. See [companion skills and built-ins](companions.md) for their current status. The parent separately audited all 23 playbooks, mode references and runtime helpers; this document's original read manifest covers only the bounded subtask below.
 
 ## Port-verification implications
 

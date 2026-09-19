@@ -39,8 +39,9 @@ message={'model': 'wrong-model' if scenario=='wrong_model' else model,'content':
 if scenario=='missing_model': message.pop('model')
 if scenario!='usage_only': print(json.dumps({'type':'assistant','message':message}),flush=True)
 if scenario=='incomplete': raise SystemExit(0)
+allowed=args[args.index('--allowedTools')+1:] if '--allowedTools' in args else []
 result={'type':'result','subtype':'success','is_error':False,
-        'result':json.dumps({'prompt':prompt,'tools':tools,'cwd':os.getcwd(),'effort':value('--effort')}),
+        'result':json.dumps({'prompt':prompt,'tools':tools,'cwd':os.getcwd(),'effort':value('--effort'),'allowed':allowed}),
         'modelUsage':{model:{'provider':'firstParty'},'auxiliary-helper':{'provider':'firstParty'}},
         'permission_denials':[]}
 if scenario=='foreign_provider': result['modelUsage']['auxiliary-helper']['provider']='external'
@@ -62,13 +63,29 @@ class ClaudeWorkerTests(unittest.TestCase):
         binary.chmod(0o755)
         self.prompt = self.root / "prompt file.txt"
         self.prompt.write_text("Synthetic stdin with spaces, quotes ' and æ.")
+        self.project = self.root / "project"
+        self.project.mkdir()
         self.count = 0
 
     def spec(self, **changes):
         self.count += 1
         return {"backend":"claude", "model":"fixture-fable", "effort":"xhigh", "profile":"analysis",
-                "cwd":str(self.root), "prompt_file":str(self.prompt), "run_dir":str(self.root/f"run {self.count}"),
+                "cwd":str(self.project), "prompt_file":str(self.prompt),
+                "run_dir":str(self.root/"attempts"/f"run {self.count}"),
                 "timeout_seconds":3, "term_grace_seconds":0.1, **changes}
+
+    def plan(self, **changes):
+        return claude.plan_claude(self.spec(**changes), environ={"PATH": str(self.binary_dir)})
+
+    def test_one_bash_entry_cannot_smuggle_additional_permission_rules(self):
+        self.assertTrue(claude.is_scoped_bash_rule("Bash(git log:*)"))
+        self.assertFalse(claude.is_scoped_bash_rule("Bash(git log:*)\n"))
+        for profile in ("reader", "writer"):
+            for rule in ("Bash(true) Bash(*)", "Bash(x) Edit(//**)", "Bash(a)(b)", "Bash(?*)", "Bash([a-z]*)", "Bash(git log:*)\n"):
+                with self.subTest(profile=profile, rule=rule):
+                    with self.assertRaises(claude.SpecError):
+                        self.plan(profile=profile, allowed_tools=[rule])
+            self.plan(profile=profile, allowed_tools=["Bash(git log:*)", "Bash(python3 -m unittest:*)"])
 
     def run_fixture(self, scenario="normal", **changes):
         return claude.run_claude(self.spec(**changes), environ={"PATH":str(self.binary_dir),
@@ -84,7 +101,7 @@ class ClaudeWorkerTests(unittest.TestCase):
                 result=json.loads(Path(receipt["result_path"]).read_text())
                 self.assertEqual(self.prompt.read_text(),result["prompt"])
                 self.assertEqual(tools,result["tools"])
-                self.assertEqual(str(self.root),result["cwd"])
+                self.assertEqual(str(self.project),result["cwd"])
                 self.assertEqual("xhigh",result["effort"])
                 self.assertNotIn(self.prompt.read_text(),receipt["command_argv"])
 
@@ -125,6 +142,14 @@ class ClaudeWorkerTests(unittest.TestCase):
         receipt=self.run_fixture("permission_denial",profile="reader")
         self.assertEqual(1,receipt["permission_denial_count"])
         self.assertEqual(["Read"],receipt["evidence"]["permission_denied_tools"])
+        self.assertEqual("success",receipt["status"])
+        self.assertEqual(0,receipt["exit_code"])
+        self.assertEqual([],receipt["errors"])
+        self.assertTrue(any(warning.startswith("permission_denials: 1 (tools: Read)") for warning in receipt["warnings"]),
+                        receipt["warnings"])
+        clean=self.run_fixture(profile="reader")
+        self.assertEqual(0,clean["permission_denial_count"])
+        self.assertFalse(any(warning.startswith("permission_denials") for warning in clean["warnings"]))
 
     def test_routing_overrides_rejected_without_disclosing_values(self):
         sentinel="synthetic-secret-do-not-echo"
@@ -171,12 +196,67 @@ class ClaudeWorkerTests(unittest.TestCase):
         self.assertNotIn("Edit", receipt["adapter"]["allowed_tools"])
 
     def test_writer_uses_one_primary_directory_edit_rule_for_edit_and_write(self):
-        plan = claude.plan_claude(self.spec(profile="writer"), environ={"PATH": str(self.binary_dir)})
+        plan = self.plan(profile="writer")
         allowed = plan["adapter"]["allowed_tools"]
-        self.assertIn("Edit(/**)", allowed)
+        edit_rules = [rule for rule in allowed if rule.startswith("Edit")]
+        self.assertEqual(1, len(edit_rules))
+        self.assertTrue(edit_rules[0].startswith("Edit(//") and edit_rules[0].endswith("/**)"), edit_rules)
+        self.assertNotIn("Edit(/**)", allowed)
         self.assertNotIn("Edit", allowed)
         self.assertNotIn("Write", allowed)
         self.assertFalse(any(rule.startswith("Write(") for rule in allowed))
+
+    def test_writer_edit_rule_is_anchored_at_the_resolved_absolute_cwd(self):
+        expected = f"Edit(/{os.path.realpath(self.project)}/**)"
+        self.assertTrue(expected.startswith("Edit(//"))
+        plan = self.plan(profile="writer")
+        self.assertEqual(["Read", "Glob", "Grep", expected], plan["adapter"]["allowed_tools"])
+        argv = plan["argv"]
+        self.assertEqual(plan["adapter"]["allowed_tools"], argv[argv.index("--allowedTools") + 1:])
+        self.assertEqual({"rule": expected, "resolved_cwd": os.path.realpath(self.project), "anchor": "filesystem-root"},
+                         plan["adapter"]["edit_scope"])
+        receipt = self.run_fixture(profile="writer", allowed_tools=["Bash(python3 -m unittest:*)"])
+        self.assertEqual("success", receipt["status"])
+        result = json.loads(Path(receipt["result_path"]).read_text())
+        self.assertEqual(["Read", "Glob", "Grep", expected, "Bash(python3 -m unittest:*)"], result["allowed"])
+        alias = self.root / "alias"
+        alias.symlink_to(self.project, target_is_directory=True)
+        aliased = self.plan(profile="writer", cwd=str(alias))
+        self.assertIn(expected, aliased["adapter"]["allowed_tools"])
+        self.assertNotIn(f"Edit(/{alias}/**)", aliased["adapter"]["allowed_tools"])
+        self.assertEqual(str(alias), aliased["spec"]["cwd"])
+        for profile in ("analysis", "reader"):
+            with self.subTest(profile=profile):
+                plan = self.plan(profile=profile)
+                self.assertFalse(any(rule.startswith("Edit") for rule in plan["adapter"]["allowed_tools"]))
+                self.assertIsNone(plan["adapter"]["edit_scope"])
+
+    def test_writer_rejects_cwd_that_cannot_be_expressed_as_a_safe_path_rule(self):
+        for name in ("comma,dir", "star*dir", "question?dir", "bracket[1]", "brace{a}", "paren(1)", "back\\slash"):
+            with self.subTest(name=name):
+                cwd = self.root / name
+                cwd.mkdir()
+                spec = self.spec(profile="writer", cwd=str(cwd))
+                with self.assertRaisesRegex(claude.SpecError, "permission path rule"):
+                    claude.run_claude(spec, environ={"PATH": str(self.binary_dir)})
+                self.assertFalse(Path(spec["run_dir"]).exists())
+                for profile in ("analysis", "reader"):
+                    plan = self.plan(profile=profile, cwd=str(cwd))
+                    self.assertFalse(any(rule.startswith("Edit") for rule in plan["adapter"]["allowed_tools"]))
+        spaced = self.root / "spaced dir name"
+        spaced.mkdir()
+        plan = self.plan(profile="writer", cwd=str(spaced))
+        self.assertIn(f"Edit(/{os.path.realpath(spaced)}/**)", plan["adapter"]["allowed_tools"])
+
+    def test_attempt_directory_inside_cwd_is_rejected_before_claim(self):
+        for run_dir in (self.project / "attempt", self.project / ".pstack" / "attempt"):
+            with self.subTest(run_dir=str(run_dir)):
+                spec = self.spec(profile="writer", run_dir=str(run_dir))
+                with self.assertRaisesRegex(claude.SpecError, "inside cwd"):
+                    claude.plan_claude(spec, environ={"PATH": str(self.binary_dir)})
+                with self.assertRaisesRegex(claude.SpecError, "inside cwd"):
+                    claude.run_claude(spec, environ={"PATH": str(self.binary_dir)})
+                self.assertFalse(run_dir.exists())
 
     def test_partial_text_is_retained_without_claiming_completion(self):
         receipt = self.run_fixture("incomplete")

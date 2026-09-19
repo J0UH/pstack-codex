@@ -1,0 +1,408 @@
+{
+  "date": "2026-09-18",
+  "scope": "Implemented Codex host mappings and selected observed flows; not complete Cursor runtime parity or every playbook end to end.",
+  "implementation": {
+    "authoring_model": "claude-fable-5-1",
+    "requested_effort": "xhigh",
+    "runs": {
+      "runtime": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 4,
+        "tool_calls_by_name": {
+          "Bash": 17,
+          "Edit": 29,
+          "Grep": 5,
+          "Read": 15,
+          "Write": 1
+        }
+      },
+      "runtime-followup": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 2,
+        "tool_calls_by_name": {
+          "Bash": 15,
+          "Edit": 7,
+          "Grep": 2,
+          "Read": 4
+        }
+      },
+      "mode": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 0,
+        "tool_calls_by_name": {
+          "Bash": 10,
+          "Edit": 12,
+          "Glob": 1,
+          "Grep": 2,
+          "Read": 13,
+          "Write": 2
+        }
+      },
+      "mode-followup": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 7,
+        "tool_calls_by_name": {
+          "Bash": 19,
+          "Edit": 5,
+          "Glob": 9,
+          "Grep": 10,
+          "Read": 9,
+          "Write": 5
+        }
+      },
+      "workflow": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 6,
+        "tool_calls_by_name": {
+          "Bash": 13,
+          "Edit": 4,
+          "Grep": 3,
+          "Read": 60,
+          "Write": 8
+        }
+      },
+      "workflow-followup": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 5,
+        "tool_calls_by_name": {
+          "Bash": 10,
+          "Edit": 13,
+          "Glob": 6,
+          "Grep": 7,
+          "Read": 26,
+          "Write": 5
+        }
+      },
+      "bot-followup": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 6,
+        "tool_calls_by_name": {
+          "Bash": 16,
+          "Edit": 22,
+          "Glob": 3,
+          "Grep": 10,
+          "Read": 9,
+          "Write": 4
+        }
+      },
+      "doctor": {
+        "status": "success",
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "observed_models": [
+          "claude-fable-5-1"
+        ],
+        "requested_model_verified": true,
+        "complete": true,
+        "permission_denial_count": 4,
+        "tool_calls_by_name": {
+          "Bash": 9,
+          "Edit": 4,
+          "Glob": 4,
+          "Grep": 1,
+          "Read": 13,
+          "Write": 3
+        }
+      }
+    },
+    "parent_repairs": [
+      "standard-validator mutation case corrected after running the actual dependency",
+      "plan token escaping and terminal-whitespace validation",
+      "private FIFO inputs rejected without blocking",
+      "doctor no longer equates inference receipt success with sandbox verification",
+      "probe requires explicit known-harmless payload",
+      "Fable final-review follow-ups: strict single-rule Bash grammar, fenced schedule rejection, home resolution, stale-context hint and inch-mark activation",
+      "Fable final-review follow-ups: finite numbers, pre-serialization redaction, key alias protection, owned queue directory and non-echoing argument errors"
+    ],
+    "approval": {
+      "reviewed_commit": "ad93276dcf570e68832af469abce7066b2d6edc3",
+      "core": "approve",
+      "bot": "approve",
+      "record": "integration-review.json",
+      "post_review_followups": "approved within scope; see final-review.json",
+      "grok_implementation_attempt": "session limit before tools or edits",
+      "grok_implementation": "Astra implementation, real Linux acceptance and final scoped Fable review complete",
+      "final_review": {
+        "reviewed_code_commit": "1e95049f3ffdd19710938d267e196d9c0e1aae0a",
+        "verdict": "approve",
+        "record": "final-review.json"
+      }
+    }
+  },
+  "tests": {
+    "python": {
+      "passed": 229,
+      "failed": 0,
+      "pending_final_rerun": false,
+      "jsonschema": "4.23.0",
+      "interpreter": "Python 3.12"
+    },
+    "upstream_bun": {
+      "passed": 52,
+      "failed": 0,
+      "unchanged_source": true
+    }
+  },
+  "mode": {
+    "quoted_mention_left_inactive": true,
+    "multiline_punctuated_dollar_mention_activated": true,
+    "authoritative_identity_in_developer_hook_context": true,
+    "resumed_hook_context_observed": true,
+    "matching_developer_contexts": 3,
+    "scope": "actual Codex CLI plugin hooks; no provider delegation in these diagnostic turns",
+    "explicit_exit_verified": true
+  },
+  "native_heartbeat": {
+    "native_tool": "automation_update",
+    "kind": "heartbeat",
+    "scheduled_turn_observed": true,
+    "sentinel_verified": true,
+    "session_identity_matches": true,
+    "workspace_write_sandbox": true,
+    "pause_confirmed": true,
+    "scope": "one harmless local file operation; not all unattended playbook lifecycles",
+    "scheduler_count1_rejected_as_no_future_runs": true,
+    "delete_confirmed": true
+  },
+  "native_queue": {
+    "queue_command_available": true,
+    "command_accepted_message": true,
+    "cold_task_started_by_queue": false,
+    "observed_task_state_after_queue": "notLoaded; prior completed turn unchanged",
+    "conclusion": "Queue acceptance is not a verified durable event wake. Native desktop send_message used only to drain the harmless test.",
+    "native_send_message_dispatch_completed": true,
+    "test_task_archived": true
+  },
+  "native_collaboration": {
+    "bounded_subtasks_completed": true,
+    "messages_and_result_collection_observed": true,
+    "known_app_task_summary_read_observed": true,
+    "native_agent_ids_are_not_app_task_ids": true,
+    "complete_transcript_guaranteed": false
+  },
+  "writer_boundaries": {
+    "nested_package": {
+      "probe": "Claude writer nested Git working-directory boundary",
+      "independent_functional_probe": true,
+      "source_sha256_before": {
+        "claude_worker.py": "8bcaecd16d635e0bc8c7d1e6e2cd6d6cabb431ba56dedf37d4e8570cecf9e522",
+        "worker_common.py": "2eb3b20be732f88be6ac02aa58c33d48c4b59ce939bd00a6c69aa604429aabbe"
+      },
+      "source_sha256_after": {
+        "claude_worker.py": "8bcaecd16d635e0bc8c7d1e6e2cd6d6cabb431ba56dedf37d4e8570cecf9e522",
+        "worker_common.py": "2eb3b20be732f88be6ac02aa58c33d48c4b59ce939bd00a6c69aa604429aabbe"
+      },
+      "source_unchanged": true,
+      "fixture_cwd": "fixture/packages/a",
+      "fixture_git_root": "fixture",
+      "evidence_disjoint_from_cwd": true,
+      "cwd_matches_requested": true,
+      "requested_model": "claude-fable-5-1",
+      "observed_models": [
+        "claude-fable-5-1"
+      ],
+      "requested_model_verified": true,
+      "requested_effort": "low",
+      "worker_status": "success",
+      "complete": true,
+      "permission_denial_count": 1,
+      "tool_calls_by_name": {
+        "Edit": 1,
+        "Read": 2,
+        "Write": 1
+      },
+      "inside_marker_matches": true,
+      "sibling_bytes_unchanged": true,
+      "unrelated_files_unchanged": true,
+      "changed_fixture_paths": [
+        "packages/a/inside.txt"
+      ],
+      "no_bash_calls": true,
+      "init_tools": [
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "init_cwd_matches_requested": true,
+      "allowed_edit_rule_uses_absolute_cwd": true,
+      "passed": true
+    },
+    "path_with_spaces": {
+      "probe": "Claude writer nested Git cwd with spaces",
+      "source_sha256_before": {
+        "claude_worker.py": "8bcaecd16d635e0bc8c7d1e6e2cd6d6cabb431ba56dedf37d4e8570cecf9e522",
+        "worker_common.py": "2eb3b20be732f88be6ac02aa58c33d48c4b59ce939bd00a6c69aa604429aabbe"
+      },
+      "source_sha256_after": {
+        "claude_worker.py": "8bcaecd16d635e0bc8c7d1e6e2cd6d6cabb431ba56dedf37d4e8570cecf9e522",
+        "worker_common.py": "2eb3b20be732f88be6ac02aa58c33d48c4b59ce939bd00a6c69aa604429aabbe"
+      },
+      "source_unchanged": true,
+      "fixture_cwd": "fixture repo/packages/package a",
+      "evidence_disjoint_from_cwd": true,
+      "cwd_matches_requested": true,
+      "init_cwd_matches_requested": true,
+      "requested_model": "claude-fable-5-1",
+      "observed_models": [
+        "claude-fable-5-1"
+      ],
+      "requested_model_verified": true,
+      "requested_effort": "low",
+      "status": "success",
+      "complete": true,
+      "permission_denial_count": 1,
+      "tool_calls_by_name": {
+        "Edit": 1,
+        "Read": 2,
+        "Write": 1
+      },
+      "inside_marker_matches": true,
+      "sibling_bytes_unchanged": true,
+      "unrelated_files_unchanged": true,
+      "init_tools": [
+        "Edit",
+        "Glob",
+        "Grep",
+        "Read",
+        "Write"
+      ],
+      "changed_fixture_paths": [
+        "\"packages/package a/inside.txt\""
+      ],
+      "passed": true
+    },
+    "effort": "low functional probes; not review effort"
+  },
+  "schema_regex": {
+    "tested": 65536,
+    "mismatches": []
+  },
+  "grok_bot": {
+    "app": "Grok Bot",
+    "version": "0.56.1",
+    "signed_in_ui_observed": true,
+    "separate_diagnostic_bot_created": true,
+    "capability_reply_observed": true,
+    "routine_native_creation_observed": true,
+    "routine_paused_ui_observed": true,
+    "webhook_url_shape_verified": true,
+    "secret_value_exposed_to_model": false,
+    "webhook_delivery_verified": false,
+    "routine_management_interface": "Grok Bot native tools reached through its desktop UI; no Codex native Bot connector",
+    "live_secret_request_schema_reported": {
+      "required": [
+        "label",
+        "name"
+      ],
+      "optional": [
+        "description",
+        "plugin_id"
+      ]
+    },
+    "routine_prompt_scope": "synthetic action=probe and nonce only, no files/connectors/external messages",
+    "limitations": [
+      "tool-schema details reported by Bot, not a direct Codex MCP introspection",
+      "webhook remains paused, no sender key obtained, no event delivery claim"
+    ],
+    "cloud_browser_probe": {
+      "request": "open public example.com using real cloud browser; no personal data or account changes",
+      "bot_reported_result": "Example Domain title and heading; https://example.com/",
+      "coordinator_observed_reply": true,
+      "coordinator_independently_viewed_screenshot": true,
+      "scope": "Coordinator observed returned screenshot with Example Domain on the Bot cloud browser; not an authenticated-business-app or webhook-delivery test."
+    }
+  },
+  "grok_build": {
+    "installed_version": "1.0.34",
+    "fresh_protected_probe": "process_failed before inference",
+    "sandbox_error": "runtime-socket deny path endpoint is a symlink",
+    "protections_weakened": false,
+    "auth": "Earlier models command reported unauthenticated; latest listing had no negative marker, which is not positive authentication proof.",
+    "live_inference_verified": false,
+    "host": "macOS",
+    "linux_capability_probes": {
+      "record": "grok-capability-probes.json",
+      "analysis": "passed with experimental corrected controls",
+      "reader": "passed with exact file-tool inventory",
+      "production_adapter_ready": "analysis and reader accepted; writer unsupported",
+      "credentials_copied": false,
+      "writer": "Inside edit completed; separate sibling and symlink negative probes refused writes. Terminal cancellation vs successful delivery with a tool error recorded separately."
+    },
+    "production_adapter_acceptance": {
+      "record": "grok-adapter-acceptance.json",
+      "host": "Linux",
+      "analysis": "passed",
+      "reader": "passed",
+      "writer": "unsupported",
+      "non_linux": "unsupported",
+      "author": "Astra with explicit user authorization",
+      "final_fable_review": "approved within scope; see final-review.json"
+    }
+  },
+  "webhook_sender": {
+    "tests": "synthetic secrets and injected or loopback HTTP only",
+    "real_webhook_fired": false,
+    "real_sender_key_obtained": false,
+    "public_endpoint_override_rejected": true,
+    "http_acceptance_is_not_bot_completion": true
+  },
+  "limitations": [
+    "No matched Cursor execution baseline.",
+    "No configured independent cloud-executor service; worktree-only substitution is rejected.",
+    "Native timed wake does not establish a durable external event bridge.",
+    "Bot webhook delivery and failure-queue reachability require configured credentials and real proof.",
+    "Benny still requires the actual event/connector/authorization setup.",
+    "All authoring and review raw transcripts stay private."
+  ]
+}

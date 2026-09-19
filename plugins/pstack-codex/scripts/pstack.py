@@ -15,6 +15,10 @@ from model_config import validate_model_config
 ROOT = Path(__file__).resolve().parent.parent
 
 
+def codex_home() -> Path:
+    return Path(os.environ.get("CODEX_HOME") or Path.home() / ".codex").expanduser()
+
+
 def config_path() -> Path:
     override = os.environ.get("PSTACK_MODEL_CONFIG")
     if override:
@@ -22,7 +26,7 @@ def config_path() -> Path:
         if not path.is_absolute():
             raise ValueError("PSTACK_MODEL_CONFIG must be an absolute path")
         return path
-    return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "pstack/models.json"
+    return codex_home() / "pstack/models.json"
 
 
 def state_root() -> Path:
@@ -31,7 +35,7 @@ def state_root() -> Path:
         if not path.is_absolute():
             raise ValueError("PSTACK_STATE_DIR must be an absolute path")
         return path
-    return Path(os.environ.get("CODEX_HOME", Path.home() / ".codex")) / "pstack/state"
+    return codex_home() / "pstack/state"
 
 
 def identity(session: str, project: str) -> tuple[str, str]:
@@ -65,7 +69,10 @@ def resolve_identity(session: str | None, project: str | None) -> tuple[str, str
         candidate_project = candidate.get("project")
         if not isinstance(candidate_project, str):
             raise ValueError("Recorded session context is malformed; pass the authoritative --project")
-        resolved = identity(session, candidate_project)
+        try:
+            resolved = identity(session, candidate_project)
+        except ValueError as exc:
+            raise ValueError("A recorded context points at an invalid or missing directory; pass the authoritative --project") from exc
         if state_path(*resolved) != path:
             raise ValueError("Recorded session context has a mismatched state key")
         read_state(*resolved)
@@ -138,6 +145,7 @@ def mode_context(state: dict, full: bool = True) -> str:
     host = ROOT / "adapters/host.md"
     if not router.is_file() or not host.is_file():
         raise ValueError("Plugin is not built: router or host adapter missing")
+    prefix = shlex.join(["python3", str(ROOT / "scripts/pstack.py"), "mode", "--session", state["session"], "--project", state["project"]])
     context = [
         "pstack-codex: poteto-mode remains active in this conversation and project.",
         "This retains the chosen style, not permission for new external actions. Honor the user's current scope, explicit opt-out and host policies.",
@@ -147,7 +155,8 @@ def mode_context(state: dict, full: bool = True) -> str:
         f"Shared mode state directory: {state_root()}. CLI mutations require host write permission here; hook trust alone does not grant it. If denied, report persistence unavailable and follow the host adapter's storage setup; do not disable the sandbox or silently change stores.",
         "Use this identity for mode commands even when editing a different worktree. Do not substitute a shell cwd or guessed task ID.",
         "Omitting --session/--project is supported when CODEX_THREAD_ID matches this session and exactly one recorded context exists; the CLI then uses this recorded project, not the shell cwd. Explicit flags are recommended, not mandatory in that case.",
-        "Mode command prefix: " + shlex.join(["python3", str(ROOT / "scripts/pstack.py"), "mode", "<action>", "--session", state["session"], "--project", state["project"]]),
+        f"Mode command prefix (shell-quoted for this session and project; use it unchanged): {prefix}",
+        f"Append exactly one action to that prefix: activate, deactivate, status, reset, or select --playbook followed by the playbook stem. Example: {prefix} status",
         f"Mode generation: {state['generation']}; current playbook: {state['playbook'] or 'none recorded; continue the workflow already in progress, or match one if none has started; record it with mode select'}.",
         "A casual turn need not run a playbook. New task rematches; it does not create a visible Codex task automatically.",
         "Read referenced pstack leaves from this installed package, not same-named unrelated skills.",

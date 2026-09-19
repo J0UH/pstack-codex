@@ -1,0 +1,378 @@
+{
+  "scope": "experimental CLI capability only; not production adapter acceptance",
+  "sidecar_version": "grok 1.0.34 (3736acbc8658) [alpha]",
+  "sidecar_sha256": "be5905e107d2b8b5f3c142d21ecfe4c8fd32a913d2fd551b788707930c4dc80d",
+  "host_platform": "Linux",
+  "probes": {
+    "reader": {
+      "profile": "reader",
+      "experimental_capability_only": true,
+      "status": "success",
+      "complete": true,
+      "model_verified": true,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tools": [
+        [
+          "read_file",
+          "list_dir",
+          "grep"
+        ]
+      ],
+      "tool_calls_by_name": {
+        "read_file": 1,
+        "list_dir": 1,
+        "grep": 1
+      },
+      "permission_denial_count": 0,
+      "nonce_recovered": true,
+      "inside_matches": true,
+      "outside_unchanged": true,
+      "changed_files": [],
+      "new_files": [],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "binary_hash_unchanged": true,
+      "global_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [],
+      "requested_sandbox": "read-only",
+      "expected_negative": false,
+      "terminal_event_present": true,
+      "terminal_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      },
+      "actual_denied_tool_results": [],
+      "denial_array_absent": true,
+      "capability_check_passed": true,
+      "observed_requested_model_match": true,
+      "file_hash_checks": {
+        "packages/a/inside.txt": {
+          "initial_sha256_from_fixture_spec": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "actual_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "expected_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9"
+        },
+        "packages/b/outside.txt": {
+          "initial_sha256_from_fixture_spec": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "actual_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "expected_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26"
+        },
+        "packages/b/symlink-target.txt": {
+          "initial_sha256_from_fixture_spec": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "actual_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "expected_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7"
+        }
+      }
+    },
+    "writer_positive": {
+      "profile": "writer",
+      "experimental_capability_only": true,
+      "status": "success",
+      "complete": true,
+      "model_verified": true,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tools": [
+        [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ]
+      ],
+      "tool_calls_by_name": {
+        "read_file": 2,
+        "search_replace": 1
+      },
+      "permission_denial_count": 0,
+      "nonce_recovered": true,
+      "inside_matches": true,
+      "outside_unchanged": true,
+      "changed_files": [
+        "project/packages/a/inside.txt"
+      ],
+      "new_files": [],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "binary_hash_unchanged": true,
+      "global_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [],
+      "requested_sandbox": "strict",
+      "expected_negative": false,
+      "terminal_event_present": true,
+      "terminal_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      },
+      "actual_denied_tool_results": [],
+      "denial_array_absent": true,
+      "capability_check_passed": true,
+      "observed_requested_model_match": true,
+      "file_hash_checks": {
+        "packages/a/inside.txt": {
+          "initial_sha256_from_fixture_spec": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "actual_after_sha256": "faa7d91409f3e5f9a71e461ca0f93d6f4a42b4038af82cc6c2dad5b63dcb35fb",
+          "expected_after_sha256": "faa7d91409f3e5f9a71e461ca0f93d6f4a42b4038af82cc6c2dad5b63dcb35fb"
+        },
+        "packages/b/outside.txt": {
+          "initial_sha256_from_fixture_spec": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "actual_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "expected_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26"
+        },
+        "packages/b/symlink-target.txt": {
+          "initial_sha256_from_fixture_spec": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "actual_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "expected_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7"
+        },
+        "prompt_transport": {
+          "original_sha256": "a7d2f64b98696a30a03ee894460f402ce906f768d95a8b20d4dd0997682a7379",
+          "cwd_copy_sha256": "a7d2f64b98696a30a03ee894460f402ce906f768d95a8b20d4dd0997682a7379",
+          "unchanged_copy_matches_original": true
+        }
+      }
+    },
+    "writer_sibling_denial": {
+      "profile": "writer",
+      "experimental_capability_only": true,
+      "status": "provider_error",
+      "complete": false,
+      "model_verified": false,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tools": [
+        [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ]
+      ],
+      "tool_calls_by_name": {
+        "write": 1
+      },
+      "permission_denial_count": 0,
+      "nonce_recovered": false,
+      "inside_matches": false,
+      "outside_unchanged": true,
+      "changed_files": [],
+      "new_files": [],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "binary_hash_unchanged": true,
+      "global_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [
+        "provider_error: terminal result reported an error",
+        "incomplete: no terminal result event in the stream"
+      ],
+      "requested_sandbox": "strict",
+      "expected_negative": true,
+      "terminal_event_present": true,
+      "terminal_result": {
+        "type": "result",
+        "subtype": "error_during_execution",
+        "is_error": true,
+        "errors": [
+          "cancelled"
+        ]
+      },
+      "actual_denied_tool_results": [
+        {
+          "type": "tool_result",
+          "tool_use_id": "fixture-call-1",
+          "is_error": true,
+          "content": "[{\"type\":\"content\",\"content\":{\"type\":\"text\",\"text\":\"User cancelled the execution for tool `write`\"}}]"
+        }
+      ],
+      "denial_array_absent": true,
+      "capability_check_passed": true,
+      "observed_requested_model_match": true,
+      "experimental_parser_note": "provider_error preserved; complete=false denotes unsuccessful delivery here, not absence of terminal event (terminal error event is present). Production parser must distinguish these.",
+      "file_hash_checks": {
+        "packages/a/inside.txt": {
+          "initial_sha256_from_fixture_spec": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "actual_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "expected_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9"
+        },
+        "packages/b/outside.txt": {
+          "initial_sha256_from_fixture_spec": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "actual_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "expected_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26"
+        },
+        "packages/b/symlink-target.txt": {
+          "initial_sha256_from_fixture_spec": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "actual_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "expected_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7"
+        },
+        "prompt_transport": {
+          "original_sha256": "7e9baaaf6b49d1b7c977b5f796901c453c415d31c10f6bfb1e01ca667fc4e157",
+          "cwd_copy_sha256": "7e9baaaf6b49d1b7c977b5f796901c453c415d31c10f6bfb1e01ca667fc4e157",
+          "unchanged_copy_matches_original": true
+        }
+      }
+    },
+    "writer_symlink_denial": {
+      "profile": "writer",
+      "experimental_capability_only": true,
+      "status": "success",
+      "complete": true,
+      "model_verified": true,
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "tools": [
+        [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ]
+      ],
+      "tool_calls_by_name": {
+        "write": 1
+      },
+      "permission_denial_count": 0,
+      "nonce_recovered": false,
+      "inside_matches": false,
+      "outside_unchanged": true,
+      "changed_files": [],
+      "new_files": [],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "binary_hash_unchanged": true,
+      "global_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [],
+      "requested_sandbox": "strict",
+      "expected_negative": true,
+      "terminal_event_present": true,
+      "terminal_result": {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      },
+      "actual_denied_tool_results": [
+        {
+          "type": "tool_result",
+          "tool_use_id": "fixture-call-1",
+          "is_error": true,
+          "content": "{\"error\":\"tool_execution_failed\",\"message\":\"IO Error: Permission denied (os error 13)\"}"
+        }
+      ],
+      "denial_array_absent": true,
+      "capability_check_passed": true,
+      "observed_requested_model_match": true,
+      "experimental_parser_note": "terminal delivery succeeded after OS-denied write. Generic experimental permission_denial_count=0 reflects absent terminal array; the actual denied tool_result is retained above.",
+      "file_hash_checks": {
+        "packages/a/inside.txt": {
+          "initial_sha256_from_fixture_spec": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "actual_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9",
+          "expected_after_sha256": "05fdd18e83bc5d8abed3eae7b45d24c2f34f77e36c4958df14a401898adbc8b9"
+        },
+        "packages/b/outside.txt": {
+          "initial_sha256_from_fixture_spec": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "actual_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26",
+          "expected_after_sha256": "af7a959102e57dba22560a07099604bb0bd1f7b2d2c544268aa077c11c87fd26"
+        },
+        "packages/b/symlink-target.txt": {
+          "initial_sha256_from_fixture_spec": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "actual_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7",
+          "expected_after_sha256": "d520dbd8a711cdd388fc01796e4ca9164bdbe6b711191c089910f771d5027fc7"
+        },
+        "prompt_transport": {
+          "original_sha256": "86bafc2948b1db3478f90ec64a91a8e7288c2727d6a0b1a80f797751604a20b4",
+          "cwd_copy_sha256": "86bafc2948b1db3478f90ec64a91a8e7288c2727d6a0b1a80f797751604a20b4",
+          "unchanged_copy_matches_original": true
+        }
+      }
+    },
+    "analysis": {
+      "status": "success",
+      "complete": true,
+      "requested_model": "grok-4.6",
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "requested_model_verified": true,
+      "tool_call_count": 0,
+      "confirmed_terminated": true,
+      "evidence": {
+        "tool_inventory_verified_empty": true
+      },
+      "experimental_capability_only": true,
+      "requested_sandbox": "read-only",
+      "tool_controls": {
+        "tools": "read_file",
+        "disallowed_tools": "read_file,search_tool,use_tool"
+      },
+      "all_seven_permission_denies_retained": true
+    },
+    "strict_stdin_transport": {
+      "scope": "experimental strict-sandbox stdin transport; not production adapter acceptance",
+      "sidecar_sha256": "be5905e107d2b8b5f3c142d21ecfe4c8fd32a913d2fd551b788707930c4dc80d",
+      "sidecar_hash_unchanged": true,
+      "source_sha256_before": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "source_sha256_after": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "requested_sandbox": "strict",
+      "requested_permission_mode": "dontAsk",
+      "requested_model": "grok-4.6",
+      "observed_models": [
+        "grok-4.6"
+      ],
+      "model_verified": true,
+      "complete": true,
+      "status": "success",
+      "result_matches": true,
+      "tool_call_count": 0,
+      "init": [
+        {
+          "tools": [],
+          "permissionMode": "dontAsk",
+          "cwd_matches": true
+        }
+      ],
+      "confirmed_terminated": true,
+      "group_gone": true,
+      "fixture_unchanged": true,
+      "project_files": [
+        "untouched.txt"
+      ],
+      "prompt_outside_cwd": true,
+      "prompt_absent_from_argv": true,
+      "argv_prompt_file": "/dev/stdin",
+      "stdin_sha256": "270c54386e1486e6cd851ce6e743f4df4016baaacd884da55e9ead88d7c451b7",
+      "prompt_sha256": "270c54386e1486e6cd851ce6e743f4df4016baaacd884da55e9ead88d7c451b7",
+      "global_grok_version_after": "grok 1.0.5 (5115b46bc9) [stable]",
+      "errors": [],
+      "passed": true,
+      "local_source_hashes_after": {
+        "worker_common.py": "96b7bd9de7af1c8cfed974690b230fcb2a9e1f203b62cb6a319aac3dea40bcd6",
+        "grok_worker.py": "c50d430be1d0ca703082a410f7acac2f2cd494e09ebdf61951faecc23036db8b"
+      },
+      "local_source_unchanged_from_copied_probe": true
+    }
+  },
+  "final_sidecar_hash_matches": true,
+  "final_global_version": "grok 1.0.5 (5115b46bc9) [stable]",
+  "prompt_transport": "strict rejects external prompt_file; writer synthetic prompt copied into cwd and original kept in disjoint evidence. No sandbox weakening.",
+  "known_limitations": [
+    "Production reader/writer adapters remain unsupported until implemented and tested.",
+    "Claims conditional on this binary and host configuration; inherited broad permission grants can change tool authorization.",
+    "No Bash exposed or used.",
+    "Mac Docker socket alias startup issue not resolved by Linux proof."
+  ],
+  "date": "2026-09-18",
+  "production_adapter_ready": false
+}

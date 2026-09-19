@@ -1,27 +1,66 @@
 # pstack for Codex
 
-The pstack workflow library, adapted for Codex orchestration with standalone Claude Code CLI workers and an optional Grok Build backend.
+<p align="center">
+  <img src="docs/assets/pstack-orchestration-v3.png" alt="You and poteto-mode; Codex/Astra; session sandbox; Fable and Grok Build workers; Grok Bot on its own computer for routines and webhook wakes; evidence back" width="100%" />
+</p>
 
-This is an independent port of [Lauren Tan's pstack](https://github.com/cursor/plugins/tree/main/pstack), pinned to **0.15.2** at `5bf2b1544db739998121a306340631963c2ff3de`. It preserves the original skills, principles, playbooks, references and agent-role instructions. The Codex host adaptations are explicit and inspectable. It is not an official Cursor, OpenAI or xAI release.
+**Open-source workflow library for Codex** — a Codex port of [Lauren Tan’s (`@poteto`) pstack](https://github.com/cursor/plugins/tree/main/pstack). Potato energy, serious verification. Not an official Cursor, OpenAI, or xAI release.
+
+The source is pinned to pstack **0.15.2** at `5bf2b1544db739998121a306340631963c2ff3de`. The original skills, principles, playbooks, and agent roles are preserved.
+
+You talk to **poteto-mode**. **Astra** coordinates native agents and CLI workers. **Fable** through Claude Code and optional **Grok Build** return evidence. Optional **Grok Bot** provides its own cloud computer, routines, and webhook wakes. The host supplies execution protections, and the verified capabilities are listed below.
+
+```text
+$pstack-codex:poteto-mode <your task>
+```
+
+That’s the verified activation form. Follow-ups continue the work; `new task` rematches; `exit poteto-mode` stops the mode.
+
+<p align="center">
+  <img src="docs/assets/pstack-codex-card-v2.png" alt="pstack for Codex — workflow library, open source" width="360" />
+</p>
 
 ## How it works
 
-Start the first line with `$pstack-codex:poteto-mode` followed by a space and your task. This is the verified automatic-activation form; mentions elsewhere or colon-suffixed forms do not guarantee persistent mode. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
+Use `$pstack-codex:poteto-mode` with your task. Explicit dollar-form mentions may appear on later prose lines and may end in punctuation; quoted examples and fenced code do not activate the mode. Slash-form activation stays on the first line. Poteto mode chooses the playbook and supporting skills. It can move through `how`, `architect`, `arena`, implementation, review and verification without you listing that sequence. Follow-ups continue the current work; `new task` rematches; `exit poteto-mode` stops applying the mode.
+
+<p align="center">
+  <img src="docs/assets/pstack-loop-v2.png" alt="Activate, coordinate, verify" width="100%" />
+</p>
 
 ```mermaid
 flowchart LR
-    U[Your request] --> P[poteto-mode and playbook]
-    P --> A[Astra in Codex coordinates]
+    U[Your request] --> P[poteto-mode]
+    P --> A[Astra in Codex]
+    A --> S[Host execution environment]
     A --> N[Native Codex agents]
-    A --> C[Standalone Claude Code CLI]
+    A --> F[Fable / Claude Code]
     A --> G[Optional Grok Build CLI]
-    N --> R[Parent reviews evidence and continues]
-    C --> R
-    G --> R
-    R --> P
+    A -.->|outer loop / wake<br/>host-dependent| B[Grok Bot own computer]
+    B --> R[Routines and webhooks]
+    S --> E[Evidence]
+    N --> E
+    F --> E
+    G --> E
+    R --> E
+    E --> U
 ```
 
-The plugin is reusable across projects. Build commands, verification harnesses, deployment effects and business rules come from the current project. Activation and mode state are scoped to the conversation and project, not switched on globally for every chat.
+Execution uses the current host's configured permissions and sandbox. The plugin does not create a disposable workspace or an isolated VM for every turn. Upstream pstack's `make-bot-ui` skill describes a UI and server on the Bot computer. The server POSTs JSON to a webhook routine and keeps the sender key out of the browser. Tailscale can make that page reachable.
+
+This port preserves those instructions. Native Codex timed wake has passed a live check. The optional Bot app handoff has also returned a verified public-page screenshot. Live Bot webhook delivery, a reachable failure queue, and durable external event wakes remain unverified. See the [host contract](adapters/host.md) and [verification record](docs/verification.md).
+
+## Grok Bot’s computer
+
+<p align="center">
+  <img src="docs/assets/pstack-grokbot-computer.png" alt="Grok Bot computer — isolated machine, routines, webhooks, still working after chat closes" width="100%" />
+</p>
+
+From `skills/make-bot-ui`: build a page; a server **on this computer** POSTs to a webhook routine; the bot wakes on `[routine]` with a `<webhook_event>` body. Secrets stay out of the browser and out of chat. Optional Tailscale for reachability. That computer is shared across agents on the node — one Tailscale hostname, not a second invented box.
+
+The plugin is reusable across projects. Build commands, verification tools, deployment effects and business rules come from the current project. Activation and mode state are scoped to the conversation and project.
+
+The external `cursor-team-kit` companions `deslop`, `control-cli`, and `control-ui` are included too. Poteto loads their bundled instructions when a workflow calls them. They do not need a separate install and are not registered as separate slash commands. Cursor's built-in authoring and automation tools have different portability limits. See [companion skills and built-ins](docs/companions.md).
 
 ## Status
 
@@ -29,14 +68,20 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
 - Claude analysis, writer and scoped local-Git reader profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
-- Grok's adapter is optional. Its protected live probe was blocked by a local sandbox startup error. Grok reader/writer profiles are not enabled.
+- Optional Grok analysis and file-reader profiles passed real production-adapter checks on the tested Linux build. Writer, shell access and non-Linux dispatch remain disabled. See [Grok's supported scope](docs/grok.md).
 - Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
 
-The package alone cannot arm Autonomous run, Babysit drive, Shipping watch, either Autopilot, Orchestrate, unattended Hillclimb, or Visual parity loops for unattended continuation. Current-turn work and bounded waits remain possible; future wakeups need an authorized, verified host adapter. Their original stopping rules remain intact.
+The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Across-turn event bridges and isolated cloud workers remain separate prerequisites; timed polling and worktrees do not pretend to replace them. See the [23-playbook capability map](docs/workflow-capabilities.json).
 
-Two completed Fable 5.1 reviews approved the documented limited alpha after repairs. See the [exact commit, verdicts and limits](docs/fable-review.md).
+Fable 5.1 approved the current implementation at its exact recorded code commit and documented scope. Astra authored the latest Grok changes, which passed real Linux acceptance before review. See the [current review](docs/integration-review.md) and [earlier alpha record](docs/fable-review.md). This remains a tested alpha with the explicit capability limits above.
+
+Use the [read-only doctor](docs/doctor.md) to distinguish installation, authentication and verified worker evidence. [Grok Bot](docs/grok-bot.md) is optional for cloud-computer and Bot-native work; ordinary coding and review do not require it.
 
 ## Install
+
+<p align="center">
+  <img src="docs/assets/pstack-install-v3.png" alt="Install — clone, build, plugin add; trust hooks; new session" width="100%" />
+</p>
 
 Requirements: a supported local Codex installation, Python 3.10+ on POSIX, and Git. Claude roles also require an independently installed and authenticated [Claude Code CLI](https://code.claude.com/docs/en/overview). Grok roles require independently installed [Grok Build](https://docs.x.ai/build/overview). Bun and GitHub CLI are needed for the upstream helpers that use them; they are not required for reading a skill.
 
@@ -99,7 +144,9 @@ The receipt verifies transport, response-model attribution and effective capabil
 ```sh
 python3 scripts/build.py
 python3 scripts/build.py --check
-python3 -m unittest discover -s tests -v
+python3 -m venv .local/tests
+.local/tests/bin/python -m pip install -r requirements-test.txt
+.local/tests/bin/python -m unittest discover -s tests -v
 python3 scripts/package.py
 python3 scripts/package.py --check
 ```

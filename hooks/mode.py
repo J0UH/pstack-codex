@@ -5,23 +5,66 @@ from __future__ import annotations
 import json
 import re
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "scripts"))
 from pstack import change_state, mode_context, read_state
 
-ACTIVATE = re.compile(r"^ {0,3}[$/](?:pstack-codex:)?poteto-mode(?=$|[ \t])", re.I)
-DOLLAR_MENTION = re.compile(r"(?<![\w\\])\$(?:pstack-codex:)?poteto-mode(?=$|[^\w:-])", re.I)
+DELIMITER = r"(?=[.,;:!?)\]}]*(?:[ \t]|$))"
+ACTIVATE = re.compile(r"^ {0,3}[$/](?:pstack-codex:)?poteto-mode" + DELIMITER, re.I)
+DOLLAR_MENTION = re.compile(r"(?<![\w\\])\$(?:pstack-codex:)?poteto-mode" + DELIMITER, re.I)
 EXIT = re.compile(r"^ {0,3}(?:exit|disable|leave|stop using)[ \t]+(?:[$/])?(?:pstack-codex:)?poteto(?:-mode| mode)?[.!]?[ \t]*$", re.I)
 NEW_TASK = re.compile(r"^ {0,3}(?:[$/](?:pstack-codex:)?poteto-mode[ \t]+)?new task\b", re.I)
+AFTER_MENTION = re.compile(r"[.,;:!?)\]}]*[ \t]*")
+FENCE = re.compile(r"^ {0,3}(`{3,}|~{3,})")
+INLINE_CODE = re.compile(r"(`+).*?\1")
+SINGLE_QUOTED = re.compile(r"(?<!\w)'(?:\\.|[^'\\])*'|‘[^’]*’")
+DOUBLE_QUOTE = re.compile(r'(?<!\\)["“”]')
 
 
-def activation_mention(line: str) -> re.Match | None:
-    if line.startswith(("    ", "\t")) or line.lstrip(" ").startswith((">", "```", "~~~")):
-        return None
-    visible = re.sub(r"(`+).*?\1", lambda match: " " * len(match[0]), line)
-    visible = re.sub(r'"(?:\\.|[^"\\])*"|(?<!\w)\'(?:\\.|[^\'\\])*\'|“[^”]*”|‘[^’]*’', lambda match: " " * len(match[0]), visible)
-    return ACTIVATE.match(visible) or DOLLAR_MENTION.search(visible)
+def _blank(match: re.Match) -> str:
+    return " " * len(match[0])
+
+
+def prose_lines(lines: list[str]) -> Iterator[tuple[int, str]]:
+    """A quoted example can span lines and must remain inactive until its quote closes."""
+    fence = None
+    quoted = False
+    for index, line in enumerate(lines):
+        marker = FENCE.match(line)
+        if fence is not None:
+            if marker and marker[1][0] == fence[0] and len(marker[1]) >= fence[1] and not line[marker.end():].strip():
+                fence = None
+            continue
+        if marker:
+            fence = (marker[1][0], len(marker[1]))
+            continue
+        if line.startswith(("    ", "\t")) or line.lstrip(" ").startswith(">"):
+            continue
+        masked = SINGLE_QUOTED.sub(_blank, INLINE_CODE.sub(_blank, line))
+        visible = list(masked)
+        start = 0
+        for quote in DOUBLE_QUOTE.finditer(masked):
+            at = quote.start()
+            if not quoted and quote[0] == '"' and at and masked[at - 1].isdigit():
+                continue
+            if quoted:
+                visible[start:at] = " " * (at - start)
+            visible[at] = " "
+            quoted = not quoted
+            start = at + 1
+        if quoted:
+            visible[start:] = " " * (len(visible) - start)
+        yield index, "".join(visible)
+
+
+def activation_mention(lines: list[str]) -> tuple[int, re.Match] | None:
+    for index, visible in prose_lines(lines):
+        match = (ACTIVATE.match(visible) if index == 0 else None) or DOLLAR_MENTION.search(visible)
+        if match:
+            return index, match
+    return None
 
 
 def handle(event: dict) -> dict:
@@ -35,15 +78,19 @@ def handle(event: dict) -> dict:
     prompt = event.get("prompt", "") if name == "UserPromptSubmit" else ""
     if not isinstance(prompt, str):
         raise ValueError("Hook prompt must be a string")
-    first_line = prompt.lstrip("\r\n").splitlines()[0] if prompt.strip("\r\n") else ""
+    lines = prompt.lstrip("\r\n").splitlines()
+    first_line = lines[0] if lines else ""
     if EXIT.fullmatch(first_line):
         change_state("deactivate", session, project)
         return {"hookSpecificOutput": {"hookEventName": name, "additionalContext": "The user explicitly exited poteto-mode. Stop applying its style and automatic skill routing; retain the user's remaining task instructions."}}
-    mention = activation_mention(first_line)
+    mention = activation_mention(lines)
     activated = mention is not None
     if activated:
         state = change_state("activate", session, project)
-    new_task = NEW_TASK.match(first_line) or (mention is not None and NEW_TASK.match(first_line[mention.end():].lstrip()))
+    new_task = NEW_TASK.match(first_line)
+    if mention is not None:
+        index, match = mention
+        new_task = new_task or NEW_TASK.match(lines[index][AFTER_MENTION.match(lines[index], match.end()).end():])
     if new_task and state["active"]:
         state = change_state("reset", session, project)
     context = mode_context(state, full=activated or name == "SessionStart")

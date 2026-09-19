@@ -44,10 +44,9 @@ PROFILE_TOOLS: dict[str, tuple[str, ...]] = {
     "writer": ("Read", "Write", "Edit", "Glob", "Grep"),
 }
 
-# Tools that must never appear in the child's init tool list unless the profile asked for them.
-RESTRICTED_TOOLS = frozenset(
-    {"Bash", "Write", "Edit", "MultiEdit", "NotebookEdit", "WebFetch", "WebSearch", "Agent", "Task", "KillShell", "BashOutput"}
-)
+# Characters that would change the meaning of a permission path pattern: rule
+# delimiters, the allow-list separator, glob metacharacters and the glob escape.
+EDIT_RULE_UNSAFE_CHARS = frozenset(",()*?[]{}\\")
 
 # Inherited variables that would change the auth route or API endpoint.  Presence is an error;
 # values are never read into messages or receipts.
@@ -94,15 +93,40 @@ SpecError = wc.SpecError
 
 def is_scoped_bash_rule(rule: str) -> bool:
     """True for ``Bash(<command prefix>:*)`` or ``Bash(<exact command>)`` with a real command token."""
-    match = BASH_RULE_RE.match(rule)
+    match = BASH_RULE_RE.fullmatch(rule)
     if not match:
         return False
     body = match.group("body").strip()
     if not body or body in ("*", ":*") or body.startswith("*") or body.startswith(":"):
         return False
-    if any(ch in body for ch in (",", "\n", "\r", "\x00")):
+    if any(ch in body for ch in (",", "\n", "\r", "\x00", "(", ")")):
+        return False
+    command = body.split()[0].removesuffix(":*")
+    if not re.fullmatch(r"[A-Za-z0-9_./-]+", command):
         return False
     return True
+
+
+def edit_scope_rule(cwd: str) -> str:
+    """Return the writer's file-tool rule anchored at the resolved absolute cwd, or raise SpecError.
+
+    A ``//`` prefix anchors a permission path pattern at the filesystem root, so the
+    rule does not depend on how the CLI derives its project root from the launch
+    directory. Under Claude Code's documented semantics one Edit rule governs the
+    built-in file-editing tools, Write included, and ``Write(path)`` rules are not
+    enforced, so no such rule is emitted. This is a permission rule, not an OS
+    boundary: separately allowed shell commands are not contained by it.
+    """
+    resolved = os.path.realpath(cwd)
+    if resolved == os.sep:
+        raise SpecError("writer cwd must not resolve to the filesystem root")
+    unsafe = sorted({ch for ch in resolved if ch in EDIT_RULE_UNSAFE_CHARS or ord(ch) < 32 or ch == "\x7f"})
+    if unsafe:
+        raise SpecError(
+            "writer cwd resolves to a path containing characters that cannot be expressed safely in a "
+            "permission path rule: " + " ".join(repr(ch) for ch in unsafe)
+        )
+    return f"Edit(/{resolved}/**)"
 
 
 def resolve_tools(spec: dict) -> tuple[list[str], list[str]]:
@@ -131,9 +155,7 @@ def resolve_tools(spec: dict) -> tuple[list[str], list[str]]:
             "and scoped Bash(<command>:*) rules are accepted"
         )
     tools = base + (["Bash"] if bash_rules else [])
-    # CLI-supplied / patterns anchor at the primary working directory. Edit path
-    # rules govern both Edit and Write; Write(path) rules are not enforced.
-    allowed = ["Read", "Glob", "Grep", "Edit(/**)"] if profile == "writer" else base
+    allowed = ["Read", "Glob", "Grep", edit_scope_rule(spec["cwd"])] if profile == "writer" else base
     return tools, allowed + bash_rules
 
 
@@ -434,6 +456,13 @@ def plan_claude(spec: Any, environ: Any = None) -> dict:
     tools, allowed = resolve_tools(normalized)
     prompt_text = read_prompt(normalized["prompt_file"])
     argv = build_argv(claude_bin, normalized)
+    edit_scope = None
+    if normalized["profile"] == "writer":
+        edit_scope = {
+            "rule": edit_scope_rule(normalized["cwd"]),
+            "resolved_cwd": os.path.realpath(normalized["cwd"]),
+            "anchor": "filesystem-root",
+        }
     return {
         "argv": argv,
         "env": env,
@@ -446,6 +475,7 @@ def plan_claude(spec: Any, environ: Any = None) -> dict:
             "profile": normalized["profile"],
             "tools": tools,
             "allowed_tools": allowed,
+            "edit_scope": edit_scope,
             "permission_mode": PERMISSION_MODE,
             "safe_mode": True,
             "session_persistence": False,

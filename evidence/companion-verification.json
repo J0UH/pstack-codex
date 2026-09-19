@@ -1,0 +1,139 @@
+{
+  "observed_at_utc": "2026-09-18T21:48:50.798032+00:00",
+  "upstream_revision": "5bf2b1544db739998121a306340631963c2ff3de",
+  "upstream_version": "0.15.2",
+  "baseline_commit": "517e1a1048b78f19580c14c1b72ff3cd3594b068",
+  "initial_checks": [
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/build.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "result": "verified; 47 registered skills; 3 companion skills; 23 playbooks; 3 dormant skills; 46 explicit-only skills"
+    },
+    {
+      "argv": [
+        "python3",
+        "-B",
+        "scripts/package.py",
+        "--check"
+      ],
+      "exit_code": 0,
+      "result": {
+        "status": "verified",
+        "files": 408,
+        "content_sha256": "51a433e027b371b378350b524cc68ed2f0988eddaab1e7db6d3dad31891452b3"
+      }
+    }
+  ],
+  "scope": "Pinned companion inclusion, body fidelity and static path routing at the recorded baseline. This is not end-to-end proof of every control workflow.",
+  "companions": [
+    {
+      "name": "deslop",
+      "source_sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810",
+      "source_manifest_sha256": "2f7b7def74af7ed11f5b44b4d32f0f91fca8c5d1f92bf2171e8d12fd33a0f810",
+      "manifest_hash_matches": true,
+      "manifest_size_matches": true,
+      "body_sha256": "d40e71977da3326f996903185a7337c40ec00a38dde68db96603d9cef5f891b3",
+      "path": "companion-skills/deslop/SKILL.md",
+      "locations": {
+        "checkout": {
+          "sha256": "a20d1badf0d4e925938036ed3db04d1b070b862e188f4fc945c3691f1f23eae7",
+          "restored_body_sha256": "d40e71977da3326f996903185a7337c40ec00a38dde68db96603d9cef5f891b3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "package": {
+          "sha256": "a20d1badf0d4e925938036ed3db04d1b070b862e188f4fc945c3691f1f23eae7",
+          "restored_body_sha256": "d40e71977da3326f996903185a7337c40ec00a38dde68db96603d9cef5f891b3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "installed": {
+          "sha256": "a20d1badf0d4e925938036ed3db04d1b070b862e188f4fc945c3691f1f23eae7",
+          "restored_body_sha256": "d40e71977da3326f996903185a7337c40ec00a38dde68db96603d9cef5f891b3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        }
+      }
+    },
+    {
+      "name": "control-cli",
+      "source_sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2",
+      "source_manifest_sha256": "13ac93e595bbda2000849bdb815d5f2ca03f7c2ca63788c8335f9212b9b422a2",
+      "manifest_hash_matches": true,
+      "manifest_size_matches": true,
+      "body_sha256": "f01f7fce3c9837cecc53bbc78028255f53eafc0d9beac22b7c8bd5ce671b52e3",
+      "path": "companion-skills/control-cli/SKILL.md",
+      "locations": {
+        "checkout": {
+          "sha256": "9247c449aec42b9425f1c725736fa0be25497b0ade266cdf2065be8ef16bf3b7",
+          "restored_body_sha256": "f01f7fce3c9837cecc53bbc78028255f53eafc0d9beac22b7c8bd5ce671b52e3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "package": {
+          "sha256": "9247c449aec42b9425f1c725736fa0be25497b0ade266cdf2065be8ef16bf3b7",
+          "restored_body_sha256": "f01f7fce3c9837cecc53bbc78028255f53eafc0d9beac22b7c8bd5ce671b52e3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "installed": {
+          "sha256": "9247c449aec42b9425f1c725736fa0be25497b0ade266cdf2065be8ef16bf3b7",
+          "restored_body_sha256": "f01f7fce3c9837cecc53bbc78028255f53eafc0d9beac22b7c8bd5ce671b52e3",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        }
+      }
+    },
+    {
+      "name": "control-ui",
+      "source_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871",
+      "source_manifest_sha256": "410cae25bdb1e5d2323b126abc5047b0213be7fdb0195710213fa8de8a751871",
+      "manifest_hash_matches": true,
+      "manifest_size_matches": true,
+      "body_sha256": "19d2defd219f28db06b9cdbe365298ff2a25319762135ed69b66fee51d1de1b9",
+      "path": "companion-skills/control-ui/SKILL.md",
+      "locations": {
+        "checkout": {
+          "sha256": "45d06ebfaeabde6fcc7de21a41424146ed640ea21a5cdb857dc0c72ebdfa5232",
+          "restored_body_sha256": "19d2defd219f28db06b9cdbe365298ff2a25319762135ed69b66fee51d1de1b9",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "package": {
+          "sha256": "45d06ebfaeabde6fcc7de21a41424146ed640ea21a5cdb857dc0c72ebdfa5232",
+          "restored_body_sha256": "19d2defd219f28db06b9cdbe365298ff2a25319762135ed69b66fee51d1de1b9",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        },
+        "installed": {
+          "sha256": "45d06ebfaeabde6fcc7de21a41424146ed640ea21a5cdb857dc0c72ebdfa5232",
+          "restored_body_sha256": "19d2defd219f28db06b9cdbe365298ff2a25319762135ed69b66fee51d1de1b9",
+          "body_equal": true,
+          "mode": "0o644",
+          "notice_host_exists": true
+        }
+      }
+    }
+  ],
+  "routes": {
+    "companions": "Load exact companion-skills path through adapters/host.md; not separately registered slash skills.",
+    "create-skill": "Codex skill-creator adaptation, not a copied Cursor built-in; full description-optimization behavior unverified.",
+    "automate": "Benny remains dormant until its actual event/connector/editor-handoff prerequisites exist.",
+    "babysit": "Upstream excludes the Cursor builtin and uses its own playbook.",
+    "verify-this": "Companion control-ui mentions it as a purpose example, not a mandatory invocation."
+  },
+  "documentation_correction": "Two historical audit passages were clarified and docs/companions.md added after the baseline check."
+}

@@ -1,0 +1,584 @@
+{
+  "date": "2026-09-18",
+  "reviewed_commit": "ad93276dcf570e68832af469abce7066b2d6edc3",
+  "verdict": "approve",
+  "scope": "Two source-only approvals for the recorded candidate and their stated limits; follow-up changes and proposed Grok profiles are not approved by these verdicts.",
+  "method": "Standalone Claude CLI, exact substantive Fable 5.1 attribution, requested xhigh. Original relevant pstack instructions, candidate source, tests and parent-observed evidence supplied. Reviewers did not execute tests.",
+  "reviews": {
+    "core": {
+      "report": {
+        "target_commit": "ad93276dcf570e68832af469abce7066b2d6edc3",
+        "scope": "core: workflow fidelity (poteto-mode routing, 23 playbooks, role/stop/cancellation/evidence semantics), mode hooks and CLI state identity, model policy schema/validator/setup, Codex plan checker gates, CLI worker runtime and cancellation (worker_common, claude_worker, grok_worker), and the integration/evidence claims in README, host.md, ADAPTATIONS.md, verification.md, native-workflows.md and workflow-capabilities.json. Bot sender internals excluded (parallel audit); only its optionality is checked here.",
+        "verdict": "approve",
+        "approval_scope": "Approved, for the documented limited alpha at exactly ad93276dcf570e68832af469abce7066b2d6edc3: (1) the byte-preserved upstream library with the ledgered frontmatter/notice/policy/index transformations and the unchanged upstream check-plan.mjs; (2) conversation-local poteto-mode lifecycle (explicit slash/dollar activation, quoted/fenced/indented/blockquote exclusions, first-line exit, new-task reset, authoritative hook identity, shared state directory, relative-override rejection, worktree cwd independence) as implemented in hooks/mode.py and scripts/pstack.py; (3) the model-role policy (model_config.py, generated schema, setup.md) preserving upstream role labels, panel sizes, inheritance aliases, separate backend/model/effort, no substitution or fallback; (4) scripts/check_plan.mjs as a form checker that retains every upstream structural gate and binds lanes to the explicit swarm-workers policy, with goal/heartbeat/hold/reconcile/isolation markers, which certifies plan form only; (5) worker_common/claude_worker/grok_worker runtime: spec validation, disjoint run_dir, process-group timeout/interrupt/late-signal lifecycle, fail-closed model/tool/receipt evidence, Claude analysis/reader/writer profiles with cwd-anchored Edit rule, Grok analysis-only gated and blocked-before-inference; (6) native goal/heartbeat/event-bridge/isolation/transcript mappings as documented, with the parent-observed timed-wake proof accepted at its stated scope. NOT approved: Cursor runtime parity; Grok inference or any Grok profile as live; Grok Bot webhook delivery, keys, or Bot as a requirement for coding (it is optional); goal creation/completion (no goal was created); any unattended playbook lifecycle (Autonomous run, Babysit drive, Shipping watch, both Autopilots, Orchestrate, unattended Hillclimb/Visual parity); cloud placement or per-lane isolated runtimes; across-turn event wake; the doctor and the Bot sender internals (not supplied here); the 207-test count and any test I did not run; robustness of allowed_tools against crafted multi-rule Bash entries (finding CORE-1) until fixed.",
+        "summary": "Source inspection finds the core port faithful to pstack 0.15.2 at the contract level: the router, 23 playbooks and principles are byte-preserved behind ledgered notices; the mode hook and CLI implement explicit activation, opt-out, new-task reset and authoritative session/project identity with one shared state store; the model policy keeps every upstream role label, panel semantics and inheritance meaning with no substitution, and the published schema is generated from the validator's constants with matching token semantics; the Codex plan checker retains every upstream gate and changes only host-evidenced markers while the upstream checker stays untouched; the worker runtime's lifecycle (claim, launch intent, process group, timeout/interrupt escalation, late-signal recording, fail-closed evaluation) matches its documentation and tests. Divergences from Cursor (stricter goal creation, confirm-stop-then-reconcile before replacing a stuck lane, timed polling instead of event wake, worktree not runtime isolation, summaries not transcripts) are explicit, conservative and disclosed rather than hidden. Grok Build stays optional and blocked before inference; Grok Bot stays optional and no playbook depends on it. One actionable P2: claude_worker's scoped-Bash rule validator accepts a crafted body containing parentheses and a space (for example Bash(true) Bash(*)), which under Claude Code's documented space-separated rule parsing would smuggle an unscoped shell or wider Edit rule past the adapter's own rejection; the spec author is the trusted coordinator and the rule is documented as not an OS boundary, so this is nonblocking for the alpha but should be fixed before relying on the scoped-shell claim. Remaining findings are P3 documentation drift and edge cases. I did not run any tests or commands; parent-observed proofs are accepted only at their stated scope and labelled as such.",
+        "checks": [
+          {
+            "requirement": "Upstream skills, playbooks, principles, agents and companions remain byte-preserved apart from ledgered transformations; original check-plan.mjs unchanged",
+            "upstream_basis": "pstack 0.15.2 @5bf2b154; ADAPTATIONS.md promises only codex-frontmatter, host-contract-notice, invocation-policy, routing-index",
+            "port_evidence": "scripts/build.py verify_manifest() checks URL/bytes/sha256/symlinks/unmanifested files and catalog shape 47/23/3; adapt_entry() rewrites only frontmatter name/description and prepends the marked notice; playbooks get notice + original bytes; tests/test_check_plan.py asserts upstream and packaged check-plan.mjs are byte-identical; parent reports build --check, package --check and plugin validator PASS at this commit",
+            "result": "pass",
+            "reason": "Generator logic inspected and consistent with the ledger; byte identity itself is parent-observed (build/package checks), not re-run by me"
+          },
+          {
+            "requirement": "poteto-mode activation, opt-out, new-task and casual-turn semantics preserved and conversation-local",
+            "upstream_basis": "poteto-mode SKILL.md: mode/reminder frontmatter, 'user opts out -> don't', 'new task? playbook match'; host.md activation contract",
+            "port_evidence": "hooks/mode.py: ACTIVATE (first line slash/dollar) and DOLLAR_MENTION (later prose lines) with delimiter regex; prose_lines() skips fences, indented code, blockquotes, inline code, single/double-quoted spans with position-preserving blanking; EXIT.fullmatch on first line wins; NEW_TASK after mention via AFTER_MENTION offset; change_state('reset') only when active; tests/test_mode.py covers 14 positive and 25 negative forms; parent observed quoted-negative and multiline-punctuated-positive in a real CLI task",
+            "result": "pass",
+            "reason": "Regex and line-state logic traced by hand against the listed fixtures; all consistent. One fail-safe edge (unbalanced inch mark hides a later-line mention) noted as P3 CORE-6"
+          },
+          {
+            "requirement": "Authoritative session/project identity; hook and CLI share one state store; no shell-cwd substitution; relative overrides rejected",
+            "upstream_basis": "host.md 'Activate and resume the mode'; prior workflow review requirement",
+            "port_evidence": "scripts/pstack.py state_root() ignores PLUGIN_DATA, requires absolute PSTACK_STATE_DIR; state_path() keys sha256([session, resolved project]); resolve_identity() resolves the single recorded context when --project omitted and errors on missing/ambiguous; read_state() rejects identity/schema mismatch; mode_context() emits shlex-joined prefix with authoritative IDs; tests cover worktree cwd change, ambiguity, shared store, relative override",
+            "result": "pass",
+            "reason": "Implementation matches contract; argparse positional-after-optional prefix form is exercised by the CLI subprocess test"
+          },
+          {
+            "requirement": "Model policy preserves upstream role names, panel-count and inheritance semantics; separate backend/model/effort; no model or effort substitution",
+            "upstream_basis": "setup-pstack SKILL.md role table, budget ladder, inherit-parent/auto aliases, panel lists",
+            "port_evidence": "scripts/model_config.py SINGLE_ROLES/PANEL_ROLES reproduce all 17 upstream labels plus documented optional 'coordinator'; aliases native-only and effort-free; profile CLI-only; optional_backends never activates a role; validate_model_config returns a deepcopy without filling defaults; docs/setup.md keeps discovery, budget, confirmation, partial-override semantics and forbids silent substitution",
+            "result": "pass",
+            "reason": "Validator logic matches the documented semantics; budget label is metadata only (not enforced), which setup.md states explicitly"
+          },
+          {
+            "requirement": "Published JSON Schema agrees with the runtime validator, including integer semantics and token whitespace/control rules across ECMAScript and Python",
+            "upstream_basis": "Prior P3 follow-up on schema/validator differential testing",
+            "port_evidence": "scripts/model_schema.py build_schema() derives enums from model_config constants; TOKEN_PATTERN uses negative lookahead end anchor and explicitly lists U+0085 and U+FEFF; model_config._token adds U+FEFF to str.isspace(); schemas/models.schema.json matches build_schema() output order and content by inspection; tests run the same corpus through jsonschema Draft 2020-12 and mutate 13 schema rules; schema_version accepts 1 and 1.0, rejects bools",
+            "result": "pass",
+            "reason": "I re-derived the Zs/LineTerminator vs isspace() set membership for the BMP by reasoning and found no divergence; the parent's 65536-point probe covers Python re only, and no ECMAScript engine run was supplied"
+          },
+          {
+            "requirement": "Codex plan checker retains every upstream structural gate, forges no Cursor markers, and only replaces host-evidenced assumptions",
+            "upstream_basis": "upstream check-plan.mjs (RULE, SUB_BLOCKS, PROGRAM_H3, ten lanes with Save/Pass when, PERF_ITEMS, review gate words, appendices, prose rules) and multi-phase-plan playbook step 6",
+            "port_evidence": "scripts/check_plan.mjs keeps all upstream checks and messages verbatim; LANES built from explicit swarm-workers policy or --lanes-model with agreement check and alias rejection; PROGRAM_MARKERS create_goal/automation_update/heartbeat/30-minute/status message/pinned/packaged playbook path/PAUSED/reconcile; STALE_MARKERS reject /loop, cloud-sleeper, git show origin/main:pstack/; hold+update_goal box fails; boot recipe requires 'own cloud VM' and 'blocked' and rejects worktree placement without port/browser/data evidence; close requires update_goal and PAUSED; tests show Cursor form passes upstream and fails here for host reasons only, Codex form fails upstream",
+            "result": "pass",
+            "reason": "Form checker only, as it prints; RRULE check skips fenced lines contrary to the doc's 'anywhere' wording (P3 CORE-2)"
+          },
+          {
+            "requirement": "Goal, heartbeat, hold/pause, stuck-lane replacement and close semantics preserve upstream stop and ownership rules without inventing capability",
+            "upstream_basis": "autopilot-full/stack steps 1,6,7; autonomous-run step 2,6; pause-safely; multi-phase-plan skeleton; host.md cancellation rules",
+            "port_evidence": "docs/native-workflows.md: create_goal only on explicit goal request or go on a plan naming it; get_goal per tick; hold/pause leave goal active; complete only on verified predicate; heartbeat armed only on explicit unattended request, attached to thread, paused on every stop class; stuck lane replaced only after confirmed stop and reconciled effects; cadence in words, RRULE never plan text; evidence JSON records one real heartbeat wake, pause and delete, no goals created",
+            "result": "pass",
+            "reason": "Two deliberate divergences (goal creation stricter than upstream 'arm a /goal on the go'; replacement gated on confirmed stop instead of 'at once') are conservative, documented in the checker table and capability map, and justified by shared-host execution; they do not weaken a stop rule"
+          },
+          {
+            "requirement": "Cloud placement and per-lane isolation are not silently replaced by worktrees or local execution",
+            "upstream_basis": "multi-phase-plan boot recipe 'own cloud VM'; shipping step 1; autopilots 'one cloud agent per PR'; swarm environment cloud",
+            "port_evidence": "host.md forbids mapping cloud onto anything but a configured isolated service; workflow-capabilities.json cloud_placement 'unavailable' and autopilot-full/stack/shipping/orchestrate 'prerequisite'; checker rejects worktree-only boot recipe; tests assert 'not runtime isolation' and no 'use local git worktrees' wording",
+            "result": "pass",
+            "reason": "Consistent across docs, map, checker and tests"
+          },
+          {
+            "requirement": "CLI worker runtime: bounded lifecycle, cancellation, receipts never lose cause, orphaned descendants cannot pass, interrupted attempts stay claimed",
+            "upstream_basis": "host.md 'Translate Task and tool access' ownership/cancellation rules; prior runtime review scope",
+            "port_evidence": "scripts/worker_common.py: validate_spec (absolute, finite, disjoint run_dir via realpath), claim_run_dir O_EXCL mkdir, launch.json before Popen, start_new_session pgid=pid, _supervise with 50ms polling and ParentSignal deferral, terminate_process_group TERM->grace->KILL->wait on the group, descendants_remained_after_leader_exit forces unverified, _ended_by_own_cause keeps timeout/spawn_failed on late stop, first-stop-during-receipt path rewrites receipt and process record, _record_late_signals after handler restore; tests/test_worker_signals.py exercises claim/hash/output_file/popen/process_record/receipt/timeout_grace/restore/ignored_hup windows with real signals",
+            "result": "pass",
+            "reason": "Traced all paths; a stop during finalization of a nonzero-exit child relabels process_failed as interrupted, which is fail-closed and keeps the original error in the list, so not a bug"
+          },
+          {
+            "requirement": "Claude profiles expose only the intended tools, verify effective capabilities from the stream, and refuse auth/route overrides and unscoped shell",
+            "upstream_basis": "docs/claude.md profile table; host.md 'narrowest verified capabilities'; prior approval of Edit(//cwd/**) anchoring",
+            "port_evidence": "scripts/claude_worker.py PROFILE_TOOLS, resolve_tools (analysis rejects any allowed_tools; reader/writer accept only base names and scoped Bash), edit_scope_rule rejects root and rule-unsafe characters, build_argv adds --safe-mode --permission-mode dontAsk --no-session-persistence and never --bare; parse_claude_events checks init model/permissionMode/tools set/mcp_servers/apiKeySource/cwd, response-model attribution, non-firstParty providers, unexpected tool_use, denial counts; REJECTED_ENV/STRIPPED_ENV; parent evidence shows nested-package and spaces writer probes with source hashes unchanged",
+            "result": "partial",
+            "reason": "All claimed checks are implemented, but is_scoped_bash_rule accepts a body containing ')' and a space so a single crafted entry can carry a second rule (P2 CORE-1); every other capability claim holds by source"
+          },
+          {
+            "requirement": "Grok Build remains optional, analysis-only, blocked before inference, with no sandbox downgrade or fake success",
+            "upstream_basis": "User intent: optional Grok Build; no fake capability",
+            "port_evidence": "scripts/grok_worker.py raises UnsupportedProfile for reader/writer/nonempty allowed_tools before launch; command pins --sandbox read-only, --tools '', dontAsk, seven --deny rules; parse_events requires empty runtime inventory, observed model equal to request, terminal event, no tool calls; docs/grok.md and evidence record the socket-symlink startup failure and no auth proof",
+            "result": "pass",
+            "reason": "Fail-closed parser and honest disclosure; live inference explicitly not claimed"
+          },
+          {
+            "requirement": "Grok Bot is optional and ordinary coding/review never requires it",
+            "upstream_basis": "User confirmation that Bot is optional",
+            "port_evidence": "README, host.md 'Scheduling, webhooks and dormant Benny', workflow-capabilities.json grok_bot_mcp status 'prerequisite'/pending; no playbook entry lists Bot as a prerequisite; make-bot-ui stays source text; evidence JSON reports paused routine, no key, no delivery",
+            "result": "pass",
+            "reason": "Optionality is consistent across all supplied docs; sender internals not in this scope"
+          },
+          {
+            "requirement": "Integration claims in README/verification/native-workflows/capabilities map match the recorded evidence and do not overstate parity, webhooks, goals or cloud",
+            "upstream_basis": "User intent: distinguish implementations, proofs and unresolved prerequisites",
+            "port_evidence": "evidence/integration-verification.json fields (native_heartbeat, native_queue cold_task_started_by_queue=false, grok_build live_inference_verified=false, webhook_sender real_webhook_fired=false, no goals) match README Status and verification.md; capability map marks only bug-fix/investigation live-tested, all wake-dependent playbooks pending; CapabilityMapTests pin the negative claims",
+            "result": "partial",
+            "reason": "Claims are honest and under-claim rather than over-claim, but native-workflows.md and the capability map still say 'pending/nothing is claimed' for the queue probe and native collaboration that the same packet records as exercised, and ADAPTATIONS.md calls the checker parameterization future work (P3 CORE-3)"
+          },
+          {
+            "requirement": "Transcript, summary and eval evidence limits preserved; no cross-project transcript globbing",
+            "upstream_basis": "eval step 6, session-pickup step 1, worktree-cleanup; host.md transcript rules",
+            "port_evidence": "native-workflows.md and capability map: read_thread returns summaries, insufficient for eval step 6 and show-me-your-work audit; CLI raw stream is the transcript for CLI candidates; report evidence unavailable otherwise; native agent ids never passed to read_thread",
+            "result": "pass",
+            "reason": "Consistent and tested (eval transcript dependency 'prerequisite')"
+          },
+          {
+            "requirement": "Test suite and doctor claims (207 Python tests, 52 Bun tests, doctor receipt semantics)",
+            "upstream_basis": "verification.md and evidence JSON",
+            "port_evidence": "Supplied test files contain about 125 test methods by my count (mode 21, model_config 22, check_plan 22, worker_common 11, worker_signals 12, claude 16, grok 21); remaining tests, doctor, hooks.json, example policy and cursor plan fixture were not supplied",
+            "result": "unverified",
+            "reason": "Parent-reported only; I ran nothing and the unsupplied files cannot be inspected"
+          }
+        ],
+        "findings": [
+          {
+            "id": "CORE-1",
+            "severity": "P2",
+            "file": "scripts/claude_worker.py",
+            "location": "is_scoped_bash_rule (BASH_RULE_RE = r'^Bash\\((?P<body>.*)\\)$'); resolve_tools appends accepted rules to --allowedTools",
+            "problem": "The 'scoped Bash only' guarantee can be bypassed by a crafted single allowed_tools entry. The greedy body capture accepts any text ending in ')' as long as it contains no comma/newline/NUL and does not start with '*' or ':'. An entry such as 'Bash(true) Bash(*)' or 'Bash(true) Edit(//**)' passes validation and is forwarded as one argv element. Claude Code documents --allowedTools values as comma or space separated lists (its own help example is \"Bash(git:*) Edit\"), and the live probes show rules with internal spaces inside parentheses work, so the parser is parenthesis-aware and a space outside parentheses splits into two rules. The result would be an unscoped shell rule under dontAsk, or a writer Edit rule wider than the cwd anchor, despite tests asserting Bash(*) is rejected.",
+            "evidence": "is_scoped_bash_rule only checks: body nonempty, body not in ('*', ':*'), not startswith '*' or ':', no ',', '\\n', '\\r', '\\x00'. edit_scope_rule() by contrast rejects ',()*?[]{}\\\\' in the cwd, showing the delimiter risk was recognized for paths but not for rule bodies. tests/test_claude_worker.py rejects 'Bash(*)' but has no case with ')' inside the body.",
+            "fix": "Reject any '(' or ')' inside the body (and, to be safe, any whitespace run followed by an identifier and '('), e.g. add `if any(ch in body for ch in \"()\"): return False` before returning True. Optionally also reject bodies containing whitespace-separated additional tokens matching r'\\s[A-Za-z_]+\\('.",
+            "validation": "Add tests asserting SpecError for ['Bash(true) Bash(*)'], ['Bash(x) Edit(//**)'], ['Bash(a)(b)'] on reader and writer, and that plan_claude still accepts 'Bash(git log:*)' and 'Bash(python3 -m unittest:*)'. Confirm with --dry-run that the adapter refuses the crafted entry before any claim. Nonblocking for the alpha because the spec author is the trusted coordinator and the rule is documented as a permission, not an OS boundary; fix before advertising the scoped-shell rejection to untrusted spec sources."
+          },
+          {
+            "id": "CORE-2",
+            "severity": "P3",
+            "file": "scripts/check_plan.mjs",
+            "location": "prose loop: `if (fence) continue;` precedes `if (RAW_ENCODING.test(text)) fail(...)`",
+            "problem": "docs/native-workflows.md states 'a raw RRULE: string anywhere in the plan fails', but the check runs only on non-fenced lines, so an RRULE inside a fenced block in the plan passes.",
+            "evidence": "Loop order: `if (/^```/.test(text)) fence = !fence; lines.push(...); if (fence) continue;` then the RAW_ENCODING test on `text`.",
+            "fix": "Evaluate RAW_ENCODING against `text` before the `if (fence) continue;` line (or state in the doc that fenced blocks are exempt).",
+            "validation": "Add a test case placing 'RRULE:FREQ=MINUTELY;INTERVAL=30' inside a ``` block in the Program checklist and assert RRULE_RULE is reported. Nonblocking."
+          },
+          {
+            "id": "CORE-3",
+            "severity": "P3",
+            "file": "docs/native-workflows.md",
+            "location": "'Proof ledger for the parent' items 3 and 6; 'Unresolved integrations' first bullet; docs/workflow-capabilities.json host_mechanisms.event_bridge.evidence; adapters/ADAPTATIONS.md plan-checker bullet",
+            "problem": "Documentation drift toward under-claiming: the ledger says native collaboration/read_thread and the event-bridge probe are 'Pending' and 'nothing is claimed until that test is recorded', while the same document's sections, the capability map (spawn_agent/read_thread live-tested, parent_evidence.queue_probe) and evidence/integration-verification.json record both as exercised (queue did not wake an unloaded task). ADAPTATIONS.md still calls a reviewed checker parameterization 'future work' though scripts/check_plan.mjs now exists and host.md routes Codex plans to it.",
+            "evidence": "native-workflows.md item 3: 'Pending. A native agent id is never passed as a task id.'; item 6: 'Pending; nothing is claimed until then.'; workflow-capabilities.json event_bridge: live_proof 'pending', evidence null, notes 'The parent is testing a native queue mechanism'; ADAPTATIONS.md: 'A reviewed parameterization remains future work.'",
+            "fix": "Update the ledger items to 'Recorded' with the negative queue outcome and the summary-only read_thread scope; set event_bridge.evidence to the queue_probe record while keeping status 'unavailable' and notes 'not verified'; reword the ADAPTATIONS.md bullet to point at scripts/check_plan.mjs as the separate Codex checker.",
+            "validation": "CapabilityMapTests must still pass (they assert 'not verified' in notes and live_proof pending, which can stay); grep the docs for 'Pending' next to recorded probes. Nonblocking; the drift errs toward disclosure, not capability claims."
+          },
+          {
+            "id": "CORE-4",
+            "severity": "P3",
+            "file": "scripts/pstack.py",
+            "location": "resolve_identity(): `resolved = identity(session, candidate_project)` inside the state glob loop",
+            "problem": "When --project is omitted and any recorded context for the session points at a project directory that no longer exists, identity() raises 'Project directory does not exist' for that candidate before other contexts are considered, so a stale context blocks resolution of a valid one with a misleading message.",
+            "evidence": "identity() raises on `not path.is_dir()`; the loop has no try/except around that call, only around JSON parsing.",
+            "fix": "Catch ValueError from identity() for a candidate, skip it, and include a hint in the final error ('a recorded context points at a missing directory; pass the authoritative --project'), or report it as ambiguity.",
+            "validation": "Unit test: activate two contexts for one session, delete one project directory, call resolve_identity(session, None); expect resolution of the surviving context or an explicit ambiguity error naming --project. Nonblocking."
+          },
+          {
+            "id": "CORE-5",
+            "severity": "P3",
+            "file": "scripts/check_plan.mjs",
+            "location": "defaultPolicyPath(env) versus scripts/pstack.py config_path()",
+            "problem": "The doc claims the checker uses 'the same resolution as pstack.py models path', but the JS expands '~' in CODEX_HOME and treats an empty CODEX_HOME as unset, while Python uses the raw value (no expanduser) and treats '' as a relative 'pstack/models.json'. In those edge cases the checker and `models path` name different files.",
+            "evidence": "JS: `env.CODEX_HOME ? expandHome(env.CODEX_HOME) : path.join(os.homedir(), '.codex')`; Python: `Path(os.environ.get('CODEX_HOME', Path.home() / '.codex')) / 'pstack/models.json'`.",
+            "fix": "Align both: treat empty CODEX_HOME as unset in Python (`os.environ.get('CODEX_HOME') or default`) and either expanduser in both or neither.",
+            "validation": "Tests with CODEX_HOME='' and CODEX_HOME='~/x' asserting both resolvers return the same path. Nonblocking."
+          },
+          {
+            "id": "CORE-6",
+            "severity": "P3",
+            "file": "hooks/mode.py",
+            "location": "prose_lines(): `quoted ^= len(parts) % 2 == 0` carries double-quote state across lines",
+            "problem": "An unbalanced double quote on an earlier prose line (for example an inch mark, 'the 5\" display') hides every later line until another quote appears, so a legitimate later-line '$poteto-mode' mention does not activate the mode. The failure is fail-safe (no activation) but silent.",
+            "evidence": "Single-line fixture '$poteto-mode fix the 5\" display bug' passes only because the mention precedes the quote; a two-line prompt 'Fix the 5\" display.\\nUse $poteto-mode.' yields no match by the same logic.",
+            "fix": "Treat a '\"' immediately preceded by a digit as an inch mark (not a quote) in DOUBLE_QUOTE, e.g. `(?<![\\\\\\d])[\"\u201c\u201d]`, or reset `quoted` at blank lines.",
+            "validation": "Add the two-line prompt to test_punctuated_and_later_line_mentions_activate and keep the existing quoted-negative cases green. Nonblocking; the first-line form always works."
+          }
+        ],
+        "limitations": [
+          "No tools beyond schema output were available: I executed no tests, builds, package checks or CLI probes. All 'PASS' counts (207 Python, 52 Bun), build/package/validator results, live Claude probes, the native heartbeat wake, the queue probe, the mode CLI checks and the Grok/Bot observations are parent-reported and accepted only at their stated scope.",
+          "Files not supplied and therefore not audited: scripts/doctor.py and docs/doctor.md, the Bot sender and its tests (parallel audit), hooks/hooks.json, examples/models.astra-claude.json, tests/fixtures/plans/cursor-autopilot-full.md and models.inherit.json, test_build/test_package/other test modules, docs/grok-bot.md, docs/skill-catalog-audit.md, docs/playbook-routing-audit.md, and the generated skills/ tree. The supplied test files contain roughly 125 test methods; the remaining ~80 are unseen.",
+          "ECMAScript versus Python whitespace/token alignment was verified by reasoning over Unicode categories, not by running a JavaScript engine; the parent's 65536-point probe covers Python re only.",
+          "The exploitability of CORE-1 rests on Claude Code's documented space-separated --allowedTools parsing plus the parenthesis-aware behavior implied by the successful live probes; I did not execute Claude Code to confirm the split.",
+          "The Codex native tool schema (create_goal, get_goal, update_goal, automation_update, read_thread, spawn_agent) and the cited learn.chatgpt.com documentation were not visible to me; their shapes are taken from docs/native-workflows.md as assumptions.",
+          "No matched Cursor execution baseline exists; fidelity is judged against the pinned source text and host contract, not against observed Cursor behavior."
+        ],
+        "files_examined": [
+          "README.md",
+          "adapters/host.md",
+          "adapters/ADAPTATIONS.md",
+          "docs/verification.md",
+          "docs/fable-review.md",
+          "docs/native-workflows.md",
+          "docs/workflow-capabilities.json",
+          "docs/setup.md",
+          "docs/claude.md",
+          "docs/grok.md",
+          "evidence/integration-verification.json",
+          "hooks/mode.py",
+          "scripts/pstack.py",
+          "scripts/model_config.py",
+          "scripts/model_schema.py",
+          "schemas/models.schema.json",
+          "scripts/check_plan.mjs",
+          "scripts/worker_common.py",
+          "scripts/claude_worker.py",
+          "scripts/grok_worker.py",
+          "scripts/build.py",
+          "scripts/package.py",
+          "tests/test_mode.py",
+          "tests/test_model_config.py",
+          "tests/test_check_plan.py",
+          "tests/test_worker_common.py",
+          "tests/test_worker_signals.py",
+          "tests/test_claude_worker.py",
+          "tests/test_grok_worker.py",
+          "tests/fixtures/plans/codex-autopilot-full.md",
+          "tests/fixtures/plans/models.codex.json",
+          "requirements-test.txt",
+          ".github/workflows/ci.yml",
+          ".codex-plugin/plugin.json",
+          "upstream/pstack/skills/poteto-mode/SKILL.md",
+          "upstream/pstack/skills/setup-pstack/SKILL.md",
+          "upstream/pstack/agents/poteto-agent.md",
+          "upstream/pstack/skills/why/SKILL.md",
+          "upstream/pstack/skills/swarm/SKILL.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/authoring-a-skill.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autonomous-run.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autopilot-full.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/autopilot-stack.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/babysit.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/bug-fix.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/eval.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/feature.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/hillclimb.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/investigation.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/multi-phase-plan.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/opening-a-pr.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/orchestrate.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/pause-safely.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/perf-issue.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/prototype.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/refactoring.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/runtime-forensics.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/session-pickup.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/shipping.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/trace-forensics.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/visual-parity.md",
+          "upstream/pstack/skills/poteto-mode/playbooks/worktree-cleanup.md",
+          "upstream/pstack/skills/poteto-mode/scripts/check-plan.mjs"
+        ]
+      },
+      "execution": {
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "elapsed_seconds": 613.2,
+        "exit_code": 0,
+        "subtype": "success",
+        "is_error": false,
+        "structured": true,
+        "init": {
+          "model": "claude-fable-5-1",
+          "tools": [
+            "StructuredOutput"
+          ],
+          "permissionMode": "dontAsk",
+          "mcp_servers": []
+        }
+      },
+      "prompt_sha256": "b5f187593f905db429effa9f8cbf8baa9f33f5994e77544a2159fabb6a76be8a",
+      "raw_response_sha256": "c7d5f8c337512260b32f8e7e2e17b9e42698b9e57022f3c4184affc372a22b93"
+    },
+    "bot": {
+      "report": {
+        "target_commit": "ad93276dcf570e68832af469abce7066b2d6edc3",
+        "scope": "Bot scope only: scripts/grok_bot.py (optional Grok Bot webhook sender), scripts/doctor.py (read-only prerequisite doctor), tests/test_grok_bot.py, tests/test_doctor.py, docs/grok-bot.md, docs/doctor.md, and the Bot-related statements in README.md, adapters/host.md, docs/verification.md, docs/native-workflows.md, evidence/integration-verification.json. Upstream basis: upstream/pstack/skills/make-bot-ui/SKILL.md. Receipt assumptions imported from scripts/worker_common.py were inspected only for the fields the doctor reads. Core workers, model hooks, plan checker and mode lifecycle were audited by other reviewers and are outside this verdict.",
+        "verdict": "approve",
+        "approval_scope": "Approved, at exactly ad93276dcf570e68832af469abce7066b2d6edc3: (1) scripts/grok_bot.py as the optional server-side bridge for the upstream make-bot-ui step \"Host the page on this computer\": POST to exactly https://api2.cursor.sh/automations/webhook/<id> with no query/fragment/userinfo/port and no host override in config, API or CLI; Content-Type application/json, Authorization Bearer and X-Automation-Key headers; 8 s urllib socket timeout, one attempt, no retry; every redirect refused with credential headers unredirected; no environment proxy; TLS verified by ssl.create_default_context; exactly HTTP 200 as acceptance with every other status unconfirmed; response body and headers never captured or awaited; sender key read only from a named environment variable or a 0600 user-owned regular file opened O_NOFOLLOW and checked on the descriptor; key never accepted on the command line, never printed, never placed in a result, error, queue line or stderr; key-bearing payloads refused before POST and never queued; failure queue as a 0600 O_NOFOLLOW O_NONBLOCK descriptor-checked append-only JSONL file that must be a different inode from the key file and config; explicit probe_payload required for probe and probe results never queued; fixed-phrase failure messages with exception class names only; the `check` readiness report with no network call. (2) scripts/doctor.py as a read-only diagnostic that runs only the four allow-listed version/list commands with stdin closed under a bounded timeout, never logs in, installs, infers, or reads credential files, never reports positive authentication, treats supplied receipts as user-supplied evidence checked for internal consistency against the worker_common receipt schema, and never lets a successful inference receipt certify sandbox enforcement or let an optional component change the core verdict. (3) docs/grok-bot.md and docs/doctor.md as honest disclosure of what is implemented, what is parent-observed, and what remains unverified. NOT approved and not implied: real webhook delivery to api2.cursor.sh; that api2.cursor.sh is the actual Grok Bot routine host (parent-observed URL shape only; a different real host would fail closed as invalid_config); obtaining a sender key through the Bot app's secure entry; a live probe returning HTTP 200; routine wake or bot completion; the routine-side drain of the local failure queue (explicitly an unbuilt bridge); page hosting, 0.0.0.0 binding and Tailscale steps; the secret-request card, update_state routine creation and [routine] wake handling as Codex facilities (they remain Bot-app UI and source text); Grok Bot MCP or Codex-native Bot tools; per-lane isolated cloud VMs; TLS behavior against a real or self-signed server (only http loopback was tested); refusal of files owned by another user (untested without root); positive Grok Build or Claude authentication from the doctor; any workflow, core worker, checker, mode or Cursor-parity claim.",
+        "summary": "The optional Grok Bot sender faithfully implements the outbound POST contract of the pinned make-bot-ui skill and strengthens its secret handling: single documented host with no override, documented headers, 8 s one-try transport with redirects refused and no proxy, exact HTTP 200 acceptance, no response capture, server-only key from env or a 0600 O_NOFOLLOW-checked file, key-bearing payload refusal, an inode-disjoint 0600 failure queue, and an explicit never-queued probe. The read-only doctor runs only allow-listed version/list commands, never claims positive authentication, treats receipts as user-supplied evidence using the correct worker_common schema and artifact names, and no longer treats inference success as sandbox proof. Docs distinguish implemented code, parent-observed Bot UI facts (paused routine, example.com screenshot, label/name secret schema) and the unresolved external prerequisites (real key, live probe, routine-side drain, webhook delivery). Tests as read assert the claimed boundaries with synthetic keys, injected openers and an http loopback server; I did not run them. Six P3 follow-ups: non-finite floats misclassified as internal_error, the final scrub misses JSON-escaped keys, queue/key inode comparison is skipped when the key file identity is unknown, queue directory trust is not checked (documented), argparse invalid-choice can echo a positional value, and one stale sentence in docs/native-workflows.md. None blocks ship and none downgrades security relative to the documented contract.",
+        "checks": [
+          {
+            "requirement": "Sender POSTs to the routine URL copied from the panel: https://api2.cursor.sh/automations/webhook/<id>, no query string, no guessed id, no other host",
+            "upstream_basis": "make-bot-ui SKILL.md: 'The URL looks like https://api2.cursor.sh/automations/webhook/<id> with no query string. Copy the URL from the routine. Do not guess the id.'",
+            "port_evidence": "grok_bot.validate_url: https scheme only, parts.netloc.lower() must equal 'api2.cursor.sh' (rejects userinfo, port, subdomain, trailing dot), WEBHOOK_PATH_RE anchors the exact path with a bounded id charset, '?' and '#' rejected before parsing, non-ASCII/whitespace/control rejected. validate_config rejects expected_host and unknown keys; _trusted_config re-derives host/routine_id from url at the send boundary so caller dicts with a spoofed host field fail. No host parameter exists (test_no_host_override_parameter_exists). Tests: UrlValidationTests (23 rejected shapes), HostOverrideRegressionTests, LoopbackBoundaryTests.test_send_event_never_accepts_a_loopback_url.",
+            "result": "pass",
+            "reason": "Fail-closed to the documented host. Assumption: the real routine panel shows this host; evidence records webhook_url_shape_verified=true as a parent UI observation. If the real host differs the sender cannot be used, which is the safe direction."
+          },
+          {
+            "requirement": "POST with Content-Type application/json, Authorization: Bearer <key>, X-Automation-Key: <key>, body one JSON object with the routine prompt's fields",
+            "upstream_basis": "make-bot-ui SKILL.md 'Host the page on this computer' header and body list",
+            "port_evidence": "grok_bot.build_request adds the two credential headers with add_unredirected_header and Content-Type/User-Agent with add_header; validate_payload requires one non-empty dict of JSON-native values; encode_payload serializes once so the same bytes are POSTed, hashed and queued. test_accepted_post_uses_documented_headers_timeout_and_one_attempt and the loopback test assert the exact header values and body reach a real http.server.",
+            "result": "pass",
+            "reason": "Matches upstream. User-Agent is an additive header the wake envelope already exposes; harmless."
+          },
+          {
+            "requirement": "Timeout 8 seconds, one try, no retry",
+            "upstream_basis": "make-bot-ui SKILL.md: 'timeout: 8 seconds', 'one try, no retry'",
+            "port_evidence": "TIMEOUT_SECONDS=8.0 passed as the urllib socket timeout; post_once performs exactly one opener call; result records attempts=1, retry=false, timeout_note stating it is a per-operation socket timeout not a whole-attempt deadline and that DNS is uncovered; STATUS_EXIT_CODES['timeout']=124. Loopback test_timeout_is_classified_without_retry shows one request only.",
+            "result": "pass",
+            "reason": "Honest interpretation of the upstream number as a socket timeout, with the deviation from a hard deadline disclosed in code, result and docs."
+          },
+          {
+            "requirement": "HTTP 200 means the routine woke; anything else is unconfirmed; the response body is not read or recorded",
+            "upstream_basis": "make-bot-ui SKILL.md: 'The POST returns HTTP 200 when the routine wakes.'",
+            "port_evidence": "send_event: status 'accepted' only when outcome kind is response and http_status == 200; 201/202/204/226/100 and 4xx/5xx become 'rejected' with the fixed 'unconfirmed' phrase (test_only_http_200_is_accepted). post_once reads only .status/.getcode() and closes; FakeResponse/NeverReadBody raise if read; loopback slow_body test proves the body is not awaited; bot_completion_verified is always false with COMPLETION_NOTE.",
+            "result": "pass",
+            "reason": "Exactly-200 acceptance and no body drain are implemented and asserted; HTTP acceptance is explicitly not Bot completion."
+          },
+          {
+            "requirement": "Sender key stays on the server: not in the browser, chat, skill, command line, logs, results or queue",
+            "upstream_basis": "make-bot-ui SKILL.md: 'Keep the sender key on the server. Do not put the sender key in the browser, in chat, or in this skill.' and 'Do not print the value. Do not log the value.'",
+            "port_evidence": "Key sources are key_env (validated name) or key_file (0600, user-owned, regular, O_NOFOLLOW, fstat on the same descriptor, one printable-ASCII line \u22644096). FORBIDDEN_CONFIG_KEYS reject inline key/secret/token; CLI has no --key/--url flags and _Parser masks values of unrecognized arguments; secret_source records only 'env:NAME' or 'file:<path>'; every error message is a fixed phrase, strerror or exception class name; payload_contains refuses key-bearing payloads before POST and queue; _finish performs a last-line scrub. Tests: SecretTests, KeyInPayloadRegressionTests, ErrorLeakRegressionTests with short, long and quote-bearing keys and 8-char fragment checks, test_cli_output_has_no_key_fragments_and_no_traceback.",
+            "result": "pass",
+            "reason": "No path I could trace places the resolved key in output. Two P3 defense-in-depth gaps recorded (escaped-key scrub, argparse invalid-choice echo) that do not involve the resolved key in normal operation."
+          },
+          {
+            "requirement": "Redirects are not followed and credentials are not re-sent; no environment proxy; TLS verified",
+            "upstream_basis": "Implied by server-only key and the single documented host; upstream gives no redirect rule",
+            "port_evidence": "_NoRedirect.redirect_request returns None so urllib raises HTTPError for 3xx before fp.read(); credential headers are unredirected; post_once classifies 3xx as 'redirect_refused' and records only the code; default_opener installs ProxyHandler({}) and HTTPSHandler(context=ssl.create_default_context()). Loopback redirect test shows a single request and no /collect fetch; test_redirects_are_refused_and_queued asserts evil.example never appears in the result.",
+            "result": "pass",
+            "reason": "Correct per Python 3.12 urllib semantics as I read them. TLS verification against a real or self-signed server is not exercised by any test (limitation, not a bug)."
+          },
+          {
+            "requirement": "Probe once with a harmless payload using an action the routine prompt ignores before declaring the UI live",
+            "upstream_basis": "make-bot-ui SKILL.md: 'Before you tell the user that the UI is live, probe once with a harmless payload. Use an action that the prompt ignores.'",
+            "port_evidence": "probe_event requires an explicit probe_payload dict in config (no universal action invented) and returns invalid_config otherwise; probe sends exactly once, is marked probe=true, and is never queued on failure (warning 'probe payloads are not queued'); an invalid queue still fails the probe closed. Tests: test_probe_requires_an_explicit_payload..., test_probe_uses_configured_harmless_payload, test_success_leaves_queue_empty_and_probe_failures_are_never_queued.",
+            "result": "pass",
+            "reason": "Faithful and conservative. Parent repair 'probe requires explicit known-harmless payload' is present in code."
+          },
+          {
+            "requirement": "If a POST can fail, append the same JSON to a local log and drain that log from the routine; do not poll as the primary path",
+            "upstream_basis": "make-bot-ui SKILL.md 'Host the page on this computer' paragraph on failure logging",
+            "port_evidence": "open_queue: parent directory must exist, file opened O_WRONLY|O_APPEND|O_CREAT|O_NOFOLLOW|O_CLOEXEC|O_NONBLOCK with 0o600, fstat-checked regular/owner/0600, inode compared to config and key file; append_queue_line writes the exact encoded bytes plus newline with short-write loop and fsync; QUEUED_STATUSES covers rejected, redirect_refused, network_error, timeout, secret_unavailable; queue append failure is reported not hidden. inspect_queue/check report entries without creating. Drain is not implemented; docs/grok-bot.md 'Failure queue and the drain gap' states the routine cannot reach a local file and no bridge is built or claimed. Tests: QueueRegressionTests (0644, symlink, hardlink to key/config, directory, missing parent, short writes, ENOSPC), FIFO subprocess test.",
+            "result": "partial",
+            "reason": "The append half is implemented and asserted; the routine-side drain is an unresolved external prerequisite and is disclosed as such rather than faked. Not a defect of the port."
+          },
+          {
+            "requirement": "Do not send media bytes on the webhook; keep the field list small",
+            "upstream_basis": "make-bot-ui SKILL.md: 'Do not send media bytes on the webhook.' and 'Keep the field list small.'",
+            "port_evidence": "validate_payload rejects bytes/bytearray/memoryview and non-JSON values, depth >16; encode_payload enforces MAX_BODY_BYTES=64 KiB; CLI reads at most 64 KiB+1. PayloadTests cover bytes, oversize, depth.",
+            "result": "pass",
+            "reason": "Upstream sets no numeric cap; the 64 KiB bound is an additive port decision documented in docs/grok-bot.md."
+          },
+          {
+            "requirement": "Routine creation via update_state, URL copy from the routine panel, secret-request card, webhook wake handling",
+            "upstream_basis": "make-bot-ui SKILL.md sections 'Create the webhook routine', 'Copy the URL and the sender key', 'Request the sender key', 'Handle the webhook wake'",
+            "port_evidence": "No Codex tool is invented for these; docs/grok-bot.md maps each to the Grok Bot app UI and notes the live secure-secret UI asks for label/name rather than connector/field (evidence: live_secret_request_schema_reported, labeled 'reported by Bot, not a direct Codex MCP introspection'). Evidence records routine_native_creation_observed and routine_paused_ui_observed, real_sender_key_obtained=false, webhook_delivery_verified=false. adapters/host.md: 'Native routine management and secure secret entry remain in the Bot environment; they are not invented Codex tools.'",
+            "result": "unverified",
+            "reason": "Source text is preserved and the mapping is honest; these steps are external prerequisites I cannot verify and the port does not claim them. This is disclosure, not functionality."
+          },
+          {
+            "requirement": "Bot is optional: ordinary coding and review never require it; no core dependency",
+            "upstream_basis": "User intent (Bot OPTIONAL); adapters/host.md 'Grok Bot is optional and separate from Grok Build'",
+            "port_evidence": "grok_bot.py imports only the standard library and is imported by no supplied core file; doctor.py does not import grok_bot and rolls Grok Bot up as optional_app whose status never affects core; README and host.md state ordinary coding does not require it.",
+            "result": "pass",
+            "reason": "Holds for every supplied file. Assumption: no unsupplied core script imports grok_bot; docs/grok-bot.md asserts this and nothing contradicts it."
+          },
+          {
+            "requirement": "Doctor is read-only: only allow-listed version/list commands, no login/install/inference/network of its own, no credential files read, no environment values, identities or home paths in output",
+            "upstream_basis": "Port-defined contract in docs/doctor.md and the doctor module docstring; user intent 'no fake capability or security downgrade'",
+            "port_evidence": "ALLOWED_COMMANDS has four read-only entries; CommandLog.run only instantiates those templates; default_runner uses shell=False, stdin DEVNULL, capture_output with bounded timeout and 64 KiB truncation; Scrubber erases secret env values \u22658 chars, token/assignment/email patterns and the home prefix from every report string via walk(); OVERRIDE_ENV_NAMES reports presence only; read_sibling_stderr opens only stderr.txt beside the receipt and skips symlinks; app bundle detection reads Info.plist only. Tests: test_only_allowlisted_read_only_commands_run_under_the_timeout, test_secret_values_identities_and_home_paths_never_reach_the_report, test_paths_named_inside_a_receipt_are_never_opened.",
+            "result": "pass",
+            "reason": "Matches its stated policy. The policy note correctly says `grok models` is the CLI's own listing and may contact its provider outside the doctor's control."
+          },
+          {
+            "requirement": "Doctor never asserts positive authentication; receipts are user-supplied evidence checked for internal consistency; inference success does not certify sandbox enforcement; optional components never change the core verdict",
+            "upstream_basis": "Parent repair 'doctor no longer equates inference receipt success with sandbox verification'; docs/doctor.md status table",
+            "port_evidence": "classify_grok_models returns only needs_login or unknown; check_claude auth is 'unknown' or 'verified_by_supplied_receipt'; analyze_worker_receipt requires schema==worker_common.RECEIPT_SCHEMA, backend match, status success, complete, requested_model_verified, provider_is_error not true, lifecycle exited, returncode 0, non-empty observed_models all equal to requested_model, empty errors list; on a verified grok receipt sandbox_probe is 'unverified' with policy_weakened None; core.status derives from Claude only; exit 0 when Claude is installed regardless of Grok state. Tests: test_success_receipt_requires_agreeing_fields_not_one_boolean, test_successful_inference_receipt_does_not_certify_sandbox_enforcement, test_missing_optional_components_do_not_break_core.",
+            "result": "pass",
+            "reason": "No positive-auth path exists; the receipt gate matches the worker_common evaluate() conditions for requested_model_verified."
+          },
+          {
+            "requirement": "Imported receipt assumptions agree with worker_common",
+            "upstream_basis": "scripts/worker_common.py RECEIPT_SCHEMA, ARTIFACTS and the receipt dict written by _run_claimed_process",
+            "port_evidence": "doctor imports ARTIFACTS ('receipt' -> receipt.json, 'stderr' -> stderr.txt) and RECEIPT_SCHEMA ('pstack-codex/worker-receipt/1'); every field the doctor reads (schema, backend, status, lifecycle, requested_model, observed_models, requested_model_verified, complete, provider_is_error, returncode, errors) is present in the full receipt; make_error_receipt lacks provider_is_error and has lifecycle None, which the doctor correctly treats as unverified.",
+            "result": "pass",
+            "reason": "Consistent by inspection."
+          },
+          {
+            "requirement": "Docs and evidence do not overstate: no claim of a working webhook, real key, enabled routine, or Bot completion",
+            "upstream_basis": "User intent: approval must never imply enabled webhooks; 'distinguish implementations, actual proofs, and unresolved external prerequisites'",
+            "port_evidence": "docs/grok-bot.md 'Current evidence' and 'Limits'; docs/verification.md 'Optional Grok Bot app handoff created a paused test routine ... No sender key was obtained and no real webhook was fired'; evidence webhook_sender.real_webhook_fired=false, real_sender_key_obtained=false, http_acceptance_is_not_bot_completion=true; adapters/host.md Bot paragraph. One stale sentence in docs/native-workflows.md says the Bot adapter is not yet linked (P3 doc finding).",
+            "result": "pass",
+            "reason": "Disclosure is accurate and separates implementation from parent observation from prerequisite; the stale sentence understates rather than overstates."
+          },
+          {
+            "requirement": "Tests assert the claimed sender and doctor behaviors with synthetic credentials only",
+            "upstream_basis": "docs/grok-bot.md 'Tests' and docs/verification.md 'secret-safe webhook transport with synthetic credentials'",
+            "port_evidence": "tests/test_grok_bot.py uses synthetic KEY/LONG_KEY/TRICKY_KEY, FakeOpener, Tripwire environ, a 127.0.0.1 http.server, and a FIFO subprocess with timeout=2; tests/test_doctor.py uses an injected FakeRunner, a synthetic app bundle and synthetic receipts, plus one real default_runner subprocess. Assertions match the behaviors documented above. Parent reports 207 Python tests pass on Python 3.12; I did not run them.",
+            "result": "pass",
+            "reason": "Assertions are meaningful by reading. Execution status is parent-reported only."
+          },
+          {
+            "requirement": "Original make-bot-ui skill body remains byte-identical and only the host notice is inserted",
+            "upstream_basis": "adapters/ADAPTATIONS.md host-contract-notice transformation; build --check and package --check",
+            "port_evidence": "The supplied upstream/pstack/skills/make-bot-ui/SKILL.md is the source used for fidelity comparison; docs/grok-bot.md maps each of its steps without rewriting it. Byte identity of the generated copy is parent-reported (build+package checks PASS) and not visible in the supplied packet.",
+            "result": "unverified",
+            "reason": "Cannot confirm from supplied files; nothing in the bot scope alters the upstream body, and the parent's build check covers it."
+          }
+        ],
+        "findings": [
+          {
+            "id": "BOT-1",
+            "severity": "P3",
+            "file": "scripts/grok_bot.py",
+            "location": "validate_payload (inner check) and encode_payload; send_event payload except-clause; _read_payload",
+            "problem": "Non-finite floats are misclassified. validate_payload rejects NaN via `value != value` but not +/-inf; json.dumps(..., allow_nan=False) then raises ValueError, which send_event catches only in its generic `except Exception` and reports as status internal_error, exit 1, instead of invalid_payload, exit 2. _read_payload uses json.loads with defaults, which accepts the `Infinity` literal from a payload file or stdin. The event is neither sent nor queued, so this is fail-closed, but the status contract is wrong and body_bytes/body_sha256 stay null.",
+            "evidence": "`if isinstance(value, float) and value != value: raise PayloadError('payload contains NaN')` is the only float check; `json.dumps(payload, ensure_ascii=False, separators=(',', ':'), allow_nan=False)` raises ValueError('Out of range float values are not JSON compliant') for inf; the caller's `except PayloadError` does not match ValueError.",
+            "fix": "In validate_payload's check(): `if isinstance(value, float) and not math.isfinite(value): raise PayloadError('payload contains a non-finite number')`. Optionally pass `parse_constant=lambda name: (_ for _ in ()).throw(PayloadError(...))` or a small rejecting function to json.loads in _read_payload.",
+            "validation": "Unit test: send_event(config, {'n': float('inf')}) -> status invalid_payload, exit_code 2, opener never called, queue file absent; CLI send with a payload file containing `{\"n\": Infinity}` -> invalid_payload exit 2."
+          },
+          {
+            "id": "BOT-2",
+            "severity": "P3",
+            "file": "scripts/grok_bot.py",
+            "location": "_finish (the `if secret:` scrub block)",
+            "problem": "The last-line scrub tests `secret in json.dumps(result)`. A key containing a double quote or backslash is JSON-escaped in the serialized form, so it would not be detected or redacted if a message ever carried it. All current messages are fixed phrases, strerror text or class names, so this is defense-in-depth only, but the test that proves the scrub (test_finish_scrubs_if_a_field_ever_carried_the_key) uses only the plain KEY and would pass with TRICKY_KEY even if scrubbing silently failed.",
+            "evidence": "`serialized = json.dumps(result, ensure_ascii=False); if secret in serialized:` versus TRICKY_KEY = 'tk\"quoted\\\\backslash/slash-NEVERPRINT-0042' whose serialized form contains `\\\"` and `\\\\`.",
+            "fix": "Walk the result's strings before serialization (reuse the walk pattern from payload_contains) and redact per-string, or additionally check `json.dumps(secret)[1:-1] in serialized`.",
+            "validation": "Extend test_finish_scrubs_if_a_field_ever_carried_the_key to loop over KEY, TRICKY_KEY and LONG_KEY and assert_no_secret on each cleaned result."
+          },
+          {
+            "id": "BOT-3",
+            "severity": "P3",
+            "file": "scripts/grok_bot.py",
+            "location": "send_event, the `if key_ident is not None:` block after resolve_secret; read_secret_file / _open_private symlink and open-failure paths",
+            "problem": "When the key file cannot be opened (symlink refused with ELOOP, ENOENT, EACCES) the SecretError carries no file identity, so the queue/key inode comparison is skipped and the event is still queued (status secret_unavailable). If key_file is a symlink whose target is the configured queue_path, the JSON event is appended to the real key file, corrupting it. This needs an operator misconfiguration (or an attacker who already has write access to the key file's directory, who could already delete the key), so it is a robustness gap rather than a security downgrade. check_config has the same blind spot.",
+            "evidence": "_open_private raises UnsafeFileError('is a symbolic link (not followed)') with ident=None on ELOOP; read_secret_file re-raises SecretError with exc.ident (None); send_event only compares `if key_ident is not None`; docs state the path-level distinctness check uses normpath, which does not resolve symlinks.",
+            "fix": "In the SecretError branch, when exc.ident is None and trusted['key_file'] is set, fall back to `_ident_of(trusted['key_file'])` (os.stat follows the symlink) for the queue and config comparisons; or refuse to queue when a configured key file's identity is unknown.",
+            "validation": "Test: write real.key 0600, make sender.key a symlink to it, set queue_path to real.key; send with a failing opener -> status invalid_queue, opener not called, real.key bytes unchanged."
+          },
+          {
+            "id": "BOT-4",
+            "severity": "P3",
+            "file": "scripts/grok_bot.py",
+            "location": "open_queue (directory check `os.path.isdir(os.path.dirname(queue_path))`)",
+            "problem": "Only the queue file is descriptor-checked; the queue's directory is not required to be owned by the current user or free of group/other write bits. In a shared writable directory (for example a sticky /tmp), another local user can pre-create the queue name as a hard link to one of the sender user's own 0600 regular files (permitted on macOS; blocked on Linux only when fs.protected_hardlinks=1). The sender would then append a JSON line into that file. docs/grok-bot.md discloses that directory ownership is unchecked; the default location beside the config file makes this unlikely in practice.",
+            "evidence": "open_queue performs os.path.isdir on the parent then os.open on the final path with O_NOFOLLOW; the fstat checks (regular, uid match, 0600) and inode comparison against key/config all pass for a hard link to an unrelated user-owned 0600 file.",
+            "fix": "Stat the queue directory (os.stat of dirname, or open it with O_DIRECTORY and fstat) and require st_uid == os.getuid() and no group/other write bits; reject otherwise with a fixed QueueError phrase. Document the requirement in docs/grok-bot.md.",
+            "validation": "Test: queue directory chmod 0o777 -> send returns invalid_queue with nothing sent; directory 0o700 -> unchanged behavior."
+          },
+          {
+            "id": "BOT-5",
+            "severity": "P3",
+            "file": "scripts/grok_bot.py",
+            "location": "_Parser.error",
+            "problem": "The argparse override masks values only for messages starting with 'unrecognized arguments:'. An invalid positional subcommand produces `argument command: invalid choice: '<value>' (choose from ...)`, which echoes the positional verbatim on stderr. A user who mistakenly pastes the key as the first argument would have it printed. Contradicts the module docstring 'never accepted on the command line, printed, logged'. Very unlikely usage; no result or file is affected.",
+            "evidence": "`if message.startswith('unrecognized arguments:'):` is the only masked case; sub = parser.add_subparsers(dest='command', required=True) with choices send/probe/check.",
+            "fix": "Also mask messages containing 'invalid choice:' by replacing the quoted value with '<value not echoed>' before calling super().error, or use a custom choices check that names only the allowed commands.",
+            "validation": "Test: grok_bot.main(['sk-SYNTHETIC-POSITIONAL']) -> SystemExit 2 and the captured stderr does not contain the value."
+          },
+          {
+            "id": "BOT-6",
+            "severity": "P3",
+            "file": "docs/native-workflows.md",
+            "location": "Section 'Unresolved integrations awaiting capability evidence', bullet 'Grok Bot and Make Bot UI'",
+            "problem": "The bullet says the Make Bot UI routine, secret-request card and webhook wake contract 'report unavailable until the parent links the separate Bot adapter'. At this commit adapters/host.md and README already link docs/grok-bot.md and the sender exists. The sentence understates rather than overstates, but it disagrees with the two other documents about what is linked and could confuse an operator deciding whether the sender may be used.",
+            "evidence": "docs/native-workflows.md bullet text versus adapters/host.md 'Use [the Bot adapter](../docs/grok-bot.md) for authorized cloud-computer handoffs through the app and the server-side webhook sender.'",
+            "fix": "Reword to: the optional sender (docs/grok-bot.md) implements the outbound POST only; routine creation, secret entry and wake handling remain Bot-app UI; obtaining a key, a live probe, webhook delivery and the routine-side drain remain unverified.",
+            "validation": "Doc review; no code change."
+          }
+        ],
+        "limitations": [
+          "I executed nothing. All statements about test outcomes (207 Python, 52 Bun) and live observations (paused routine creation, example.com screenshot, label/name secret schema, no key obtained, no webhook fired) are parent-reported and are cited as such, never as my own reproduction.",
+          "I had no line numbers; findings cite functions and quoted code instead.",
+          "Python urllib/http.client behavior (no body read before HTTPError, redirect_request returning None causing an HTTPError without fp.read, socket timeout scope) is from my reading of the 3.12 standard library, not from execution.",
+          "The claim that api2.cursor.sh is the real Grok Bot routine host rests on the parent's UI observation (webhook_url_shape_verified); the sender fails closed if the real host differs.",
+          "The https/TLS path (ssl.create_default_context, certificate failure classification) is not exercised by any supplied test; only http loopback transport was tested.",
+          "Refusal of files owned by another user is untested (needs root), as docs/grok-bot.md discloses.",
+          "macOS hard-link permission semantics cited in BOT-4 are from memory and platform-dependent.",
+          "I could not see whether any unsupplied core script imports grok_bot; the optionality check covers only the supplied files and the docs' assertion.",
+          "Byte identity of the generated make-bot-ui skill and the absence of other diffs are parent build/package checks, not visible in the supplied packet.",
+          "The routine-side drain, page hosting, Tailscale, secret-request card and webhook wake are unresolved external prerequisites; this approval does not treat their disclosure as functionality."
+        ],
+        "files_examined": [
+          "scripts/grok_bot.py",
+          "scripts/doctor.py",
+          "tests/test_grok_bot.py",
+          "tests/test_doctor.py",
+          "docs/grok-bot.md",
+          "docs/doctor.md",
+          "scripts/worker_common.py",
+          "upstream/pstack/skills/make-bot-ui/SKILL.md",
+          "adapters/host.md",
+          "adapters/ADAPTATIONS.md",
+          "README.md",
+          "docs/verification.md",
+          "docs/fable-review.md",
+          "docs/native-workflows.md",
+          "docs/grok.md",
+          "evidence/integration-verification.json",
+          "upstream/pstack/skills/poteto-mode/SKILL.md",
+          "upstream/pstack/skills/setup-pstack/SKILL.md",
+          "upstream/pstack/agents/poteto-agent.md",
+          "upstream/pstack/skills/why/SKILL.md",
+          "upstream/pstack/skills/swarm/SKILL.md"
+        ]
+      },
+      "execution": {
+        "requested_model": "claude-fable-5-1",
+        "requested_effort": "xhigh",
+        "assistant_models": [
+          "claude-fable-5-1"
+        ],
+        "elapsed_seconds": 544.56,
+        "exit_code": 0,
+        "subtype": "success",
+        "is_error": false,
+        "structured": true,
+        "init": {
+          "model": "claude-fable-5-1",
+          "tools": [
+            "StructuredOutput"
+          ],
+          "permissionMode": "dontAsk",
+          "mcp_servers": []
+        }
+      },
+      "prompt_sha256": "a0efe16d22693e9465dccdeaf2003eea3589a837a97299e934cc5672dd25a0b2",
+      "raw_response_sha256": "54ee8cf256eedc15e1705cca08793382f96d9ba0250e52c3a516d841a488512c"
+    }
+  },
+  "current_followups": {
+    "status": "approved at the exact code commit recorded in final-review.json",
+    "repaired_finding_ids": [
+      "CORE-1",
+      "CORE-2",
+      "CORE-3",
+      "CORE-4",
+      "CORE-5",
+      "CORE-6",
+      "BOT-1",
+      "BOT-2",
+      "BOT-3",
+      "BOT-4",
+      "BOT-5",
+      "BOT-6"
+    ],
+    "tests": {
+      "python_passed": 229,
+      "failed": 0,
+      "jsonschema": "4.23.0"
+    },
+    "note": "Historical reviews remain bound to their original commit. The later scoped approval is recorded separately.",
+    "resumed_poteto_pass": {
+      "companion_inclusion": "Verified in source, distribution and installed cache; record in companion-verification.json.",
+      "cleanup": "Accepted scoped comment-only review; parent simplified lifecycle discrimination and removed an unreachable secret guard.",
+      "tests_passed": 216,
+      "approval": "Approved within the exact scope in final-review.json",
+      "fresh_fable_retry": "Provider session limit before tools or edits.",
+      "grok_implementation": {
+        "author": "Astra, explicitly authorized by user",
+        "supported_profiles": [
+          "analysis",
+          "reader"
+        ],
+        "host": "tested Linux Grok1.0.34 build",
+        "production_acceptance": "grok-adapter-acceptance.json",
+        "tests_passed": 223,
+        "final_fable_review": "approved within scope; see final-review.json"
+      }
+    }
+  },
+  "latest_review_record": "final-review.json",
+  "historical_fable_implementation_attempt": {
+    "purpose": "Implement verified Grok launch controls and profile gates",
+    "status": "provider_session_limit",
+    "tool_calls": 0,
+    "edits": 0,
+    "approval": false,
+    "reported_reset": "01:30 Europe/Copenhagen, following the September 18 evening attempt",
+    "requested_model": "claude-fable-5-1",
+    "requested_effort": "xhigh",
+    "substantive_requested_model_response": false
+  }
+}

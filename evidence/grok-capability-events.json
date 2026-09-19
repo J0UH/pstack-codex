@@ -1,0 +1,173 @@
+{
+  "scope": "Selected actual event shapes, not complete streams. Identity, machine paths and nonce-bearing content removed. Fixture call IDs preserve links; do not treat omitted metadata as absent from the original run.",
+  "events": {
+    "reader": [
+      {
+        "type": "system",
+        "subtype": "init",
+        "tools": [
+          "read_file",
+          "list_dir",
+          "grep"
+        ],
+        "permissionMode": "dontAsk"
+      },
+      {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      }
+    ],
+    "writer_positive": [
+      {
+        "type": "system",
+        "subtype": "init",
+        "tools": [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ],
+        "permissionMode": "dontAsk"
+      },
+      {
+        "type": "assistant",
+        "message": {
+          "model": "grok-4.6",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "fixture-call-1",
+              "name": "search_replace",
+              "input": {
+                "file_path": "inside.txt",
+                "new_string": "INSIDE_ALLOWED\n",
+                "old_string": ""
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "user",
+        "message": {
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "fixture-call-1",
+              "is_error": false,
+              "content": "{\"type\":\"SearchReplace\",\"EditsApplied\":{\"old_string\":\"\",\"new_string\":\"INSIDE_ALLOWED\\n\",\"tool_output_for_prompt\":\"The file inside.txt has been created successfully.\",\"tool_output_for_prompt_concise\":\"The file inside.txt has been created.\",\"absolute_path\":\"<fixture-root>/writer-positive-fixture/project/packages/a/inside.txt\",\"edits\":{\"details\":[{\"old_string\":\"\",\"old_line\":1,\"new_string\":\"INSIDE_ALLOWED\\n\",\"new_line\":1,\"context_before\":\"\",\"context_after\":\"\",\"line_prefix\":\"\"}]}}}"
+            }
+          ]
+        }
+      },
+      {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      }
+    ],
+    "writer_sibling_denial": [
+      {
+        "type": "system",
+        "subtype": "init",
+        "tools": [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ],
+        "permissionMode": "dontAsk"
+      },
+      {
+        "type": "assistant",
+        "message": {
+          "model": "grok-4.6",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "fixture-call-1",
+              "name": "write",
+              "input": {
+                "file_path": "<fixture-root>/writer-sibling-fixture/project/packages/b/outside.txt",
+                "content": "OUTSIDE_ATTEMPTED\n"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "user",
+        "message": {
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "fixture-call-1",
+              "is_error": true,
+              "content": "[{\"type\":\"content\",\"content\":{\"type\":\"text\",\"text\":\"User cancelled the execution for tool `write`\"}}]"
+            }
+          ]
+        }
+      },
+      {
+        "type": "result",
+        "subtype": "error_during_execution",
+        "is_error": true,
+        "errors": [
+          "cancelled"
+        ]
+      }
+    ],
+    "writer_symlink_denial": [
+      {
+        "type": "system",
+        "subtype": "init",
+        "tools": [
+          "read_file",
+          "search_replace",
+          "list_dir",
+          "grep",
+          "write"
+        ],
+        "permissionMode": "dontAsk"
+      },
+      {
+        "type": "assistant",
+        "message": {
+          "model": "grok-4.6",
+          "content": [
+            {
+              "type": "tool_use",
+              "id": "fixture-call-1",
+              "name": "write",
+              "input": {
+                "file_path": "<fixture-root>/writer-symlink-fixture/project/packages/a/linked.txt",
+                "content": "SYMLINK_ATTEMPTED\n"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "type": "user",
+        "message": {
+          "content": [
+            {
+              "type": "tool_result",
+              "tool_use_id": "fixture-call-1",
+              "is_error": true,
+              "content": "{\"error\":\"tool_execution_failed\",\"message\":\"IO Error: Permission denied (os error 13)\"}"
+            }
+          ]
+        }
+      },
+      {
+        "type": "result",
+        "subtype": "success",
+        "is_error": false
+      }
+    ]
+  }
+}
