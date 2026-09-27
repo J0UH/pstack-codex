@@ -19,18 +19,19 @@ No Codex-native Bot API is invented here. Codex has no `update_state`, no `SendT
 | Store `{url, key}` on the server | `url` goes in the config file. The key goes in a 0600 file or an environment variable that only the sender process sees. The config never contains the key. |
 | POST with the documented headers, 8 s, one try | `scripts/grok_bot.py send` or `send_event`. |
 | Probe once with a harmless payload before saying the UI is live | `scripts/grok_bot.py probe`. |
-| Append failed JSON to a local log; drain it from the routine | The bridge appends to a local 0600 file. Draining is not provided (see below). |
+| Append failed JSON to a local log; drain it from the routine | The sender appends to a local 0600 file. `scripts/grok_failure_bridge.py` lets the routine claim and acknowledge those entries over a separately authenticated endpoint (see below). |
 | Tailscale, page hosting, wake handling | Outside this bridge. |
 
 ## Current evidence
 
-The parent session has live UI proof that a webhook routine was created in the Grok Bot app and left paused. The sender key was not obtained, and no webhook was fired. Direct app delegation also produced an observed screenshot of `example.com` on the Bot computer. Therefore:
+The initial September 18 checkpoint proved app handoff and paused-routine creation only. The September 27 [host-bridge acceptance record](../evidence/host-bridge-acceptance.json) adds real webhook and queue access:
 
-- No real POST has been made to `api2.cursor.sh` by this code. All transport evidence comes from an injected opener and a loopback HTTP server on 127.0.0.1.
-- Whether the live routine returns exactly HTTP 200 on wake, and what its response looks like, is unobserved.
-- The end-to-end workflow (page click, local POST, routine wake, bot action) remains unverified. Do not describe it as working.
+- The existing diagnostic routine received a real POST with HTTP 200 and returned the exact harmless probe nonce in the Bot UI.
+- A second webhook woke a cloud routine that claimed two synthetic failed events from this Mac through a temporary authenticated HTTPS endpoint, acknowledged both, and confirmed the next claim was empty. Server request logs and SQLite receipts independently recorded all four operations. The original JSONL remained unchanged.
+- The routine did not post its own completion reply for the queue run; its later report confirmed the counts and empty final claim. This is proof of the bounded queue exercise, not arbitrary Bot task completion or a full page-click workflow.
+- The original routine instruction was restored exactly and left paused. Temporary services were stopped and the local copy of the sender key was removed. No real credential value is in the published evidence.
 
-There are still blockers before the full skill can be claimed: obtaining the key through the app's secure entry, an accepted live probe, and a failure-queue bridge the routine can actually reach.
+Each installation still needs its own sender key, routine, consumer token and reachable TLS front end. Those are configuration prerequisites; the sender and queue bridge are now implemented and live-tested within the scope above.
 
 ## Config
 
@@ -68,12 +69,14 @@ Exit codes: 0 accepted, 1 rejected/redirect/network/internal, 2 invalid config, 
 
 1. Re-validate the config at the send boundary, including a caller-supplied dict, against the documented host. Anything else stops here with `invalid_config` before the key is read.
 2. Validate and encode the payload: one non-empty JSON object, JSON-native values only, no bytes, at most 64 KiB, nesting at most 16 deep.
-3. Open the failure queue for append with `O_NOFOLLOW` and `O_NONBLOCK`, creating it 0600 if missing, and check the open descriptor: regular file, owned by the current user, no group/other bits, not the config file. An existing 0644 queue, a symlink, a directory or a missing directory stops here with `invalid_queue`. Nothing is chmodded, truncated or created except a missing queue file.
+3. Open the failure queue for read and append with `O_NOFOLLOW` and `O_NONBLOCK`, creating it 0600 if missing, and check the open descriptor: regular file, owned by the current user, no group/other bits, not the config file. An existing 0644 queue, a symlink, a directory or a missing directory stops here with `invalid_queue`. Nothing is chmodded, truncated or created except a missing queue file.
 4. Read the key. `key_file` is opened with `O_NOFOLLOW` and checked on the same descriptor it is read from. A key file that is the same inode as the queue or the config stops the send.
 5. Refuse a payload that contains the key. Dict keys and string values are inspected before JSON escaping, and the encoded bytes are checked too. Such an event is neither sent nor queued.
 6. POST once with `Content-Type: application/json`, `Authorization: Bearer <key>`, `X-Automation-Key: <key>`, an 8 s socket timeout, TLS verification, no proxy and every redirect refused.
 7. Accept exactly HTTP 200. Any other status, including 201 or 204, is `rejected` and unconfirmed. The response body and headers are never read or recorded.
 8. On `rejected`, `redirect_refused`, `network_error`, `timeout` or `secret_unavailable`, append the exact encoded event bytes as one line to the queue. Probe payloads are never queued.
+
+   The append holds an exclusive `flock` on the queue from the first byte through `fsync`, waiting at most 10 s for another sender (otherwise `queue_append_failed`). Senders that use this module therefore never interleave records, even when the kernel accepts a record in several short writes. Writers that do not take the lock, such as another program appending to the same file, are not excluded. If the file does not end in a newline because a writer died mid-record, the append first writes one newline. The fragment then stays a single malformed line and the new record stays whole. The record's own bytes never change. On macOS, if two sends race to create a missing queue file, the one that loses retries the same checked open once instead of refusing the send.
 
 Failure messages are fixed phrases plus an exception class name. No transport exception text, response body, response header or key fragment reaches the result, stdout or stderr. A final pass scrubs the result if the key were ever present, which the tests treat as an internal error.
 
@@ -83,11 +86,44 @@ Failure messages are fixed phrases plus an exception class name. No transport ex
 
 `http_accepted` means the routine was woken. It says nothing about what the bot did afterwards. That is observed in the Grok Bot app.
 
-## Failure queue and the drain gap
+## Failure queue and the failure bridge
 
-The queue is one encoded event per line, the same JSON that was POSTed, in a 0600 file on this Mac. That satisfies "append the same JSON to a local log".
+The queue is one encoded event per line, the same JSON that was POSTed, in a 0600 file on this Mac. That satisfies "append the same JSON to a local log". The sender never retries on its own, and nothing below changes the sender.
 
-The upstream skill then says to drain that log from the routine. The routine runs on the Bot's cloud computer, which cannot read a file on this Mac. Nothing here gives it that access. Before the full workflow can be claimed, an explicit and accessible failure bridge is needed, for example a tailnet-reachable endpoint on this machine that the routine can call, with its own authorization. That bridge is not designed or built here, and this bridge never retries on its own.
+The upstream skill then says to drain that log from the routine. The routine runs on the Bot's cloud computer, which cannot read a file on this Mac. `scripts/grok_failure_bridge.py` is the opt-in bridge for that step. Status: implemented, regression-tested and exercised from a real cloud routine with synthetic queued events; see the acceptance record above.
+
+- **Endpoints.** `POST /v1/failures/claim` with `{"limit": n, "lease_seconds": s}` leases up to `n` entries and returns each as `{entry_id, claim_id, claim_count, body_sha256, event}`, where `event` is the exact JSON object from the log line and `body_sha256` hashes that line. `POST /v1/failures/ack` with `{"acks": [{"entry_id", "claim_id"}]}` marks entries handled. `POST /v1/failures/release` with `{"releases": [...]}` returns them early. `GET /v1/failures/status` reports counts.
+- **Non-lossy.** The bridge opens the log read-only with the sender's own `open_queue` checks, never truncates, rewrites or deletes it, and imports only complete newline-terminated lines into its private SQLite state. A partial line that the sender is still writing waits for its newline. Malformed lines, including lines nested deeper than the sender's 16-level limit, are counted and never served; they stay in the log. A shrunken or rewritten log is refused rather than guessed.
+- **Claim is not delete.** A claim is a lease. An entry that is not acknowledged returns after its lease with a new `claim_id` and a higher `claim_count`, so delivery to the routine is at least once. An ack with an old `claim_id` is `stale_claim`. The routine should treat `entry_id` or `body_sha256` as its idempotency key.
+- **Ack is not Bot completion.** An ack is the routine's own statement that it handled the entry. Every ack and status response carries `bot_completion_verified: false`. HTTP 200 from the bridge means the request was processed, nothing more.
+- **Separate credential.** The routine authenticates with a consumer bearer token from its own 0600 file, created with `new-token`. It is refused if it is the sender key file, the queue, the sender config or the bridge config, by path or by inode. The bridge never reads the sender key. The event bridge's ingest token is a third, unrelated credential.
+- **Reachability.** The server binds only `127.0.0.1` or `::1`. The routine reaches it only through an operator-configured TLS reverse proxy or tailnet front end, for example Tailscale Serve forwarding HTTPS to the loopback port. The routine stores the consumer token in the Bot's own secure secret entry, never in chat or in the routine prompt.
+
+Config ([example](../examples/grok-failure-bridge.example.json)):
+
+```json
+{
+  "sender_config": "/absolute/path/to/bot.json",
+  "state_dir": "/absolute/private/failure-bridge-state",
+  "listen_host": "127.0.0.1",
+  "listen_port": 8788,
+  "consumer_token_file": "/absolute/private/failure-consumer.token",
+  "default_lease_seconds": 300,
+  "max_lease_seconds": 3600,
+  "max_claim": 20
+}
+```
+
+```text
+python3 scripts/grok_failure_bridge.py new-token --path /abs/failure-consumer.token
+python3 scripts/grok_failure_bridge.py check  --config /abs/failures.json
+python3 scripts/grok_failure_bridge.py serve  --config /abs/failures.json
+python3 scripts/grok_failure_bridge.py status --config /abs/failures.json
+```
+
+`check` is offline and never reads the sender key. `serve` runs in the foreground until `SIGTERM`, `SIGINT` or `SIGHUP`. `state_dir` must be a 0700 directory owned by the operator.
+
+A routine that drains the queue calls claim, handles each `event` as untrusted data under its own prompt, acks what it finished, and releases or leaves the rest to expire. This routine-side behavior is a suggested contract; it has not run on a real Bot.
 
 When the key is unavailable the event is still queued, because there is no key to compare it against. Keep the payload free of secrets by construction.
 
@@ -110,12 +146,15 @@ Removed from the previous draft: `expected_host`, the `queue` subcommand, the qu
 
 ```text
 python3 -m unittest discover -s tests -p test_grok_bot.py -v
+python3 -m unittest tests.test_grok_failure_bridge -v
 ```
 
-Regression classes reproduce the review findings against synthetic keys and an injected opener: host override, queue handling (0644, symlink, hardlink, directory, missing parent, short writes), key-bearing payloads, error-message leakage with short, long and quote-containing keys, and non-200 acceptance. A loopback server verifies real header delivery, redirect refusal, timeout classification and that the response body is not awaited. Synthetic keys are chosen so that no 8-character window of a key appears in any other fixture text, which lets the tests fail on a leaked fragment rather than only on the whole value.
+The failure-bridge suite produces real queue lines through `send_event` with a failing injected opener, then checks exact-JSON claims, an unchanged log, lease expiry and stale acks, release, partial, malformed and overly nested lines, concurrent senders and consumers with no loss, scoped HTTP authentication (the sender key is refused as a consumer token), a refused 0644 queue left untouched, credential separation by path and inode, and that the sender key is never read.
+
+Regression classes reproduce the review findings against synthetic keys and an injected opener: host override, queue handling (0644, symlink, hardlink, directory, missing parent, short writes, two concurrent senders forced into 37-byte writes through the real `_write_all`, a crashed partial trailing record, a lock that is never released), key-bearing payloads, error-message leakage with short, long and quote-containing keys, and non-200 acceptance. A loopback server verifies real header delivery, redirect refusal, timeout classification and that the response body is not awaited. Synthetic keys are chosen so that no 8-character window of a key appears in any other fixture text, which lets the tests fail on a leaked fragment rather than only on the whole value.
 
 ## Optional cloud-computer handoff
 
 Use Grok Bot only when the task benefits from its persistent cloud computer or needs Bot-native facilities. Pass a bounded, authorized task and verify the returned artifact. Local Codex paths, browser sessions and credentials are not automatically present on that computer. Do not infer the Bot's selected model or count it as an exact-model reviewer without independent evidence. Bots in one account share a cloud computer, so separate Bots are not substitutes for per-lane isolated VMs. [Grok Bot overview](https://docs.x.ai/grok-bot/overview).
 
-A Bot-native workflow can run its page/server and failure queue on that computer under the original skill. A sender hosted on the local Mac needs a separately verified way for the routine to reach its failure queue; this helper does not silently claim that bridge exists.
+A Bot-native workflow can run its page/server and failure queue on that computer under the original skill. A sender hosted on the local Mac uses the failure bridge above, whose routine-side reachability was proved for the bounded diagnostic setup above. Each new deployment still needs its own reachability check.

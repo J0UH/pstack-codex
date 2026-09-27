@@ -1,0 +1,10 @@
+{
+  "sender_config": "/Users/you/grok-bot-ui/bot.json",
+  "state_dir": "/Users/you/grok-bot-ui/failure-bridge-state",
+  "listen_host": "127.0.0.1",
+  "listen_port": 8788,
+  "consumer_token_file": "/Users/you/grok-bot-ui/failure-consumer.token",
+  "default_lease_seconds": 300,
+  "max_lease_seconds": 3600,
+  "max_claim": 20
+}

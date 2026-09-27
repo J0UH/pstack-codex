@@ -1,0 +1,19 @@
+{
+  "state_dir": "/Users/you/.codex/pstack/event-bridge/state",
+  "listen_host": "127.0.0.1",
+  "listen_port": 8787,
+  "ingest_token_file": "/Users/you/.codex/pstack/event-bridge/ingest.token",
+  "codex_bin": "/opt/homebrew/bin/codex",
+  "transport": "daemon",
+  "thread_id": "00000000-0000-0000-0000-000000000000",
+  "cwd": "/Users/you/Code/project",
+  "instruction_file": "/Users/you/.codex/pstack/event-bridge/instructions.md",
+  "sandbox": "read-only",
+  "network_access": false,
+  "turn_timeout_seconds": 1800,
+  "max_attempts": 3,
+  "retry_delay_seconds": 60,
+  "defer_seconds": 30,
+  "max_event_bytes": 65536,
+  "max_pending_events": 1000
+}

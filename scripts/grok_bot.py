@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import errno
+import fcntl
 import hashlib
 import http.client
 import json
@@ -74,6 +75,7 @@ MAX_BODY_BYTES = 64 * 1024
 MAX_CONFIG_BYTES = 1 << 20
 USER_AGENT = "pstack-codex-grok-bot/1"
 DEFAULT_QUEUE_NAME = "failed-webhook-events.jsonl"
+QUEUE_LOCK_SECONDS = 10.0
 HEADERS_SENT = ["Authorization", "X-Automation-Key", "Content-Type", "User-Agent"]
 
 CONFIG_KEYS = frozenset({"url", "key_env", "key_file", "queue_path", "probe_payload"})
@@ -535,18 +537,26 @@ def open_queue(queue_path: str, *, create: bool) -> tuple[int, os.stat_result]:
 
     ``create=True`` opens for append and creates a 0600 file if missing.  The
     directory must already exist; nothing is created, chmodded or truncated.
-    ``create=False`` opens read-only and lets FileNotFoundError through.
+    It is also readable so an append can check the final byte for a record
+    left partial by a crashed writer.  ``create=False`` opens read-only and
+    lets FileNotFoundError through.
     """
     if not os.path.isdir(os.path.dirname(queue_path)):
         raise QueueError("queue_path directory does not exist; this tool does not create directories")
-    flags = (os.O_WRONLY | os.O_APPEND | os.O_CREAT) if create else os.O_RDONLY
+    flags = (os.O_RDWR | os.O_APPEND | os.O_CREAT) if create else os.O_RDONLY
     directory_fd = None
     try:
         directory_fd = os.open(os.path.dirname(queue_path), os.O_RDONLY | os.O_DIRECTORY | os.O_CLOEXEC)
         directory = os.fstat(directory_fd)
         if directory.st_uid != os.getuid() or directory.st_mode & 0o022:
             raise QueueError("queue directory must be owned by the current user and not writable by group or others")
-        return _open_private(os.path.basename(queue_path), flags, dir_fd=directory_fd)
+        try:
+            return _open_private(os.path.basename(queue_path), flags, dir_fd=directory_fd)
+        except FileNotFoundError:
+            if not create:
+                raise
+            # macOS openat(O_CREAT) can report ENOENT to the loser of a concurrent create; the same checked open is retried once.
+            return _open_private(os.path.basename(queue_path), flags, dir_fd=directory_fd)
     except UnsafeFileError as exc:
         raise QueueError(f"queue_path {exc}; it was left untouched") from None
     except FileNotFoundError:
@@ -560,10 +570,36 @@ def open_queue(queue_path: str, *, create: bool) -> tuple[int, os.stat_result]:
             os.close(directory_fd)
 
 
-def append_queue_line(fd: int, body: bytes) -> None:
-    """Append the exact encoded event as one line to an already-checked queue descriptor."""
-    _write_all(fd, body + b"\n")
-    os.fsync(fd)
+def _lock_queue(fd: int) -> None:
+    deadline = time.monotonic() + QUEUE_LOCK_SECONDS
+    while True:
+        try:
+            fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            return
+        except BlockingIOError:
+            if time.monotonic() >= deadline:
+                raise OSError(errno.EWOULDBLOCK, "the queue stayed locked by another writer") from None
+            time.sleep(0.005)
+
+
+def append_queue_line(fd: int, body: bytes, *, write: Callable[[int, Any], int] = os.write) -> None:
+    """Append the exact encoded event as one line to an already-checked queue descriptor.
+
+    An exclusive ``flock`` is held from the first byte through ``fsync``, so
+    senders using this function never interleave records even when the kernel
+    accepts a record in several partial writes.  Writers that do not take the
+    lock are not excluded.  If the file ends without a newline (a writer died
+    mid-record), a newline is written first so the fragment stays one malformed
+    line and this record stays whole; the record's own bytes are unchanged.
+    """
+    _lock_queue(fd)
+    try:
+        size = os.fstat(fd).st_size
+        separator = b"\n" if size and os.pread(fd, 1, size - 1) != b"\n" else b""
+        _write_all(fd, separator + body + b"\n", write)
+        os.fsync(fd)
+    finally:
+        fcntl.flock(fd, fcntl.LOCK_UN)
 
 
 def inspect_queue(queue_path: str) -> dict[str, Any]:
@@ -587,7 +623,7 @@ def inspect_queue(queue_path: str) -> dict[str, Any]:
                     continue
                 try:
                     value = json.loads(raw.decode("utf-8"))
-                except (UnicodeDecodeError, json.JSONDecodeError):
+                except (UnicodeDecodeError, json.JSONDecodeError, RecursionError):
                     report["malformed_lines"] += 1
                     continue
                 if isinstance(value, dict) and value:
