@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "recorded": "2026-09-18",
+  "recorded": "2026-09-27",
   "description": "Per-playbook map of Cursor host facilities onto the Codex mechanisms actually exposed to the coordinator. Documentation of a mechanism is not proof that it fired; the parent updates live_proof entries with recorded evidence. Each live-tested entry names the exact scope that was exercised and nothing beyond it.",
   "upstream": {
     "package": "pstack",
@@ -12,8 +12,10 @@
     "https://learn.chatgpt.com/docs/long-running-work",
     "adapters/host.md",
     "docs/native-workflows.md",
+    "docs/event-bridge.md",
     "docs/verification.md",
-    "evidence/integration-verification.json"
+    "evidence/integration-verification.json",
+    "evidence/host-bridge-acceptance.json"
   ],
   "parent_evidence": {
     "automation_update_heartbeat": {
@@ -40,6 +42,11 @@
       "conclusion": "Queue acceptance is not a verified durable event wake. Native desktop send_message used only to drain the harmless test.",
       "native_send_message_dispatch_completed": true,
       "test_task_archived": true
+    },
+    "host_bridges": {
+      "recorded": "2026-09-27",
+      "record": "evidence/host-bridge-acceptance.json",
+      "scope": "Dedicated-thread event delivery and bounded cloud routine queue access; not full playbook completion or desktop/IDE ownership."
     }
   },
   "status_vocabulary": {
@@ -148,10 +155,10 @@
       "notes": "No Codex cloud placement, cloud VM per lane, cloud-sleeper wake chain or cloud-agent URL is exposed. The source's per-lane and per-PR isolated executors stay a prerequisite: the plan keeps each live lane on its own cloud VM and reports blocked until an isolated runtime per lane is configured or the operator explicitly approves an alternative with separate port, browser and data evidence per lane. A git worktree is write ownership, not runtime isolation; ten lanes on one host's port collide. The checker verifies plan form only, never runtime readiness."
     },
     "event_bridge": {
-      "status": "unavailable",
-      "live_proof": "pending",
-      "evidence": "evidence/integration-verification.json native_queue: accepted message, unloaded task did not start; bridge not verified.",
-      "notes": "Across-turn event wake is not verified. The tested queue-only command did not start an unloaded task. Native timed heartbeat is available, but it is polling, not event-primary."
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/host-bridge-acceptance.json",
+      "notes": "Opt-in authenticated ingress and durable SQLite queue with real private and controlled shared-daemon delivery, restart recovery, duplicate suppression, busy-thread deferral and interruption evidence. Desktop/IDE sharing of that daemon is not established. Every playbook still needs its own producer, configured target and ownership contract; no full playbook lifecycle is verified by these checks."
     },
     "codex_skill_creator": {
       "status": "native-mapped",
@@ -193,13 +200,19 @@
       "status": "live-tested",
       "live_proof": "live-tested",
       "evidence": "evidence/integration-verification.json grok_bot: app handoff, paused-routine creation and returned public-page screenshot observed.",
-      "notes": "Optional cloud-computer surface. No exact model identity or independent VM per Bot is inferred; no live webhook delivery proof."
+      "notes": "Optional cloud-computer surface with scoped webhook and queue acceptance evidence. No exact Bot model identity or independent VM per Bot is inferred."
     },
     "grok_bot_sender": {
-      "status": "native-mapped",
-      "live_proof": "pending",
-      "evidence": "tests/test_grok_bot.py uses synthetic credentials and injected/loopback HTTP.",
-      "notes": "Optional outbound POST helper. A configured sender key, live harmless probe and routine-accessible failure queue are prerequisites for claiming the full webhook workflow."
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/host-bridge-acceptance.json",
+      "notes": "A real HTTP POST returned 200 and the diagnostic Bot replied with the exact probe nonce. Each installation needs its own sender key and routine. Arbitrary business-task completion is not inferred from HTTP acceptance."
+    },
+    "grok_failure_bridge": {
+      "status": "live-tested",
+      "live_proof": "live-tested",
+      "evidence": "evidence/host-bridge-acceptance.json",
+      "notes": "A real webhook-triggered cloud routine claimed and acknowledged two synthetic failed events over a temporary authenticated HTTPS endpoint. The original JSONL remained intact. Acknowledgment is the consumer assertion, not Bot completion. Each deployment needs its own token and reachable front end."
     }
   },
   "playbooks": [
@@ -266,7 +279,7 @@
         },
         {
           "facility": "Event watcher subagent with heartbeat fallback",
-          "codex": "Immediate bounded watcher inside the active turn; across turns each tick polls once and no event bridge exists, so the event wake stays unresolved",
+          "codex": "Immediate bounded watcher inside the active turn; across turns each tick polls once. No native event bridge exists; the opt-in event bridge needs an operator-run producer and live proof, so the event wake stays unresolved until then",
           "status": "prerequisite"
         },
         {
@@ -425,7 +438,7 @@
         "gh or Origin",
         "Bun for watch-pr on GitHub",
         "Desktop app running and awake for timed polling across turns",
-        "An across-turn event bridge for the unattended event wake, not yet available"
+        "The opt-in event bridge configured for the program's thread with an operator-run producer and live-verified, for the unattended event wake; mechanism live-tested; program-specific verification pending"
       ],
       "dependencies": [
         {
@@ -440,7 +453,7 @@
         },
         {
           "facility": "drive and background under /loop, rearm after every push wave",
-          "codex": "Inside the turn, rearm the watcher after every push wave and acted-on verdict with the frozen list. Across turns only timed polling exists, one bounded pass per heartbeat tick, so the unattended event wake stays unresolved and is reported as a gap",
+          "codex": "Inside the turn, rearm the watcher after every push wave and acted-on verdict with the frozen list. Across turns the native host offers only timed polling, one bounded pass per heartbeat tick; the opt-in event bridge still needs a producer and live proof, so the unattended event wake stays unresolved and is reported as a gap",
           "status": "prerequisite"
         },
         {
@@ -804,7 +817,7 @@
         "gh or Origin",
         "Desktop app running and awake for timed drains across turns",
         "Isolated runtimes for workers that do not need this machine, or the operator's explicit approval of local execution with evidence",
-        "An across-turn event bridge for the frontier watcher wake, not yet available"
+        "The opt-in event bridge configured for the program's thread with an operator-run producer and live-verified, for the frontier watcher wake; mechanism live-tested; program-specific verification pending"
       ],
       "dependencies": [
         {
@@ -824,7 +837,7 @@
         },
         {
           "facility": "Frontier watcher wake with a long heartbeat fallback",
-          "codex": "No across-turn event wake; a heartbeat tick at the long interval drains at the drain point, which is the fallback interval without the event wake it backed up",
+          "codex": "No native across-turn event wake, and the opt-in event bridge still needs a producer and live proof; a heartbeat tick at the long interval drains at the drain point, which is the fallback interval without the event wake it backed up",
           "status": "prerequisite"
         },
         {
@@ -1083,7 +1096,7 @@
         "Bun for the watcher",
         "Explicit land, ship or merge-when-ready request",
         "An isolated runtime per verifier, or the operator's explicit approval of an alternative with per-verifier port, browser and data evidence",
-        "An across-turn event bridge for the unattended frontier watch, not yet available"
+        "The opt-in event bridge configured for the program's thread with an operator-run producer and live-verified, for the unattended frontier watch; mechanism live-tested; program-specific verification pending"
       ],
       "dependencies": [
         {
@@ -1098,7 +1111,7 @@
         },
         {
           "facility": "Frontier watch under /loop with the watcher as event wake",
-          "codex": "Inside the turn the bounded watcher is the immediate event wake and gh pr view is read after each pass, ignoring READY until mergedAt or MERGED. Across turns only timed polling exists, so the unattended watch is reported as a gap; hard-fail rules unchanged",
+          "codex": "Inside the turn the bounded watcher is the immediate event wake and gh pr view is read after each pass, ignoring READY until mergedAt or MERGED. Across turns the native host offers only timed polling and the opt-in event bridge still needs a producer and live proof, so the unattended watch is reported as a gap; hard-fail rules unchanged",
           "status": "prerequisite"
         },
         {

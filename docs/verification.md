@@ -78,7 +78,7 @@ Grok writer and shell dispatch remain unsupported because inherited permission g
 
 ## Latest integration pass
 
-Fable 5.1 implemented the runtime, mode/schema, native workflow, optional Bot sender and prerequisite-doctor changes. Parent review reproduced and corrected additional edge cases before integration. Authoring success is separate from independent review approval. [Sanitized implementation and proof record](../evidence/integration-verification.json).
+Historical September 18–19 checkpoint (superseded for host-bridge status by the September 27 section below): Fable 5.1 implemented the runtime, mode/schema, native workflow, optional Bot sender and prerequisite-doctor changes. Parent review reproduced and corrected additional edge cases before integration. Authoring success is separate from independent review approval. [Sanitized implementation and proof record](../evidence/integration-verification.json).
 
 The current checks cover absolute writer boundaries (including nested packages and spaces), disjoint attempt storage, handled and late signals, permission-denial warnings, schema parity against the standard validator, JavaScript/Python token consistency, plan gates, and secret-safe webhook transport with synthetic credentials. The webhook tests use an injected transport or loopback server, never a real Bot key.
 
@@ -93,7 +93,7 @@ Two source-only Fable reviews approved the integration candidate at `ad93276dcf5
 ## Remaining limits
 
 - No matched, side-by-side Cursor execution baseline was run. Current claims are source-contract preservation plus selected real Codex flows.
-- Independent cloud-worker placement, Benny event automations and some full-transcript integrations still require real host facilities. The optional Bot sender is implemented and transport-tested, but real webhook delivery and queue access remain unverified.
+- Independent cloud-worker placement, Benny event automations and some full-transcript integrations still require real host facilities. The optional Bot sender, real webhook delivery and cloud queue access now have the scoped September 27 acceptance evidence below.
 - Native goal and timed-heartbeat mappings are implemented, and a real timed wake with cleanup passed. Durable external event wake and isolated executor prerequisites remain distinct; periodic polling does not silently replace watcher-first behavior. Their stopping conditions are unchanged.
 - The original checker remains unchanged. A separate Codex checker retains the substantive gates while validating the chosen model and supported host mechanisms; format acceptance is not runtime readiness.
 - Process groups do not contain deliberately escaped sessions or undo external side effects. Permission allowlists and worktrees are not OS security boundaries.
@@ -107,3 +107,11 @@ Run the README's deterministic checks and upstream helper suite. For live provid
 ## Final integration review
 
 Fable 5.1 approved the follow-up source changes and supported Grok profiles at [`1e95049f3ffd`](https://github.com/J0UH/pstack-codex/commit/1e95049f3ffdd19710938d267e196d9c0e1aae0a). This was an independent source review at requested xhigh, with supplied original contracts and parent-observed runtime evidence. It did not run the tests. The [review record](integration-review.md) preserves the exact scope, findings and remaining limits. Earlier pending-review statements above describe prior checkpoints.
+
+## Host bridges: September 27 acceptance
+
+Claude Opus 5.5 implemented and repaired the host bridges through Claude Code CLI 2.1.283; response metadata confirmed the requested model. The coordinator reproduced lifecycle, concurrent-append and daemon-framing failures, then verified the repaired code against Codex CLI 0.154.0 and the real Bot app.
+
+The [host-bridge acceptance record](../evidence/host-bridge-acceptance.json) records the final source hashes and the exact revision scope of each probe: cold-thread HTTP delivery, restart persistence, duplicate suppression, reconciliation of a missing receipt, shared-daemon busy-thread deferral, and a confirmed interrupt without redelivery. A real Grok webhook returned the exact first probe nonce. A webhook-triggered cloud routine then claimed and acknowledged two synthetic failed events over temporary HTTPS; server logs and stored receipts independently confirmed the drain. The routine was restored and paused, and temporary services and the local sender-key copy were removed.
+
+Validation: 289 Python tests with no failures or skips; 52 Bun tests; source preservation and package mirror checks. Earlier dated evidence above remains historical. These checks do not claim a full unattended playbook, desktop/IDE daemon ownership, per-lane cloud isolation, or arbitrary Bot business-task completion.

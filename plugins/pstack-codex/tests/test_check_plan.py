@@ -479,18 +479,24 @@ class CapabilityMapTests(unittest.TestCase):
         self.assertTrue(record["scheduled_turn_observed"] and record["sentinel_verified"] and record["session_identity_matches"])
         self.assertTrue(record["pause_confirmed"] and record["delete_confirmed"] and record["workspace_write_sandbox"])
         self.assertIn("not", record["scope"])
-        for name in ("create_goal", "get_goal", "update_goal", "cloud_placement", "event_bridge", "watch_pr"):
+        for name in ("create_goal", "get_goal", "update_goal", "cloud_placement", "watch_pr"):
             with self.subTest(name):
                 self.assertNotEqual("live-tested", self.mechanisms[name]["live_proof"])
         for stem in self.HEARTBEAT_PLAYBOOKS:
             with self.subTest(stem):
                 self.assertNotEqual("live-tested", self.playbooks[stem]["live_proof"]["status"])
         bridge = self.mechanisms["event_bridge"]
-        self.assertEqual("unavailable", bridge["status"])
-        self.assertEqual("pending", bridge["live_proof"])
-        self.assertIn("did not start", bridge["evidence"])
-        self.assertIn("not verified", bridge["notes"])
-        self.assertNotIn("bridge verified", bridge["notes"])
+        self.assertEqual(("live-tested", "live-tested"), (bridge["status"], bridge["live_proof"]))
+        self.assertIn("host-bridge-acceptance.json", bridge["evidence"])
+        self.assertIn("not established", bridge["notes"])
+        failure_bridge = self.mechanisms["grok_failure_bridge"]
+        self.assertEqual(("live-tested", "live-tested"), (failure_bridge["status"], failure_bridge["live_proof"]))
+        self.assertIn("not Bot completion", failure_bridge["notes"])
+        self.assertIn("synthetic", failure_bridge["notes"])
+        acceptance = json.loads((ROOT / "evidence/host-bridge-acceptance.json").read_text())
+        self.assertTrue(acceptance["event_bridge"]["checks"]["cold_http_event"]["turn_status"] == "completed")
+        self.assertEqual(2, acceptance["grok_failure_queue"]["acknowledged"])
+        self.assertTrue(acceptance["cleanup"]["routine_paused"])
         for stem in self.EVENT_DEPENDENT:
             with self.subTest(stem):
                 self.assertEqual("prerequisite", self.playbooks[stem]["unattended"])
@@ -517,7 +523,7 @@ class CapabilityMapTests(unittest.TestCase):
         self.assertEqual("unavailable", grok_bot["status"])
         self.assertEqual("not-applicable", grok_bot["live_proof"])
         self.assertEqual("live-tested", self.mechanisms["grok_bot_app"]["live_proof"])
-        self.assertEqual("pending", self.mechanisms["grok_bot_sender"]["live_proof"])
+        self.assertEqual("live-tested", self.mechanisms["grok_bot_sender"]["live_proof"])
         self.assertNotIn("delivery verified", grok_bot["notes"])
         self.assertNotIn("RRULE:", self.text)
 

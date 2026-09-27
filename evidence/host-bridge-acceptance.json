@@ -1,0 +1,132 @@
+{
+  "schema": "pstack-codex/host-bridge-acceptance/1",
+  "date": "2026-09-27",
+  "base_commit": "0a93abe9ca09f2dfce1819f950899d50b752f517",
+  "implementation": {
+    "model": "claude-opus-5-5",
+    "model_verified_in_cli_stream": true,
+    "provider": "firstParty",
+    "claude_code_version": "2.1.283",
+    "coordinator_review": "Reproduced blocked pipe writes and interleaved partial queue appends; requested and verified lifecycle and real daemon-framing repairs."
+  },
+  "tests": {
+    "python": {
+      "passed": 289,
+      "failures": 0,
+      "skipped": 0
+    },
+    "bun": {
+      "passed": 52,
+      "failures": 0
+    },
+    "upstream_preservation": "47 registered skills, unchanged upstream source; build.py --check",
+    "package_mirror": "package.py --check"
+  },
+  "event_bridge": {
+    "codex_cli_version": "0.154.0",
+    "checks": {
+      "cold_http_event": {
+        "http_status": 202,
+        "turn_status": "completed",
+        "attempt_count": 1
+      },
+      "real_turn_reconciliation": {
+        "missing_receipt_injected": true,
+        "real_turn_read_back": true,
+        "new_turn_started": false
+      },
+      "restart_and_duplicate": {
+        "pending_event_survived_restart": true,
+        "duplicate_http_status": 200,
+        "attempt_count": 1
+      },
+      "exact_thread_responses": true,
+      "active_thread_deferral": {
+        "while_active": "deferred",
+        "after_completion": "completed"
+      },
+      "real_turn_interruption": {
+        "outcome": "stopped",
+        "turn_status": "interrupted",
+        "redelivered": false
+      }
+    },
+    "same_dedicated_thread_verified": true,
+    "scope": "Real local Codex model turns on a dedicated exec-origin thread, private stdio and a controlled shared Unix-socket app-server. Read-only sandbox. This does not establish ownership of a desktop or IDE thread served by another process."
+  },
+  "grok_webhook": {
+    "real_webhook_fired": true,
+    "http_status": 200,
+    "exact_first_probe_nonce_reply_observed": true,
+    "response_marker": "PSTACK_WEBHOOK_PROBE_RECEIVED",
+    "real_sender_key_value_disclosed": false,
+    "temporary_local_key_copy_removed": true
+  },
+  "grok_failure_queue": {
+    "real_cloud_routine_requests": [
+      {
+        "method": "POST",
+        "path": "/v1/failures/claim",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/v1/failures/claim",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/v1/failures/ack",
+        "status": 200
+      },
+      {
+        "method": "POST",
+        "path": "/v1/failures/claim",
+        "status": 200
+      }
+    ],
+    "queued_failure_transport": "Injected offline failure; two synthetic event bodies written by the real sender",
+    "entry_hashes": [
+      "b1dffeebde3986a4006ea9db1359859296cf802fbd4cdef119a903ff31b115c0",
+      "55d70524052ed54211093da70db185256ba244754629f23eb3234ebbdccf40e2"
+    ],
+    "each_claimed_once": true,
+    "acknowledged": 2,
+    "final_claim_empty_reported_by_bot": true,
+    "original_jsonl_retained": true,
+    "direct_routine_completion_reply_observed": false,
+    "followup_bot_report_observed": true,
+    "scope": "Live webhook-triggered cloud routine fetched and acknowledged synthetic local failures over a temporary authenticated HTTPS endpoint. HTTP logs and SQLite receipts independently confirmed the operations; acknowledgment remains the consumer assertion, not proof of arbitrary business-task completion.",
+    "revision_scope": "The real cloud probe preceded the final JSON-depth and partial-write hardening. Those repairs preserved the claim/ack API and were covered by the final regression suite. The event-bridge live replay was rerun against the final source hashes below."
+  },
+  "cleanup": {
+    "routine_original_instruction_restored_exactly": true,
+    "routine_paused": true,
+    "temporary_tunnel_and_queue_services_stopped": true,
+    "live_smoke_processes_stopped": true
+  },
+  "source_sha256": {
+    "app_server_ws.py": "6dcc93d03ce165c37063cffed8295fe4bd9945ea1332e06d581303f6354a76f7",
+    "bridge_common.py": "f3599711ed30ff7f29ab6ea4df0508f5dfea1d1a5f48d78355e60c49d62c1cbc",
+    "build.py": "28f8a7c7b55e8e868ccdfd77eb951e31e22bd7029ee09b9f5998b822e696e7e8",
+    "claude_worker.py": "988292143b3aab75a54f0b0870ab2bbcaf9c5f794f2658d24d22472fdf492e06",
+    "doctor.py": "09016d6629bdfbbeaaeca6a67c16fe57c927f70e816e963b88ea3f0f8479d2ab",
+    "event_bridge.py": "a9983c19d66250dd777640784927b185684751eb282f7c7dcd7e3ab429c407a9",
+    "grok_bot.py": "89e922a5dc998320065cc001db477b671f94fd2138e9a76fe3bd10acb8635530",
+    "grok_failure_bridge.py": "f8b7d4ea08cea1a94764150c6241528c3f24cd675327d1138188f72c3e8c3d26",
+    "grok_worker.py": "5cc9f219e737b47beec3b5f866dc275de916b998c6fcbdc723d24ba445c14d97",
+    "model_config.py": "cf02f019e1f7c79a3fa923e3afed8bd202bad9ef6101f403606084537f719103",
+    "model_schema.py": "333e035fb949c4aae9a1c4e8df6e9cbd14c7855031bdccf27787d9bcc64ef9a2",
+    "package.py": "f5a8250fdd13ff3eacb82aec1809bb502f257a1068e09b8d22576a6a709d1adf",
+    "pstack.py": "9deec6226d5f56b257b700bb4ddb3bcd84a32f7b8b52666c9df1325467c52e9f",
+    "worker_common.py": "a85902a560daa25b7fc3b1bd1d84744bc4953b4e29b09f09e302a523629e5b13"
+  },
+  "limits": [
+    "Host processes must be running and available; accepted events persist locally across restart.",
+    "The app-server protocol is experimental; evidence is for Codex CLI 0.154.0.",
+    "Desktop/IDE sharing of the daemon is not established. Keep a dedicated thread and one producer/dispatcher ownership contract.",
+    "A status-check/start race remains when another client also writes; use an exclusively owned thread.",
+    "No full unattended playbook, per-lane isolated cloud VM, or Benny event integration is claimed.",
+    "No permanent service or public endpoint is installed by the package."
+  ]
+}

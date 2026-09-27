@@ -48,7 +48,7 @@ flowchart LR
 
 Execution uses the current host's configured permissions and sandbox. The plugin does not create a disposable workspace or an isolated VM for every turn. Upstream pstack's `make-bot-ui` skill describes a UI and server on the Bot computer. The server POSTs JSON to a webhook routine and keeps the sender key out of the browser. Tailscale can make that page reachable.
 
-This port preserves those instructions. Native Codex timed wake has passed a live check. The optional Bot app handoff has also returned a verified public-page screenshot. Live Bot webhook delivery, a reachable failure queue, and durable external event wakes remain unverified. See the [host contract](adapters/host.md) and [verification record](docs/verification.md).
+This port preserves those instructions. Native Codex timed wake has passed a live check. The optional Bot app handoff has also returned a verified public-page screenshot. The opt-in external event bridge now has real Codex wake, restart, duplicate, busy-thread and interruption evidence. A real Grok Bot webhook and cloud routine queue drain also passed using synthetic queued events. The [host-bridge acceptance record](evidence/host-bridge-acceptance.json), [host contract](adapters/host.md) and [verification record](docs/verification.md) describe the scope and setup.
 
 ## Grok Bot’s computer
 
@@ -69,11 +69,12 @@ This is an early, tested port, **not a claim of complete Cursor runtime parity**
 - All **47 registered pstack skills**, **23 playbooks**, **23 principles**, two agent roles, three companion skills, and the three dormant Benny skills are retained.
 - Claude analysis, writer and scoped local-Git reader profiles have been exercised against the real CLI; native/Claude handoffs and mode lifecycle have dedicated checks.
 - Optional Grok analysis and file-reader profiles passed real production-adapter checks on the tested Linux build. Writer, shell access and non-Linux dispatch remain disabled. See [Grok's supported scope](docs/grok.md).
-- Cursor cloud placement, durable wakeups (`/loop`, `/goal`, timed audit ticks and watcher-driven wakes), Grok Bot webhooks, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
+- Cursor cloud placement, full unattended playbook lifecycles, Benny event automations, some transcript integrations and model-specific plan validation still have explicit limitations. Their source and routes remain present. Missing capabilities do not become silent weaker substitutes.
+- An opt-in [external event bridge](docs/event-bridge.md) and a [Grok Bot failure-queue bridge](docs/grok-bot.md#failure-queue-and-the-failure-bridge) have passed local regression tests and scoped live acceptance. Neither service is started automatically; each needs an operator-configured target, credentials and a running host.
 
-The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Across-turn event bridges and isolated cloud workers remain separate prerequisites; timed polling and worktrees do not pretend to replace them. See the [23-playbook capability map](docs/workflow-capabilities.json).
+The [native workflow adapter](docs/native-workflows.md) maps goals, timed heartbeats, task identities and plan checks onto actual Codex capabilities. A real timed wake and its cleanup have passed. Isolated cloud workers remain a prerequisite, and each program still needs its own event producer and configured bridge; timed polling and worktrees do not pretend to replace either. See the [23-playbook capability map](docs/workflow-capabilities.json).
 
-Fable 5.1 approved the current implementation at its exact recorded code commit and documented scope. Astra authored the latest Grok changes, which passed real Linux acceptance before review. See the [current review](docs/integration-review.md) and [earlier alpha record](docs/fable-review.md). This remains a tested alpha with the explicit capability limits above.
+Fable 5.1 approved the earlier integration at its recorded code commit and documented scope. The host bridges were implemented with Claude Opus 5.5 through Claude Code CLI and independently checked with real Codex and Bot flows; their evidence is recorded separately. See the [earlier integration review](docs/integration-review.md) and [earlier alpha record](docs/fable-review.md). This remains a tested alpha with the explicit capability limits above.
 
 Use the [read-only doctor](docs/doctor.md) to distinguish installation, authentication and verified worker evidence. [Grok Bot](docs/grok-bot.md) is optional for cloud-computer and Bot-native work; ordinary coding and review do not require it.
 

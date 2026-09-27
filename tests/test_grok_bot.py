@@ -1,6 +1,7 @@
 
 import contextlib
 import email.message
+import fcntl
 import http.server
 import io
 import json
@@ -604,6 +605,57 @@ class QueueRegressionTests(Base):
         self.assertEqual(len(written), 4)
         with self.assertRaises(OSError):
             grok_bot._write_all(99, b"abc", write=lambda _fd, _view: 0)
+
+    def test_concurrent_appends_with_short_writes_never_interleave_records(self):
+        records = [grok_bot.encode_payload({"action": "count", "writer": writer, "pad": "x" * 300}) for writer in range(2)]
+        barrier = threading.Barrier(2)
+        failures = []
+
+        def chunked(fd, view):
+            written = os.write(fd, view[:37])
+            time.sleep(0.001)
+            return written
+
+        def writer(body):
+            try:
+                fd, _ = grok_bot.open_queue(str(self.queue_path), create=True)
+                try:
+                    barrier.wait(5)
+                    for _ in range(5):
+                        grok_bot.append_queue_line(fd, body, write=chunked)
+                finally:
+                    os.close(fd)
+            except BaseException as exc:
+                failures.append(exc)
+
+        threads = [threading.Thread(target=writer, args=(body,)) for body in records]
+        for thread in threads:
+            thread.start()
+        for thread in threads:
+            thread.join(30)
+        self.assertEqual([], failures)
+        lines = self.queue_path.read_bytes().split(b"\n")
+        self.assertEqual(b"", lines.pop())
+        self.assertEqual(sorted(records * 5), sorted(lines), "every record is whole and byte-identical")
+        self.assertEqual(stat.S_IMODE(os.stat(self.queue_path).st_mode), 0o600)
+
+    def test_append_after_a_crashed_partial_record_keeps_the_new_record_whole(self):
+        write_secret_file(self.queue_path, EVENT_BYTES.decode() + '\n{"action":"cut')
+        result, _ = self.send(http_error(503))
+        self.assertTrue(result["queued"])
+        self.assertEqual(self.queue_path.read_bytes(), EVENT_BYTES + b'\n{"action":"cut\n' + EVENT_BYTES + b"\n")
+        report = grok_bot.inspect_queue(str(self.queue_path))
+        self.assertEqual((report["entries"], report["malformed_lines"]), (2, 1))
+
+    def test_append_reports_a_queue_lock_that_is_never_released(self):
+        fd, _ = grok_bot.open_queue(str(self.queue_path), create=True)
+        self.addCleanup(os.close, fd)
+        fcntl.flock(fd, fcntl.LOCK_EX)
+        with unittest.mock.patch.object(grok_bot, "QUEUE_LOCK_SECONDS", 0.2):
+            result, _ = self.send(http_error(503))
+        self.assertFalse(result["queued"])
+        self.assertIn("queue_append_failed: the queue stayed locked by another writer; the event was not preserved", result["errors"])
+        self.assertEqual(b"", self.queue_path.read_bytes())
 
     def test_queue_append_failure_is_reported_not_hidden(self):
         with unittest.mock.patch.object(grok_bot, "append_queue_line", side_effect=OSError(28, "No space left on device")):
